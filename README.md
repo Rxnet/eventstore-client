@@ -1,19 +1,19 @@
 Event Store Client
 ==================
 
-Client for [event store](https://geteventstore.com/) TCP Api
+Asynchronous client for [EventStore](https://geteventstore.com/) TCP Api
 
 
 ## Usage
 ### Connect
 ```php
 <?php
-
 $eventStore = new \Rxnet\EventStore\EventStore();
+// Default value
 $eventStore->connect('tcp://admin:changeit@localhost:1113');
 
 $eventStore = new \Rxnet\EventStore\EventStore();
-// Lazy way, you can use also subscribeCallback to something after commit
+// Lazy way, to connect
 $eventStore = \Rxnet\await($eventStore->connect());
 /* @var \Rxnet\EventStore\EventStore $eventStore */
 echo "connected \n";
@@ -53,6 +53,8 @@ $eventStore->catchUpSubscription('category-test_stream_id', 100)
     });
 ```
 ### Read
+
+Read from event 0 to event 100 on stream category-test_stream_id then end
 ```php
 <?php
 $eventStore->readEventsForward('category-test_stream_id', 0, 100)
@@ -60,6 +62,8 @@ $eventStore->readEventsForward('category-test_stream_id', 0, 100)
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
     });
 ```
+
+Read from event 100 to event 90 on stream category-test_stream_id then end
 ```php
 <?php
 $eventStore->readEventsBackWard('category-test_stream_id', 100, 10)
@@ -67,6 +71,8 @@ $eventStore->readEventsBackWard('category-test_stream_id', 100, 10)
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
     });
 ```
+
+Read first event detail from category-test_stream_id
 ```php
 <?php
 $eventStore->readEvent('category-test_stream_id', 0)
