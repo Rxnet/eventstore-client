@@ -1,0 +1,40 @@
+{
+  "name": "rxnet/eventstore-client",
+  "description": "EventStore asynchronous PHP client with reactiveX flavours",
+  "type": "library",
+  "version": "0.1.0",
+  "keywords": [
+    "eventsourcing",
+    "eventstore",
+    "reactphp",
+    "reactivex"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dariusz Gafka",
+      "email": "d.gafka@madkom.pl"
+    },
+    {
+      "name": "Vincent Vermersch",
+      "email": "vermersch@gmail.com"
+    }
+  ],
+  "require": {
+    "ramsey/uuid": "~3.5.1",
+    "TrafficCophp/ByteBuffer": "0.3",
+    "google/protobuf": "^3.2",
+    "domraider/rxnet" : "dev-master"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "@stable",
+    "phpspec/prophecy": "1.5.0",
+    "protobuf-php/protobuf-plugin": "^0.1.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Rxnet\\EventStore\\" : "src/Rxnet/EventStore",
+      "GPBMetadata\\": "src/GPBMetadata"
+    }
+  }
+}
