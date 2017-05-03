@@ -105,15 +105,16 @@ $eventStore->readEvent('category-test_stream_id', 0)
 ## Contribute
 ### TODO
 
- [x] Append event to stream
- [x] Read given stream
- [x] Subscribe to given stream
- [x] Read a huge stream 
- [x] Persistent subscription
- [] transactions
- [] Write some specs
- [] create / update / delete persistent subscription
- [] delete stream
+- [ ] Append event to stream
+- [ ] Read given stream
+- [ ] subscribe to given stream
+- [ ] read a huge stream
+- [ ] persistent subscription
+- [ ] transactions
+- [ ] write som specs
+- [ ] create / update / delete persistent subscription
+- [ ] delete stream
+
 
 ### Protocol buffer
 If ClientMessageDtos.proto is modified, you must generate new php class
