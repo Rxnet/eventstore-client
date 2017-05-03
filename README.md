@@ -105,11 +105,11 @@ $eventStore->readEvent('category-test_stream_id', 0)
 ## Contribute
 ### TODO
 
-- [ ] Append event to stream
-- [ ] Read given stream
-- [ ] subscribe to given stream
-- [ ] read a huge stream
-- [ ] persistent subscription
+- [x] Append event to stream
+- [x] Read given stream
+- [x] subscribe to given stream
+- [x] read a huge stream
+- [x] persistent subscription
 - [ ] transactions
 - [ ] write som specs
 - [ ] create / update / delete persistent subscription
