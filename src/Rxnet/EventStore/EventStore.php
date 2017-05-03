@@ -12,6 +12,9 @@ use Rxnet\Connector\Tcp;
 use Rxnet\Connector\Tls;
 use Rxnet\Dns\Dns;
 use Rxnet\Event\ConnectorEvent;
+use Rxnet\EventStore\Data\ConnectToPersistentSubscription;
+use Rxnet\EventStore\Data\PersistentSubscriptionConfirmation;
+use Rxnet\EventStore\Data\PersistentSubscriptionStreamEventAppeared;
 use Rxnet\EventStore\Data\ReadAllEvents;
 use Rxnet\EventStore\Data\ReadEvent;
 use Rxnet\EventStore\Data\ReadEventCompleted;
@@ -209,14 +212,84 @@ class EventStore
                 ->map(
                     function (StreamEventAppeared $eventAppeared) use ($correlationID) {
                         $record = $eventAppeared->getEvent()->getEvent();
-                        $link = $eventAppeared->getEvent()->getLink();
                         /* @var \Rxnet\EventStore\Data\EventRecord $record */
 
                         return new EventRecord(
                             $record,
                             $correlationID,
-                            $this->writer,
-                            $link
+                            $this->writer
+                        );
+                    }
+                )
+                ->subscribe($observer);
+
+            return new CallbackDisposable(function () {
+                $event = new UnsubscribeFromStream();
+                $this->writer->composeAndWrite(
+                    MessageType::UNSUBSCRIBE_FROM_STREAM,
+                    $event
+                );
+            });
+        });
+    }
+
+    /**
+     * @param $streamID
+     * @param $group
+     * @param int $parallel
+     * @return Observable\AnonymousObservable
+     */
+    public function persistentSubscription($streamID, $group, $parallel = 1) {
+        $query = new ConnectToPersistentSubscription();
+        $query->setEventStreamId($streamID);
+        $query->setSubscriptionId($group);
+        $query->setAllowedInFlightMessages($parallel);
+
+        return Observable::create(function (ObserverInterface $observer) use ($query, $group) {
+            $correlationID = $this->writer->createUUIDIfNeeded();
+            $this->writer
+                ->composeAndWriteOnce(
+                    MessageType::CONNECT_TO_PERSISTENT_SUBSCRIPTION,
+                    $query,
+                    $correlationID
+                )
+                // When written wait for all responses
+                ->concat(
+                    $this->readBuffer
+                        ->filter(
+                            function (SocketMessage $message) use ($correlationID) {
+                                // Use same correlationID to pass by this filter
+                                return $message->getCorrelationID() == $correlationID;
+                            }
+                        )
+                )
+                ->flatMap(
+                    function (SocketMessage $message) {
+                        $data = $message->getData();
+                        //var_dump($data);
+                        switch (get_class($data)) {
+                            case SubscriptionDropped::class :
+                                return Observable::error(new \Exception("Subscription dropped, for reason : {$data->getReason()}"));
+                            case PersistentSubscriptionConfirmation::class :
+                                return Observable::emptyObservable();
+                            case PersistentSubscriptionStreamEventAppeared::class :
+                                return Observable::just($data);
+                            default:
+                                var_dump($data);
+                        }
+                    }
+                )
+                ->map(
+                    function (PersistentSubscriptionStreamEventAppeared $eventAppeared) use ($correlationID, $group) {
+                        $record = $eventAppeared->getEvent()->getEvent();
+                        //$link = $eventAppeared->getEvent()->getLink();
+                        /* @var \Rxnet\EventStore\Data\EventRecord $record */
+
+                        return new AcknowledgeableEventRecord(
+                            $record,
+                            $correlationID,
+                            $group,
+                            $this->writer
                         );
                     }
                 )

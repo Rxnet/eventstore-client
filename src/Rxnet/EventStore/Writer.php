@@ -30,6 +30,8 @@ class Writer
         $this->stream = $stream;
         $this->readBuffer = $readBuffer;
         $this->credentials = $credentials;
+
+        // TODO queue message for writing ?
     }
 
     public function createUUIDIfNeeded($uuid = null)
@@ -62,6 +64,7 @@ class Writer
     public function writeOnce(SocketMessage $message)
     {
         $data = $this->encode($message);
+
         return $this->stream->write($data);
     }
 
@@ -103,7 +106,7 @@ class Writer
         $buffer->writeInt32LE($messageLength + $authorizationLength, 0);
         $buffer->writeInt8($socketMessage->getMessageType()->getType(), MessageConfiguration::MESSAGE_TYPE_OFFSET);
         $buffer->writeInt8(($doAuthorization ? MessageConfiguration::FLAG_AUTHORIZATION : MessageConfiguration::FLAGS_NONE), MessageConfiguration::FLAG_OFFSET);
-        $buffer->write(hex2bin($this->createUUIDIfNeeded($socketMessage->getCorrelationID())), MessageConfiguration::CORRELATION_ID_OFFSET);
+        $buffer->write(pack('H*', $socketMessage->getCorrelationID()), MessageConfiguration::CORRELATION_ID_OFFSET);
 
         if ($doAuthorization) {
             $usernameLength = strlen($socketMessage->getCredentials()->getUsername());

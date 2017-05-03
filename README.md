@@ -29,7 +29,7 @@ $eventStore->appendToStream('category-test_stream_id')
     ->jsonEvent('event_type3', ['data' => microtime()])
     ->commit()
     ->subscribeCallback(function(\Rxnet\EventStore\Data\WriteEventsCompleted $eventsCompleted) {
-        echo "Last event number {$eventsCompleted->getLastEventNumber()} on commit position {$eventsCompleted->getCommitPosition()} ".memory_get_usage()." \n";
+        echo "Last event number {$eventsCompleted->getLastEventNumber()} on commit position {$eventsCompleted->getCommitPosition()} \n";
     });
 ```
 ### Subscribe
