@@ -13,7 +13,7 @@ $eventStore = new \Rxnet\EventStore\EventStore();
 $eventStore->connect('tcp://admin:changeit@localhost:1113');
 
 $eventStore = new \Rxnet\EventStore\EventStore();
-// Lazy way, you can use also subscribeCallback to something after commit
+// Lazy way, to connect
 $eventStore = \Rxnet\await($eventStore->connect());
 /* @var \Rxnet\EventStore\EventStore $eventStore */
 echo "connected \n";
