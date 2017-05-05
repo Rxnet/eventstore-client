@@ -9,6 +9,7 @@ based on Madkom/event-store-client
 ## Usage
 ### Connect
 ```php
+<?php
 $eventStore = new \Rxnet\EventStore\EventStore();
 // Default value
 $eventStore->connect('tcp://admin:changeit@localhost:1113');
@@ -24,6 +25,7 @@ echo "connected \n";
 You can put as many event you want (max 2000) before commit or commit after each
 
 ```php
+<?php
 $eventStore->appendToStream('category-test_stream_id')
     ->jsonEvent('event_type', ['data' => microtime()], ['worker'=>'ip'])
     ->jsonEvent('event_type2', ['data' => microtime()], ['some'=>'metadata'])
@@ -38,6 +40,7 @@ $eventStore->appendToStream('category-test_stream_id')
 
 Connect to persistent subscription $ce-category (projection) has group my-group, process message 4 by 4, then acknowledge or not
 ```php
+<?php
 $eventStore->persistentSubscription('$ce-category', 'my-group', 4)
     ->subscribeCallback(function(\Rxnet\EventStore\AcknowledgeableEventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
@@ -54,6 +57,7 @@ Watch given stream for new events.
 SubscribeCallback will be called when a new event appeared
 
 ```php
+<?php
 $eventStore->volatileSubscription('category-test_stream_id')
     ->subscribeCallback(function(\Rxnet\EventStore\EventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
@@ -62,6 +66,7 @@ $eventStore->volatileSubscription('category-test_stream_id')
 
 Read all events from position 100, when everything is read, watch for new events (like volatile)
 ```php
+<?php
 $eventStore->catchUpSubscription('category-test_stream_id', 100)
     ->subscribeCallback(function(\Rxnet\EventStore\EventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
@@ -72,6 +77,7 @@ $eventStore->catchUpSubscription('category-test_stream_id', 100)
 
 Read from event 0 to event 100 on stream category-test_stream_id then end
 ```php
+<?php
 $eventStore->readEventsForward('category-test_stream_id', 0, 100)
     ->subscribeCallback(function(\Rxnet\EventStore\EventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
@@ -80,6 +86,7 @@ $eventStore->readEventsForward('category-test_stream_id', 0, 100)
 
 Read backward (latest to oldest) from event 100 to event 90 on stream category-test_stream_id then end
 ```php
+<?php
 $eventStore->readEventsBackWard('category-test_stream_id', 100, 10)
     ->subscribeCallback(function(\Rxnet\EventStore\EventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
@@ -88,6 +95,7 @@ $eventStore->readEventsBackWard('category-test_stream_id', 100, 10)
 
 Read first event detail from category-test_stream_id
 ```php
+<?php
 $eventStore->readEvent('category-test_stream_id', 0)
     ->subscribeCallback(function(\Rxnet\EventStore\EventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
