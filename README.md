@@ -110,9 +110,9 @@ $eventStore->readEvent('category-test_stream_id', 0)
  - [x] Read given stream
  - [x] Subscribe to given stream
  - [x] Read a huge stream 
- - [x] TLS connect
- - [x] Connect to cluster
- - [] Persistent subscription
+ - [x] Persistent subscription
+ - [] TLS connect
+ - [] Connect to cluster
  - [] transactions
  - [] Write some specs
  - [] create / update / delete persistent subscription
