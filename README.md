@@ -3,6 +3,7 @@ Event Store Client
 
 Asynchronous client for [EventStore](https://geteventstore.com/) TCP Api
 
+based on Madkom/event-store-client
 
 
 ## Usage
