@@ -111,13 +111,13 @@ $eventStore->readEvent('category-test_stream_id', 0)
  - [x] Subscribe to given stream
  - [x] Read a huge stream 
  - [x] Persistent subscription
- - [] TLS connect
- - [] Connect to cluster
- - [] transactions
- - [] Write some specs
- - [] create / update / delete persistent subscription
- - [] create / update / delete projection
- - [] delete stream
+ - [ ] TLS connect
+ - [ ] Connect to cluster
+ - [ ] transactions
+ - [ ] Write some specs
+ - [ ] create / update / delete persistent subscription
+ - [ ] create / update / delete projection
+ - [ ] delete stream
 
 ### Protocol buffer
 If ClientMessageDtos.proto is modified, you must generate new php class
