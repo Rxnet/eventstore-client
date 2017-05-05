@@ -27,8 +27,16 @@
     "domraider/rxnet" : "dev-master"
   },
   "require-dev": {
-    "phpunit/phpunit": "@stable",
-    "phpspec/prophecy": "1.5.0",
+    "peridot-php/peridot-list-reporter": "^1.0",
+    "peridot-php/peridot-dot-reporter": "^1.0",
+    "peridot-php/peridot-watcher-plugin": "^1.3",
+    "peridot-php/peridot-code-coverage-reporters": "^2.0",
+    "peridot-php/leo": "^1.5",
+    "peridot-php/peridot-concurrency": "^1.1",
+    "peridot-php/peridot-prophecy-plugin": "^1.1",
+    "cloak/peridot-cloak-plugin": "^2.0",
+    "holyshared/file-fixture": "^2.0",
+    "mrkrstphr/peridot-automock-plugin": "^0.5.0",
     "protobuf-php/protobuf-plugin": "^0.1.3"
   },
   "autoload": {

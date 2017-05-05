@@ -11,27 +11,40 @@ namespace Rxnet\EventStore;
 
 use Google\Protobuf\Internal\Message;
 use Ramsey\Uuid\Uuid;
+use Rx\Observable;
+use function Rxnet\await;
 use Rxnet\EventStore\Message\Credentials;
-use Rxnet\EventStore\Message\MessageComposer;
 use Rxnet\EventStore\Message\MessageConfiguration;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 use Rxnet\Transport\Stream;
 use TrafficCophp\ByteBuffer\Buffer;
+use Zend\Stdlib\SplQueue;
 
 class Writer
 {
+    /** @var  Stream */
     protected $stream;
-    protected $readBuffer;
+    /** @var  Credentials */
     protected $credentials;
+    /** @var  SplQueue */
+    protected $queue;
 
-    public function __construct(Credentials $credentials, Stream $stream, ReadBuffer $readBuffer)
+    protected $working = false;
+
+    public function __construct()
     {
-        $this->stream = $stream;
-        $this->readBuffer = $readBuffer;
+        $this->queue = new SplQueue();
+    }
+    public function setCredentials(Credentials $credentials) {
         $this->credentials = $credentials;
+    }
 
-        // TODO queue message for writing ?
+    /**
+     * @param Stream $stream
+     */
+    public function setStream($stream) {
+        $this->stream = $stream;
     }
 
     public function createUUIDIfNeeded($uuid = null)
@@ -50,12 +63,6 @@ class Writer
         );
     }
 
-    public function composeAndWrite($messageType, Message $event, $correlationID = null)
-    {
-        return $this->write($this->compose($messageType, $event, $correlationID));
-    }
-
-
     public function composeAndWriteOnce($messageType, Message $event = null, $correlationID = null)
     {
         return $this->writeOnce($this->compose($messageType, $event, $correlationID));
@@ -65,24 +72,27 @@ class Writer
     {
         $data = $this->encode($message);
 
-        return $this->stream->write($data);
+        $this->queue->push($data);
+
+        return $this->dequeue();
+
+        //return $this->stream->write($data);
+    }
+    protected function dequeue() {
+        if($this->working) {
+            return Observable::emptyObservable();
+        }
+        $this->working = true;
+        while($this->queue->count()) {
+            $data = $this->queue->pop();
+            await($this->stream->write($data));
+        }
+        $this->working = false;
+        return Observable::emptyObservable();
     }
 
-    public function write(SocketMessage $message)
-    {
-        $data = $this->encode($message);
-        return $this->stream->write($data)
-            ->concat(
-                $this->readBuffer
-                    ->takeWhile(
-                        function (SocketMessage $response) use ($message) {
-                            return $response->getCorrelationID() == $message->getCorrelationID();
-                        }
-                    )
-            );
-    }
 
-    protected function encode(SocketMessage $socketMessage)
+    public function encode(SocketMessage $socketMessage)
     {
         //Correlation + flag length + command length
         $messageLength = MessageConfiguration::HEADER_LENGTH;

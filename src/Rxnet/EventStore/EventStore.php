@@ -9,7 +9,6 @@ use Rx\Disposable\CallbackDisposable;
 use Rx\Observable;
 use Rx\ObserverInterface;
 use Rxnet\Connector\Tcp;
-use Rxnet\Connector\Tls;
 use Rxnet\Dns\Dns;
 use Rxnet\Event\ConnectorEvent;
 use Rxnet\EventStore\Data\ConnectToPersistentSubscription;
@@ -30,7 +29,7 @@ use Rxnet\EventStore\Data\WriteEvents;
 use Rxnet\EventStore\Message\Credentials;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
-use Rxnet\Operator\OnBackPressureBuffer;
+use Rxnet\Transport\Stream;
 
 class EventStore
 {
@@ -53,12 +52,22 @@ class EventStore
      * @var Writer
      */
     protected $writer;
+    /**
+     * @var Stream
+     */
+    protected $stream;
+    /**
+     * @var Tcp
+     */
+    protected $connector;
 
-    public function __construct(LoopInterface $loop = null, Dns $dns = null)
+    public function __construct(LoopInterface $loop = null, Dns $dns = null, Tcp $tcp = null, ReadBuffer $readBuffer = null, Writer $writer = null)
     {
         $this->loop = $loop ?: EventLoop::getLoop();
         $this->dns = $dns ?: new Dns();
-        $this->readBuffer = new ReadBuffer();
+        $this->readBuffer = $readBuffer ?: new ReadBuffer();
+        $this->writer = $writer ?: new Writer();
+        $this->connector = $tcp ?: new Tcp($this->loop);
     }
 
     /**
@@ -90,37 +99,29 @@ class EventStore
                 ->resolve($parsedDsn['host'])
                 ->flatMap(
                     function ($ip) use ($parsedDsn, $connectTimeout) {
-                        return $this->getConnector($parsedDsn['scheme'])
-                            ->setTimeout($connectTimeout)
-                            ->connect($ip, $parsedDsn['port']);
+                        $this->connector->setTimeout($connectTimeout);
+                        return $this->connector->connect($ip, $parsedDsn['port']);
                     })
                 ->map(function (ConnectorEvent $connectorEvent) use ($parsedDsn) {
-                    $stream = $connectorEvent->getStream();
-                    // next step will be reading
-                    $stream->resume();
+                    $this->stream = $connectorEvent->getStream();
                     // send all data to our read buffer
-                    $stream->subscribe($this->readBuffer);
+                    $this->stream->subscribe($this->readBuffer);
                     // start heartbeat listener
                     $this->heartbeat();
-                    // Auth
-                    $credentials = new Credentials($parsedDsn['user'], $parsedDsn['pass']);
                     // common object to write to socket
-                    $this->writer = new Writer($credentials, $stream, $this->readBuffer);
+                    $this->writer->setStream($this->stream);
+                    $this->writer->setCredentials(new Credentials($parsedDsn['user'], $parsedDsn['pass']));
                     // for await compatibility
                     return $this;
                 })
                 ->subscribe($observer);
-            // TODO disposable : what to do ?
-        });
-    }
 
-    /**
-     * @param string $protocol
-     * @return Tcp|Tls
-     */
-    protected function getConnector($protocol)
-    {
-        return new Tcp($this->loop);
+            return new CallbackDisposable(function () {
+                if ($this->stream instanceof Stream) {
+                    $this->stream->close();
+                }
+            });
+        });
     }
 
     /**
@@ -225,7 +226,7 @@ class EventStore
 
             return new CallbackDisposable(function () {
                 $event = new UnsubscribeFromStream();
-                $this->writer->composeAndWrite(
+                $this->writer->composeAndWriteOnce(
                     MessageType::UNSUBSCRIBE_FROM_STREAM,
                     $event
                 );
@@ -239,7 +240,8 @@ class EventStore
      * @param int $parallel
      * @return Observable\AnonymousObservable
      */
-    public function persistentSubscription($streamID, $group, $parallel = 1) {
+    public function persistentSubscription($streamID, $group, $parallel = 1)
+    {
         $query = new ConnectToPersistentSubscription();
         $query->setEventStreamId($streamID);
         $query->setSubscriptionId($group);
@@ -297,7 +299,7 @@ class EventStore
 
             return new CallbackDisposable(function () {
                 $event = new UnsubscribeFromStream();
-                $this->writer->composeAndWrite(
+                $this->writer->composeAndWriteOnce(
                     MessageType::UNSUBSCRIBE_FROM_STREAM,
                     $event
                 );
@@ -319,8 +321,17 @@ class EventStore
         $event->setResolveLinkTos($resolveLinkTos);
         $event->setRequireMaster(false);
 
-
-        return $this->writer->composeAndWrite(MessageType::READ, $event)
+        $correlationID = $this->writer->createUUIDIfNeeded();
+        return $this->writer->composeAndWriteOnce(MessageType::READ, $event, $correlationID)
+            ->concat(
+                $this->readBuffer
+                    ->filter(
+                        function (SocketMessage $message) use ($correlationID) {
+                            // Use same correlationID to pass by this filter
+                            return $message->getCorrelationID() == $correlationID;
+                        }
+                    )
+            )
             ->take(1)
             ->map(function (SocketMessage $message) {
                 $data = $message->getData();
@@ -400,7 +411,7 @@ class EventStore
 
         $correlationID = $this->writer->createUUIDIfNeeded();
 
-        // TODO backpressure, wait for first array to be read before reading next
+        // TODO backpressure, wait for event's array to be read before reading next
         // OnDemand ? onBackpressureBuffer ?
         return $this->writer
             // First query

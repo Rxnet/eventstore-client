@@ -5,7 +5,7 @@ $eventStore = new \Rxnet\EventStore\EventStore();
 $eventStore = \Rxnet\await($eventStore->connect());
 /* @var \Rxnet\EventStore\EventStore $eventStore */
 
-\Rx\Observable::interval(20)
+\Rx\Observable::interval(1)
     ->flatMap(
         function ($i) use ($eventStore) {
             return $eventStore->appendToStream('domain-test.fr')
