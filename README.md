@@ -41,7 +41,7 @@ $eventStore->appendToStream('category-test_stream_id')
 Connect to persistent subscription $ce-category (projection) has group my-group, process message 4 by 4, then acknowledge or not
 ```php
 <?php
-$eventStore->persistentSubscription('$ce-category', 'my-group', 4)
+$eventStore->persistentSubscription('$projection-category', 'my-group', 4)
     ->subscribeCallback(function(\Rxnet\EventStore\AcknowledgeableEventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
         if($event->getNumber() %2) {
