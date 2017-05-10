@@ -16,8 +16,8 @@ $eventStore->connect('tcp://admin:changeit@localhost:1113');
 
 $eventStore = new \Rxnet\EventStore\EventStore();
 // Lazy way, to connect
-$eventStore = \Rxnet\await($eventStore->connect());
-/* @var \Rxnet\EventStore\EventStore $eventStore */
+\Rxnet\await($eventStore->connect());
+
 echo "connected \n";
 ```
 
