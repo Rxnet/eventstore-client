@@ -12,7 +12,7 @@ namespace Rxnet\EventStore;
 use Google\Protobuf\Internal\Message;
 use Ramsey\Uuid\Uuid;
 use Rx\Observable;
-use function Rxnet\await;
+use Rx\ObserverInterface;
 use Rxnet\EventStore\Message\Credentials;
 use Rxnet\EventStore\Message\MessageConfiguration;
 use Rxnet\EventStore\Message\MessageType;
@@ -20,6 +20,7 @@ use Rxnet\EventStore\Message\SocketMessage;
 use Rxnet\Transport\Stream;
 use TrafficCophp\ByteBuffer\Buffer;
 use Zend\Stdlib\SplQueue;
+use function Rxnet\await;
 
 class Writer
 {
@@ -30,20 +31,21 @@ class Writer
     /** @var  SplQueue */
     protected $queue;
 
-    protected $working = false;
-
     public function __construct()
     {
         $this->queue = new SplQueue();
     }
-    public function setCredentials(Credentials $credentials) {
+
+    public function setCredentials(Credentials $credentials)
+    {
         $this->credentials = $credentials;
     }
 
     /**
      * @param Stream $stream
      */
-    public function setStream($stream) {
+    public function setStream($stream)
+    {
         $this->stream = $stream;
     }
 
@@ -75,20 +77,16 @@ class Writer
         $this->queue->push($data);
 
         return $this->dequeue();
-
-        //return $this->stream->write($data);
     }
-    protected function dequeue() {
-        if($this->working) {
+
+    protected function dequeue()
+    {
+        if(!$this->queue->count()) {
             return Observable::emptyObservable();
         }
-        $this->working = true;
-        while($this->queue->count()) {
-            $data = $this->queue->pop();
-            await($this->stream->write($data));
-        }
-        $this->working = false;
-        return Observable::emptyObservable();
+        $data = $this->queue->pop();
+        return $this->stream->write($data)
+            ->concat($this->dequeue());
     }
 
 

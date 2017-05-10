@@ -2,8 +2,8 @@
 require '../vendor/autoload.php';
 
 $eventStore = new \Rxnet\EventStore\EventStore();
-$eventStore = \Rxnet\await($eventStore->connect());
-/* @var \Rxnet\EventStore\EventStore $eventStore */
+\Rxnet\await($eventStore->connect());
+
 $eventStore->persistentSubscription('domain-test.fr', 'journal', 100)
     ->subscribeCallback(function (\Rxnet\EventStore\AcknowledgeableEventRecord $record) {
         //$metadata = json_decode($record->getMetadata(), true);

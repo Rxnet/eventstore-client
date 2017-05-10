@@ -89,8 +89,13 @@ class AppendToStream
                 return $message->getData();
             })
             ->doOnNext(function () {
-                // reset it
+                $writeEvents = new WriteEvents();
+                $writeEvents->setEventStreamId($this->writeEvents->getEventStreamId());
+                $writeEvents->setRequireMaster($this->writeEvents->getExpectedVersion());
+                $writeEvents->setExpectedVersion($this->writeEvents->getExpectedVersion());
                 $this->events = new RepeatedField(GPBType::MESSAGE, NewEvent::class);
+                $writeEvents->setEvents($this->events);
+                $this->writeEvents = $writeEvents;
             });
 
 

@@ -2,10 +2,9 @@
 require '../vendor/autoload.php';
 
 $eventStore = new \Rxnet\EventStore\EventStore();
-$eventStore = \Rxnet\await($eventStore->connect());
-/* @var \Rxnet\EventStore\EventStore $eventStore */
+\Rxnet\await($eventStore->connect());
 
-\Rx\Observable::interval(1)
+\Rx\Observable::interval(100)
     ->flatMap(
         function ($i) use ($eventStore) {
             return $eventStore->appendToStream('domain-test.fr')

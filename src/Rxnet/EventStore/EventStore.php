@@ -6,11 +6,17 @@ use EventLoop\EventLoop;
 use Google\Protobuf\Internal\Message;
 use React\EventLoop\LoopInterface;
 use Rx\Disposable\CallbackDisposable;
+use Rx\DisposableInterface;
 use Rx\Observable;
+use Rx\Observer\CallbackObserver;
 use Rx\ObserverInterface;
+use Rx\Scheduler\EventLoopScheduler;
+use Rx\Subject\ReplaySubject;
+use Rx\Subject\Subject;
 use Rxnet\Connector\Tcp;
 use Rxnet\Dns\Dns;
 use Rxnet\Event\ConnectorEvent;
+use Rxnet\Event\Event;
 use Rxnet\EventStore\Data\ConnectToPersistentSubscription;
 use Rxnet\EventStore\Data\PersistentSubscriptionConfirmation;
 use Rxnet\EventStore\Data\PersistentSubscriptionStreamEventAppeared;
@@ -36,31 +42,35 @@ class EventStore
     const POSITION_START = 0;
     const POSITION_END = -1;
     const POSITION_LATEST = 999999;
-    /**
-     * @var \React\EventLoop\LibEventLoop
-     */
+    /** @var LoopInterface */
     protected $loop;
-    /**
-     * @var Dns
-     */
+    /** @var Dns */
     protected $dns;
-    /**
-     * @var ReadBuffer
-     */
+    /** @var ReadBuffer */
     protected $readBuffer;
-    /**
-     * @var Writer
-     */
+    /** @var Writer */
     protected $writer;
-    /**
-     * @var Stream
-     */
+    /** @var Stream */
     protected $stream;
-    /**
-     * @var Tcp
-     */
+    /** @var Tcp */
     protected $connector;
+    /** @var Subject */
+    protected $connectionSubject;
+    /** @var DisposableInterface */
+    protected $heartBeatDisposable;
+    /** @var  int */
+    protected $heartBeatRate;
+    /** @var  DisposableInterface */
+    protected $readBufferDisposable;
 
+    /**
+     * EventStore constructor.
+     * @param LoopInterface|null $loop
+     * @param Dns|null $dns
+     * @param Tcp|null $tcp
+     * @param ReadBuffer|null $readBuffer
+     * @param Writer|null $writer
+     */
     public function __construct(LoopInterface $loop = null, Dns $dns = null, Tcp $tcp = null, ReadBuffer $readBuffer = null, Writer $writer = null)
     {
         $this->loop = $loop ?: EventLoop::getLoop();
@@ -72,11 +82,17 @@ class EventStore
 
     /**
      * @param string $dsn tcp://user:password@host:port
-     * @param int $connectTimeout
+     * @param int $connectTimeout in milliseconds
+     * @param int $heartBeatRate in milliseconds
      * @return Observable\AnonymousObservable
      */
-    public function connect($dsn = 'tcp://admin:changeit@localhost:1113', $connectTimeout = 1000)
+    public function connect($dsn = 'tcp://admin:changeit@localhost:1113', $connectTimeout = 1000, $heartBeatRate = 5000)
     {
+        // connector compatibility
+        $connectTimeout = ($connectTimeout > 0) ? $connectTimeout / 1000 : 0;
+        $this->heartBeatRate = $heartBeatRate;
+
+
         if (!stristr($dsn, '://')) {
             $dsn = 'tcp://' . $dsn;
         }
@@ -93,7 +109,8 @@ class EventStore
         if (!isset($parsedDsn['pass'])) {
             $parsedDsn['pass'] = 'changeit';
         }
-
+        // What you should observe if you want to auto reconnect
+        $this->connectionSubject = new ReplaySubject(1, 1);
         return Observable::create(function (ObserverInterface $observer) use ($parsedDsn, $connectTimeout) {
             $this->dns
                 ->resolve($parsedDsn['host'])
@@ -102,26 +119,62 @@ class EventStore
                         $this->connector->setTimeout($connectTimeout);
                         return $this->connector->connect($ip, $parsedDsn['port']);
                     })
-                ->map(function (ConnectorEvent $connectorEvent) use ($parsedDsn) {
-                    $this->stream = $connectorEvent->getStream();
+                ->flatMap(function (ConnectorEvent $connectorEvent) use ($parsedDsn) {
                     // send all data to our read buffer
-                    $this->stream->subscribe($this->readBuffer);
-                    // start heartbeat listener
-                    $this->heartbeat();
+                    $this->stream = $connectorEvent->getStream();
+                    $this->readBufferDisposable = $this->stream->subscribe($this->readBuffer);
+                    $this->stream->resume();
+
                     // common object to write to socket
                     $this->writer->setStream($this->stream);
                     $this->writer->setCredentials(new Credentials($parsedDsn['user'], $parsedDsn['pass']));
-                    // for await compatibility
-                    return $this;
+
+                    // start heartbeat listener
+                    $this->heartBeatDisposable = $this->heartbeat();
+
+                    // Replay subject will do the magic
+                    $this->connectionSubject->onNext(new Event('/eventstore/connected'));
+                    // Forward internal errors to the connect result
+                    return $this->connectionSubject;
                 })
-                ->subscribe($observer);
+                ->subscribe($observer, new EventLoopScheduler($this->loop));
 
             return new CallbackDisposable(function () {
+                if ($this->readBufferDisposable instanceof DisposableInterface) {
+                    $this->readBufferDisposable->dispose();
+                }
+                if ($this->heartBeatDisposable instanceof DisposableInterface) {
+                    $this->heartBeatDisposable->dispose();
+                }
                 if ($this->stream instanceof Stream) {
                     $this->stream->close();
                 }
             });
         });
+    }
+
+    /**
+     * Intercept heartbeat message and answer automatically
+     * @return DisposableInterface
+     */
+    protected function heartbeat()
+    {
+        return $this->readBuffer
+            ->timeout($this->heartBeatRate)
+            ->filter(
+                function (SocketMessage $message) {
+                    return $message->getMessageType()->getType() === MessageType::HEARTBEAT_REQUEST;
+                }
+            )
+            ->subscribe(
+                new CallbackObserver(
+                    function (SocketMessage $message) {
+                        $this->writer->composeAndWriteOnce(MessageType::HEARTBEAT_RESPONSE, null, $message->getCorrelationID());
+                    },
+                    [$this->connectionSubject, 'onError']
+                ),
+                new EventLoopScheduler($this->loop)
+            );
     }
 
     /**
@@ -480,23 +533,5 @@ class EventStore
                 return Observable::fromArray($records);
             });
 
-    }
-
-    /**
-     * Intercept heartbeat message and answer automatically
-     */
-    protected function heartbeat()
-    {
-        $this->readBuffer
-            ->filter(
-                function (SocketMessage $message) {
-                    return $message->getMessageType()->getType() === MessageType::HEARTBEAT_REQUEST;
-                }
-            )
-            ->subscribeCallback(
-                function (SocketMessage $message) {
-                    $this->writer->composeAndWriteOnce(MessageType::HEARTBEAT_RESPONSE, null, $message->getCorrelationID());
-                }
-            );
     }
 }
