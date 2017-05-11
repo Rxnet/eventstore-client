@@ -30,6 +30,8 @@ use Rxnet\EventStore\Data\StreamEventAppeared;
 use Rxnet\EventStore\Data\SubscribeToStream;
 use Rxnet\EventStore\Data\SubscriptionConfirmation;
 use Rxnet\EventStore\Data\SubscriptionDropped;
+use Rxnet\EventStore\Data\TransactionStart;
+use Rxnet\EventStore\Data\TransactionStartCompleted;
 use Rxnet\EventStore\Data\UnsubscribeFromStream;
 use Rxnet\EventStore\Data\WriteEvents;
 use Rxnet\EventStore\Message\Credentials;
@@ -180,16 +182,43 @@ class EventStore
     /**
      * @param $streamId
      * @param int $expectedVersion
+     * @param bool $requireMaster
      * @return AppendToStream
      */
-    public function appendToStream($streamId, $expectedVersion = -2)
+    public function appendToStream($streamId, $expectedVersion = -2, $requireMaster = false)
     {
         $writeEvents = new WriteEvents();
         $writeEvents->setEventStreamId($streamId);
-        $writeEvents->setRequireMaster(false);
+        $writeEvents->setRequireMaster($requireMaster);
         $writeEvents->setExpectedVersion($expectedVersion);
 
         return new AppendToStream($writeEvents, $this->writer, $this->readBuffer);
+    }
+
+    public function startTransaction($streamId, $expectedVersion = -2, $requireMaster = false)
+    {
+        $query = new TransactionStart();
+        $query->setEventStreamId($streamId);
+        $query->setRequireMaster($requireMaster);
+        $query->setExpectedVersion($expectedVersion);
+
+        $correlationID = $this->writer->createUUIDIfNeeded();
+        return $this->writer->composeAndWriteOnce(MessageType::TRANSACTION_START, $query, $correlationID)
+            ->concat(
+                $this->readBuffer
+                    ->filter(
+                        function (SocketMessage $message) use ($correlationID) {
+                            return $message->getCorrelationID() == $correlationID;
+                        }
+                    )
+                    ->take(1)
+            )
+            ->map(function (SocketMessage $message) {
+                return $message->getData();
+            })
+            ->map(function (TransactionStartCompleted $startCompleted) {
+                return new Transaction($startCompleted->getTransactionId(), $this->writer, $this->readBuffer);
+            });
     }
 
     /**
@@ -364,15 +393,16 @@ class EventStore
      * @param $streamId
      * @param int $number
      * @param bool $resolveLinkTos
+     * @param bool $requireMaster
      * @return Observable\AnonymousObservable
      */
-    public function readEvent($streamId, $number = 0, $resolveLinkTos = false)
+    public function readEvent($streamId, $number = 0, $resolveLinkTos = false, $requireMaster = false)
     {
         $event = new ReadEvent();
         $event->setEventStreamId($streamId);
         $event->setEventNumber($number);
         $event->setResolveLinkTos($resolveLinkTos);
-        $event->setRequireMaster(false);
+        $event->setRequireMaster($requireMaster);
 
         $correlationID = $this->writer->createUUIDIfNeeded();
         return $this->writer->composeAndWriteOnce(MessageType::READ, $event, $correlationID)
@@ -395,12 +425,13 @@ class EventStore
 
     /**
      * @param bool $resolveLinkTos
+     * @param bool $requireMaster
      * @return Observable\AnonymousObservable
      */
-    public function readAllEvents($resolveLinkTos = false)
+    public function readAllEvents($resolveLinkTos = false, $requireMaster = false)
     {
         $query = new ReadAllEvents();
-        $query->setRequireMaster(false);
+        $query->setRequireMaster($requireMaster);
         $query->setResolveLinkTos($resolveLinkTos);
 
         return $this->readEvents($query, MessageType::READ_ALL_EVENTS_FORWARD);
@@ -411,12 +442,13 @@ class EventStore
      * @param int $fromEvent
      * @param int $max
      * @param bool $resolveLinkTos
+     * @param bool $requireMaster
      * @return Observable\AnonymousObservable
      */
-    public function readEventsForward($streamId, $fromEvent = self::POSITION_START, $max = self::POSITION_LATEST, $resolveLinkTos = false)
+    public function readEventsForward($streamId, $fromEvent = self::POSITION_START, $max = self::POSITION_LATEST, $resolveLinkTos = false, $requireMaster = false)
     {
         $query = new ReadStreamEvents();
-        $query->setRequireMaster(false);
+        $query->setRequireMaster($requireMaster);
         $query->setEventStreamId($streamId);
         $query->setFromEventNumber($fromEvent);
         $query->setMaxCount($max);
@@ -430,12 +462,13 @@ class EventStore
      * @param int $fromEvent
      * @param int $max
      * @param bool $resolveLinkTos
+     * @param bool $requireMaster
      * @return Observable\AnonymousObservable
      */
-    public function readEventsBackward($streamId, $fromEvent = self::POSITION_END, $max = 10, $resolveLinkTos = false)
+    public function readEventsBackward($streamId, $fromEvent = self::POSITION_END, $max = 10, $resolveLinkTos = false, $requireMaster = false)
     {
         $query = new ReadStreamEvents();
-        $query->setRequireMaster(false);
+        $query->setRequireMaster($requireMaster);
         $query->setEventStreamId($streamId);
         $query->setFromEventNumber($fromEvent);
         $query->setMaxCount($max);

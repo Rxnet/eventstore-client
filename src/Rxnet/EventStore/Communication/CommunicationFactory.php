@@ -70,6 +70,15 @@ class CommunicationFactory
             case MessageType::NOT_AUTHENTICATED:
                 $communicable = new Type\NotAuthenticatedHandler();
                 break;
+            case MessageType::TRANSACTION_START_COMPLETED:
+                $communicable = new Type\TransactionStartCompletedHandler();
+                break;
+            case MessageType::TRANSACTION_WRITE_COMPLETED:
+                $communicable = new Type\TransactionWriteCompletedHandler();
+                break;
+            case MessageType::TRANSACTION_COMMIT_COMPLETED:
+                $communicable = new Type\TransactionCommitCompletedHandler();
+                break;
             default:
 
                 throw new EventStoreHandlerException('Unsupported message type ' . $messageType->getType());

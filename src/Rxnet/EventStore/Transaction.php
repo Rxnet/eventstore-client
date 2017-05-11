@@ -6,30 +6,31 @@ namespace Rxnet\EventStore;
 use Google\Protobuf\Internal\GPBType;
 use Google\Protobuf\Internal\RepeatedField;
 use Ramsey\Uuid\Uuid;
+use Rx\Observable;
+use Rx\ObserverInterface;
 use Rxnet\EventStore\Data\NewEvent;
-use Rxnet\EventStore\Data\TransactionStart;
-use Rxnet\EventStore\Data\WriteEvents;
+use Rxnet\EventStore\Data\TransactionCommit;
+use Rxnet\EventStore\Data\TransactionWrite;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 
-
-class AppendToStream
+class Transaction
 {
-    protected $writeEvents;
+    protected $transactionId;
     protected $writer;
     protected $events;
     protected $readBuffer;
-
-    public function __construct(WriteEvents $writeEvents, Writer $writer, ReadBuffer $readBuffer)
+    public function __construct($transactionId, Writer $writer, ReadBuffer $readBuffer)
     {
-        $this->writeEvents = $writeEvents;
+        $this->transactionId = $transactionId;
         $this->writer = $writer;
         $this->readBuffer = $readBuffer;
-
         $this->events = new RepeatedField(GPBType::MESSAGE, NewEvent::class);
-        $writeEvents->setEvents($this->events);
-    }
 
+    }
+    public function getId() {
+        return $this->transactionId;
+    }
     public function jsonEvent($name, $data, $id = null, $metaData = [])
     {
         $data = json_encode($data);
@@ -70,15 +71,50 @@ class AppendToStream
         $this->events[] = $event;
         return $this;
     }
-
-
-    public function commit()
-    {
+    public function write($requireMaster = false) {
         if ($this->events->count() == 0) {
-            throw new \LogicException('You commit events but added none');
+            throw new \LogicException('You write events but added none');
         }
+        $query = new TransactionWrite();
+        $query->setEvents($this->events);
+        $query->setRequireMaster($requireMaster);
+        $query->setTransactionId($this->transactionId);
+
+        return Observable::create(function(ObserverInterface $observer) use($query) {
+            $correlationID = $this->writer->createUUIDIfNeeded();
+
+            $this->writer
+                ->composeAndWriteOnce(MessageType::TRANSACTION_WRITE, $query, $correlationID)
+                ->concat(
+                    $this->readBuffer
+                        ->filter(
+                            function (SocketMessage $message) use ($correlationID) {
+                                return $message->getCorrelationID() == $correlationID;
+                            }
+                        )
+                        ->take(1)
+                )
+                ->map(function (SocketMessage $message) {
+                    return $message->getData();
+                })
+                ->doOnNext(function () {
+                    echo "Reinit write \n";
+                    $this->events = new RepeatedField(GPBType::MESSAGE, NewEvent::class);
+                })
+                ->doOnCompleted(function() {
+                    echo "Finished to write \n";
+                })
+                ->subscribe($observer);
+        });
+    }
+    public function commit($requireMaster = false) {
+        $query = new TransactionCommit();
+        $query->setTransactionId($this->transactionId);
+        $query->setRequireMaster($requireMaster);
+
         $correlationID = $this->writer->createUUIDIfNeeded();
-        return $this->writer->composeAndWriteOnce(MessageType::WRITE_EVENTS, $this->writeEvents, $correlationID)
+
+        return $this->writer->composeAndWriteOnce(MessageType::TRANSACTION_COMMIT, $query, $correlationID)
             ->concat(
                 $this->readBuffer
                     ->filter(
@@ -89,18 +125,11 @@ class AppendToStream
                     ->take(1)
             )
             ->map(function (SocketMessage $message) {
+                echo "transaction written \n";
                 return $message->getData();
             })
             ->doOnNext(function () {
-                $writeEvents = new WriteEvents();
-                $writeEvents->setEventStreamId($this->writeEvents->getEventStreamId());
-                $writeEvents->setRequireMaster($this->writeEvents->getExpectedVersion());
-                $writeEvents->setExpectedVersion($this->writeEvents->getExpectedVersion());
                 $this->events = new RepeatedField(GPBType::MESSAGE, NewEvent::class);
-                $writeEvents->setEvents($this->events);
-                $this->writeEvents = $writeEvents;
             });
-
-
     }
 }
