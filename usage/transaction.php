@@ -15,8 +15,10 @@ $eventStore->startTransaction('domain-test.fr')
         function (Transaction $transaction) {
             echo "Started transaction {$transaction->getId()} \n";
             $eventA = new JsonEvent('/truc/chose', ['i' => "coucou"]);
+            $eventB = new JsonEvent('/truc/chose', ['i' => "coucou"]);
+            $eventC = new JsonEvent('/truc/chose', ['i' => "coucou"]);
 
-            return $transaction->write([$eventA, $eventA, $eventA])
+            return $transaction->write([$eventA, $eventB, $eventC])
                 ->doOnNext(
                     function (TransactionWriteCompleted $completed) {
                         echo "Written transaction {$completed->getTransactionId()} \n";
