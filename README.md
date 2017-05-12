@@ -3,7 +3,7 @@ Event Store Client
 
 Asynchronous client for [EventStore](https://geteventstore.com/) TCP Api
 
-based on Madkom/event-store-client
+based on [Madkom/event-store-client](https://github.com/madkom/event-store-client)
 
 
 ## Usage
@@ -22,7 +22,7 @@ echo "connected \n";
 ```
 
 ### Write
-You can put as many event you want (max 2000) before commit or commit after each
+You can put as many event you want (max 2000)
 
 ```php
 <?php
