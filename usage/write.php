@@ -1,24 +1,29 @@
 <?php
+use EventLoop\EventLoop;
+use Rx\Observer\CallbackObserver;
+use Rx\Scheduler\EventLoopScheduler;
+use Rxnet\EventStore\Data\WriteEventsCompleted;
+use Rxnet\EventStore\NewEvent\JsonEvent;
+
 require '../vendor/autoload.php';
 
 $eventStore = new \Rxnet\EventStore\EventStore();
-\Rxnet\await($eventStore->connect());
+\Rxnet\await($eventStore->connect('online-10.4x.fr'));
 
-\Rx\Observable::interval(100)
+\Rx\Observable::interval(5)
     ->flatMap(
         function ($i) use ($eventStore) {
-            return $eventStore->appendToStream('domain-test.fr')
-                ->jsonEvent('/truc/chose', ['i' => $i])
-                ->commit();
+            $event = new JsonEvent('/truc/chose', ['i' => $i]);
+            return $eventStore->write('domain-test.fr', [$event]);
         }
     )
     ->subscribe(
-        new \Rx\Observer\CallbackObserver(
-            function(\Rxnet\EventStore\Data\WriteEventsCompleted $eventsCompleted) {
+        new CallbackObserver(
+            function(WriteEventsCompleted $eventsCompleted) {
                 echo "Last event number {$eventsCompleted->getLastEventNumber()} on commit position {$eventsCompleted->getCommitPosition()} \n";
             }
         ),
-        new \Rx\Scheduler\EventLoopScheduler(\EventLoop\EventLoop::getLoop())
+        new EventLoopScheduler(EventLoop::getLoop())
     );
 
-\EventLoop\EventLoop::getLoop()->run();
+EventLoop::getLoop()->run();

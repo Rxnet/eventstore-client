@@ -1,18 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vincent
- * Date: 27/04/2017
- * Time: 10:38
- */
 
 namespace Rxnet\EventStore;
-
 
 use Google\Protobuf\Internal\Message;
 use Ramsey\Uuid\Uuid;
 use Rx\Observable;
-use Rx\ObserverInterface;
 use Rxnet\EventStore\Message\Credentials;
 use Rxnet\EventStore\Message\MessageConfiguration;
 use Rxnet\EventStore\Message\MessageType;
@@ -20,7 +12,6 @@ use Rxnet\EventStore\Message\SocketMessage;
 use Rxnet\Transport\Stream;
 use TrafficCophp\ByteBuffer\Buffer;
 use Zend\Stdlib\SplQueue;
-use function Rxnet\await;
 
 class Writer
 {
@@ -44,7 +35,7 @@ class Writer
     /**
      * @param Stream $stream
      */
-    public function setStream($stream)
+    public function setSocketStream($stream)
     {
         $this->stream = $stream;
     }
@@ -52,6 +43,11 @@ class Writer
     public function createUUIDIfNeeded($uuid = null)
     {
         return $uuid ?: str_replace('-', '', Uuid::uuid4());
+    }
+
+    public function composeAndWrite($messageType, Message $event = null, $correlationID = null)
+    {
+        return $this->write($this->compose($messageType, $event, $correlationID));
     }
 
     public function compose($messageType, Message $event = null, $correlationID = null)
@@ -65,12 +61,8 @@ class Writer
         );
     }
 
-    public function composeAndWriteOnce($messageType, Message $event = null, $correlationID = null)
-    {
-        return $this->writeOnce($this->compose($messageType, $event, $correlationID));
-    }
 
-    public function writeOnce(SocketMessage $message)
+    public function write(SocketMessage $message)
     {
         $data = $this->encode($message);
 
@@ -81,12 +73,12 @@ class Writer
 
     protected function dequeue()
     {
-        if(!$this->queue->count()) {
+        if (!$this->queue->count()) {
             return Observable::emptyObservable();
         }
         $data = $this->queue->pop();
         return $this->stream->write($data)
-            ->concat($this->dequeue());
+            ->concatMapTo($this->dequeue());
     }
 
 
