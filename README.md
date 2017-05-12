@@ -26,22 +26,41 @@ You can put as many event you want (max 2000) before commit or commit after each
 
 ```php
 <?php
-$eventStore->appendToStream('category-test_stream_id')
-    ->jsonEvent('event_type', ['data' => microtime()], ['worker'=>'ip'])
-    ->jsonEvent('event_type2', ['data' => microtime()], ['some'=>'metadata'])
-    ->event('event_type3', microtime(), 'my meta data')
-    // Nothing is written until commit
-    ->commit()
+$eventA = new \Rxnet\EventStore\NewEvent\JsonEvent('event_type1', ['data' => 'a'], ['worker'=>'metadata']);
+$eventB = new \Rxnet\EventStore\RawEvent('event_type2', 'raw data', 'raw metadata');
+
+$eventStore->write('category-test_stream_id', [$eventA, $eventB])
     ->subscribeCallback(function(\Rxnet\EventStore\Data\WriteEventsCompleted $eventsCompleted) {
         echo "Last event number {$eventsCompleted->getLastEventNumber()} on commit position {$eventsCompleted->getCommitPosition()} \n";
     });
 ```
-### Subscription
 
-Connect to persistent subscription $ce-category (projection) has group my-group, process message 4 by 4, then acknowledge or not
+### Transaction
+
 ```php
 <?php
-$eventStore->persistentSubscription('$projection-category', 'my-group', 4)
+$eventStore->startTransaction('category-test_stream')
+    ->subscribeCallback(
+        function (\Rxnet\EventStore\Transaction $transaction) {
+            $eventA = new JsonEvent('event_type', ['i' => "data"]);
+            // You can write as many as you want
+            return $transaction->write([$eventA, $eventA, $eventA])
+                // Commit to make it work
+                ->flatMap([$transaction, 'commit'])
+                ->subscribeCallback(
+                    function (TransactionCommitCompleted $commitCompleted) {
+                        echo "Transaction {$commitCompleted->getTransactionId()} commit completed : events from {$commitCompleted->getFirstEventNumber()} to {$commitCompleted->getLastEventNumber()} \n";
+                    }
+                );
+        }
+    );
+```
+### Subscription
+
+Connect to persistent subscription $ce-category (projection) has group my-group, then acknowledge or not
+```php
+<?php
+$eventStore->persistentSubscription('$projection-category', 'my-group')
     ->subscribeCallback(function(\Rxnet\EventStore\AcknowledgeableEventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
         if($event->getNumber() %2) {
@@ -112,16 +131,17 @@ $eventStore->readEvent('category-test_stream_id', 0)
  - [x] Read a huge stream 
  - [x] Persistent subscription
  - [x] Connect to cluster
+ - [x] Auto re-connect to master if needed
  - [x] Reconnect and disconnected from remote
+ - [x] Transactions
  - [ ] TLS connect
- - [ ] Transactions
  - [ ] Write some specs
  - [ ] create / update / delete persistent subscription
  - [ ] create / update / delete projection
  - [ ] delete stream
 
 ### Protocol buffer
-If ClientMessageDtos.proto is modified, you must generate new php class
+If ClientMessageDtos.proto is modified, you must generate new Data php class
 ```bash
 ./vendor/bin/protobuf --include-descriptors -i . -o ./src ./ClientMessageDtos.proto
 ```

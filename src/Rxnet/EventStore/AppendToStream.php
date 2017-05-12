@@ -78,7 +78,7 @@ class AppendToStream
             throw new \LogicException('You commit events but added none');
         }
         $correlationID = $this->writer->createUUIDIfNeeded();
-        return $this->writer->composeAndWriteOnce(MessageType::WRITE_EVENTS, $this->writeEvents, $correlationID)
+        return $this->writer->composeAndWrite(MessageType::WRITE_EVENTS, $this->writeEvents, $correlationID)
             ->concat(
                 $this->readBuffer
                     ->filter(

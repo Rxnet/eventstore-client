@@ -2,9 +2,9 @@
 
 namespace Rxnet\EventStore\Communication;
 
+use Rxnet\EventStore\Communication\Type;
 use Rxnet\EventStore\EventStoreHandlerException;
 use Rxnet\EventStore\Message\MessageType;
-use Rxnet\EventStore\Communication\Type;
 
 /**
  * Class CommunicationFactory
@@ -25,7 +25,7 @@ class CommunicationFactory
 
         $communicable = null;
 
-        switch($messageType->getType()) {
+        switch ($messageType->getType()) {
 
             case MessageType::PONG:
                 $communicable = new Type\PongHandler();
@@ -51,6 +51,9 @@ class CommunicationFactory
                 break;
             case MessageType::SUBSCRIPTION_DROPPED:
                 $communicable = new Type\SubscriptionDroppedHandler();
+                break;
+            case MessageType::NOT_HANDLED:
+                $communicable = new Type\NotHandledHandler();
                 break;
             case MessageType::PERSISTENT_SUBSCRIPTION_CONFIRMATION:
                 $communicable = new Type\PersistentSubscriptionConfirmationHandler();
@@ -80,7 +83,7 @@ class CommunicationFactory
                 $communicable = new Type\TransactionCommitCompletedHandler();
                 break;
             default:
-
+                var_dump($messageType);
                 throw new EventStoreHandlerException('Unsupported message type ' . $messageType->getType());
         }
 
