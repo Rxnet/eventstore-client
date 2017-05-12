@@ -43,8 +43,9 @@ $eventStore->startTransaction('category-test_stream')
     ->subscribeCallback(
         function (\Rxnet\EventStore\Transaction $transaction) {
             $eventA = new JsonEvent('event_type', ['i' => "data"]);
+            $eventB = new JsonEvent('event_type', ['i' => "data"]);
             // You can write as many as you want
-            return $transaction->write([$eventA, $eventA, $eventA])
+            return $transaction->write([$eventA, $eventB])
                 // Commit to make it work
                 ->flatMap([$transaction, 'commit'])
                 ->subscribeCallback(
