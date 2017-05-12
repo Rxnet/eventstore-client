@@ -6,9 +6,11 @@ use Rx\Scheduler\EventLoopScheduler;
 use Rxnet\EventStore\Data\WriteEventsCompleted;
 use Rxnet\EventStore\EventRecord;
 use Rxnet\EventStore\EventStore;
+use Rxnet\EventStore\NewEvent\JsonEvent;
 use Rxnet\Httpd\Httpd;
 use Rxnet\Httpd\HttpdEvent;
 use Rxnet\Operator\OnBackPressureBuffer;
+
 require '../vendor/autoload.php';
 
 $eventStore = new EventStore();
@@ -38,7 +40,6 @@ $memoryBuffer = new OnBackPressureBuffer(
     OnBackPressureBuffer::OVERFLOW_STRATEGY_ERROR
 );
 // Write to this stream id
-$eventStream = $eventStore->appendToStream('category-test');
 
 // API part :
 // Forward to event store when an event is received
@@ -55,21 +56,18 @@ $httpd->listen(8082)
             ->json(compact('id'));
 
         // Transform it to an event (do what you want)
-        return [
+        return new JsonEvent(
             '/test/asked',
             ['i' => microtime(true)],
             $id
-        ];
+        );
 
     })
     // here we buffer until commit finished
     ->lift($memoryBuffer->operator())
     // Write to event store
-    ->flatMap(function ($data) use ($eventStream) {
-        return $eventStream
-            // We could  have group events by
-            ->jsonEvent($data[0], $data[1], $data[2])
-            ->commit();
+    ->flatMap(function ($data) use ($eventStore) {
+        return $eventStore->write('category-test', $data);
     })
     // Ask for next element in buffer
     ->doOnNext([$memoryBuffer, 'request'])

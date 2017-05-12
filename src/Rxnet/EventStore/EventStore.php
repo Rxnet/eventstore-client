@@ -3,11 +3,14 @@
 namespace Rxnet\EventStore;
 
 use EventLoop\EventLoop;
+use Google\Protobuf\Internal\GPBType;
 use Google\Protobuf\Internal\Message;
+use Google\Protobuf\Internal\RepeatedField;
 use React\EventLoop\LoopInterface;
 use Rx\Disposable\CallbackDisposable;
 use Rx\DisposableInterface;
 use Rx\Observable;
+use Rx\ObservableInterface;
 use Rx\Observer\CallbackObserver;
 use Rx\ObserverInterface;
 use Rx\Scheduler\EventLoopScheduler;
@@ -18,6 +21,9 @@ use Rxnet\Dns\Dns;
 use Rxnet\Event\ConnectorEvent;
 use Rxnet\Event\Event;
 use Rxnet\EventStore\Data\ConnectToPersistentSubscription;
+use Rxnet\EventStore\Data\NewEvent;
+use Rxnet\EventStore\Data\NotHandled;
+use Rxnet\EventStore\Data\NotHandled_MasterInfo;
 use Rxnet\EventStore\Data\PersistentSubscriptionConfirmation;
 use Rxnet\EventStore\Data\PersistentSubscriptionStreamEventAppeared;
 use Rxnet\EventStore\Data\ReadAllEvents;
@@ -30,12 +36,17 @@ use Rxnet\EventStore\Data\StreamEventAppeared;
 use Rxnet\EventStore\Data\SubscribeToStream;
 use Rxnet\EventStore\Data\SubscriptionConfirmation;
 use Rxnet\EventStore\Data\SubscriptionDropped;
+use Rxnet\EventStore\Data\TransactionStart;
+use Rxnet\EventStore\Data\TransactionStartCompleted;
 use Rxnet\EventStore\Data\UnsubscribeFromStream;
 use Rxnet\EventStore\Data\WriteEvents;
+use Rxnet\EventStore\Exception\NotMasterException;
 use Rxnet\EventStore\Message\Credentials;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
+use Rxnet\EventStore\NewEvent\NewEventInterface;
 use Rxnet\Transport\Stream;
+use Zend\Stdlib\Exception\LogicException;
 
 class EventStore
 {
@@ -62,6 +73,8 @@ class EventStore
     protected $heartBeatRate;
     /** @var  DisposableInterface */
     protected $readBufferDisposable;
+    /** @var  array */
+    protected $dsn;
 
     /**
      * EventStore constructor.
@@ -92,7 +105,6 @@ class EventStore
         $connectTimeout = ($connectTimeout > 0) ? $connectTimeout / 1000 : 0;
         $this->heartBeatRate = $heartBeatRate;
 
-
         if (!stristr($dsn, '://')) {
             $dsn = 'tcp://' . $dsn;
         }
@@ -109,25 +121,26 @@ class EventStore
         if (!isset($parsedDsn['pass'])) {
             $parsedDsn['pass'] = 'changeit';
         }
+        $this->dsn = $parsedDsn;
         // What you should observe if you want to auto reconnect
         $this->connectionSubject = new ReplaySubject(1, 1);
-        return Observable::create(function (ObserverInterface $observer) use ($parsedDsn, $connectTimeout) {
+        $this->connector->setTimeout($connectTimeout);
+        return Observable::create(function (ObserverInterface $observer) {
             $this->dns
-                ->resolve($parsedDsn['host'])
+                ->resolve($this->dsn['host'])
                 ->flatMap(
-                    function ($ip) use ($parsedDsn, $connectTimeout) {
-                        $this->connector->setTimeout($connectTimeout);
-                        return $this->connector->connect($ip, $parsedDsn['port']);
+                    function ($ip) {
+                        return $this->connector->connect($ip, $this->dsn['port']);
                     })
-                ->flatMap(function (ConnectorEvent $connectorEvent) use ($parsedDsn) {
+                ->flatMap(function (ConnectorEvent $connectorEvent) {
                     // send all data to our read buffer
                     $this->stream = $connectorEvent->getStream();
                     $this->readBufferDisposable = $this->stream->subscribe($this->readBuffer);
                     $this->stream->resume();
 
                     // common object to write to socket
-                    $this->writer->setStream($this->stream);
-                    $this->writer->setCredentials(new Credentials($parsedDsn['user'], $parsedDsn['pass']));
+                    $this->writer->setSocketStream($this->stream);
+                    $this->writer->setCredentials(new Credentials($this->dsn['user'], $this->dsn['pass']));
 
                     // start heartbeat listener
                     $this->heartBeatDisposable = $this->heartbeat();
@@ -154,6 +167,39 @@ class EventStore
     }
 
     /**
+     * @param $host
+     * @param $port
+     * @return Observable\AnonymousObservable
+     */
+    protected function reconnect($host, $port)
+    {
+        $this->dsn['host'] = $host;
+        $this->dsn['port'] = $port;
+        return $this->connector->connect($host, $this->dsn['port'])
+            ->flatMap(function (ConnectorEvent $connectorEvent) {
+                // send all data to our read buffer
+                $this->stream = $connectorEvent->getStream();
+                $this->readBufferDisposable->dispose();
+                $this->readBufferDisposable = $this->stream->subscribe($this->readBuffer);
+                $this->stream->resume();
+
+                // common object to write to socket
+                $this->writer->setSocketStream($this->stream);
+                $this->writer->setCredentials(new Credentials($this->dsn['user'], $this->dsn['pass']));
+
+                // start heartbeat listener
+                $this->heartBeatDisposable->dispose();
+                $this->heartBeatDisposable = $this->heartbeat();
+
+                // Replay subject will do the magic
+                $this->connectionSubject->onNext(new Event('/eventstore/re-connected'));
+                // Forward internal errors to the connect result
+                return Observable::just(true);
+            });
+
+    }
+
+    /**
      * Intercept heartbeat message and answer automatically
      * @return DisposableInterface
      */
@@ -169,7 +215,7 @@ class EventStore
             ->subscribe(
                 new CallbackObserver(
                     function (SocketMessage $message) {
-                        $this->writer->composeAndWriteOnce(MessageType::HEARTBEAT_RESPONSE, null, $message->getCorrelationID());
+                        $this->writer->composeAndWrite(MessageType::HEARTBEAT_RESPONSE, null, $message->getCorrelationID());
                     },
                     [$this->connectionSubject, 'onError']
                 ),
@@ -178,18 +224,55 @@ class EventStore
     }
 
     /**
+     * @param string $streamId
+     * @param NewEventInterface[] $events
+     * @param int $expectedVersion
+     * @param bool $requireMaster
+     * @return ObservableInterface(WriteEventsCompleted) with WriteEventsCompleted
+     */
+    public function write($streamId, $events, $expectedVersion = -2, $requireMaster = false)
+    {
+        if (!is_array($events)) {
+            $events = [$events];
+        }
+        if (!$events) {
+            throw new \LogicException('No events added');
+        }
+        $query = new WriteEvents();
+        $query->setEventStreamId($streamId);
+        $query->setRequireMaster($requireMaster);
+        $query->setExpectedVersion($expectedVersion);
+
+        $array = new RepeatedField(GPBType::MESSAGE, NewEvent::class);
+        $query->setEvents($array);
+        foreach ($events as $event) {
+            $array[] = $event->getMessage();
+        }
+        $correlationID = $this->writer->createUUIDIfNeeded();
+        return $this->writer->composeAndWrite(MessageType::WRITE_EVENTS, $query, $correlationID)
+            ->concat($this->readBuffer->waitFor($correlationID, 1));
+
+    }
+
+    /**
      * @param $streamId
      * @param int $expectedVersion
-     * @return AppendToStream
+     * @param bool $requireMaster
+     * @return Observable\AnonymousObservable
      */
-    public function appendToStream($streamId, $expectedVersion = -2)
+    public function startTransaction($streamId, $expectedVersion = -2, $requireMaster = false)
     {
-        $writeEvents = new WriteEvents();
-        $writeEvents->setEventStreamId($streamId);
-        $writeEvents->setRequireMaster(false);
-        $writeEvents->setExpectedVersion($expectedVersion);
+        $query = new TransactionStart();
+        $query->setEventStreamId($streamId);
+        $query->setRequireMaster($requireMaster);
+        $query->setExpectedVersion($expectedVersion);
 
-        return new AppendToStream($writeEvents, $this->writer, $this->readBuffer);
+        $correlationID = $this->writer->createUUIDIfNeeded();
+        return $this->writer->composeAndWrite(MessageType::TRANSACTION_START, $query, $correlationID)
+            ->concat($this->readBuffer->waitFor($correlationID, 1))
+            ->map(function (TransactionStartCompleted $startCompleted) use($requireMaster) {
+                return new Transaction($startCompleted->getTransactionId(), $requireMaster, $this->writer, $this->readBuffer);
+            });
     }
 
     /**
@@ -234,7 +317,7 @@ class EventStore
         return Observable::create(function (ObserverInterface $observer) use ($event) {
             $correlationID = $this->writer->createUUIDIfNeeded();
             $this->writer
-                ->composeAndWriteOnce(
+                ->composeAndWrite(
                     MessageType::SUBSCRIBE_TO_STREAM,
                     $event,
                     $correlationID
@@ -279,7 +362,7 @@ class EventStore
 
             return new CallbackDisposable(function () {
                 $event = new UnsubscribeFromStream();
-                $this->writer->composeAndWriteOnce(
+                $this->writer->composeAndWrite(
                     MessageType::UNSUBSCRIBE_FROM_STREAM,
                     $event
                 );
@@ -290,38 +373,66 @@ class EventStore
     /**
      * @param $streamID
      * @param $group
-     * @param int $parallel
      * @return Observable\AnonymousObservable
      */
-    public function persistentSubscription($streamID, $group, $parallel = 1)
+    public function persistentSubscription($streamID, $group)
+    {
+        // TODO Not for now, acknowledge do shit with parallel
+        $parallel = 1;
+        $correlationID = $this->writer->createUUIDIfNeeded();
+        return $this->connectToPersistentSubscription($streamID, $group, $parallel, $correlationID)
+            ->catchError(function (\Exception $e) use ($streamID, $group, $parallel, $correlationID) {
+                if ($e instanceOf NotMasterException) {
+                    // Reconnect if not master
+                    return $this->reconnect($e->getMasterIp(), $e->getMasterPort())
+                        ->concat($this->connectToPersistentSubscription($streamID, $group, $parallel, $correlationID))
+                        ->flatMap(function () use ($streamID, $group, $parallel, $correlationID) {
+                            return $this->connectToPersistentSubscription($streamID, $group, $parallel, $correlationID);
+                        });
+                }
+                throw $e;
+            })
+            ->map(
+                function (PersistentSubscriptionStreamEventAppeared $eventAppeared) use ($correlationID, $group) {
+                    $record = $eventAppeared->getEvent()->getEvent();
+                    //$link = $eventAppeared->getEvent()->getLink();
+                    /* @var \Rxnet\EventStore\Data\EventRecord $record */
+
+                    return new AcknowledgeableEventRecord(
+                        $record,
+                        $correlationID,
+                        $group,
+                        $this->writer
+                    );
+                }
+            );
+    }
+
+    /**
+     * @param $streamID
+     * @param $group
+     * @param int $parallel
+     * @param $correlationID
+     * @return Observable\AnonymousObservable
+     */
+    protected function connectToPersistentSubscription($streamID, $group, $parallel = 1, $correlationID)
     {
         $query = new ConnectToPersistentSubscription();
         $query->setEventStreamId($streamID);
         $query->setSubscriptionId($group);
         $query->setAllowedInFlightMessages($parallel);
 
-        return Observable::create(function (ObserverInterface $observer) use ($query, $group) {
-            $correlationID = $this->writer->createUUIDIfNeeded();
+        return Observable::create(function (ObserverInterface $observer) use ($correlationID, $query, $group) {
             $this->writer
-                ->composeAndWriteOnce(
+                ->composeAndWrite(
                     MessageType::CONNECT_TO_PERSISTENT_SUBSCRIPTION,
                     $query,
                     $correlationID
                 )
                 // When written wait for all responses
-                ->concat(
-                    $this->readBuffer
-                        ->filter(
-                            function (SocketMessage $message) use ($correlationID) {
-                                // Use same correlationID to pass by this filter
-                                return $message->getCorrelationID() == $correlationID;
-                            }
-                        )
-                )
+                ->concat($this->readBuffer->waitFor($correlationID, -1))
                 ->flatMap(
-                    function (SocketMessage $message) {
-                        $data = $message->getData();
-                        //var_dump($data);
+                    function ($data) use ($query) {
                         switch (get_class($data)) {
                             case SubscriptionDropped::class :
                                 return Observable::error(new \Exception("Subscription dropped, for reason : {$data->getReason()}"));
@@ -329,30 +440,27 @@ class EventStore
                                 return Observable::emptyObservable();
                             case PersistentSubscriptionStreamEventAppeared::class :
                                 return Observable::just($data);
-                            default:
-                                var_dump($data);
-                        }
-                    }
-                )
-                ->map(
-                    function (PersistentSubscriptionStreamEventAppeared $eventAppeared) use ($correlationID, $group) {
-                        $record = $eventAppeared->getEvent()->getEvent();
-                        //$link = $eventAppeared->getEvent()->getLink();
-                        /* @var \Rxnet\EventStore\Data\EventRecord $record */
 
-                        return new AcknowledgeableEventRecord(
-                            $record,
-                            $correlationID,
-                            $group,
-                            $this->writer
-                        );
+                            case NotHandled_MasterInfo::class:
+                                /* @var NotHandled_MasterInfo $data */
+                                return Observable::error(new NotMasterException($data->getExternalTcpAddress(), $data->getExternalTcpPort()));
+                            case NotHandled::class :
+                                if ($data->getReason() == 0) {
+                                    return Observable::error(new LogicException("Server is not ready {$data->getAdditionalInfo()}", 0));
+                                }
+                                return Observable::error(new LogicException("Server is too busy {$data->getAdditionalInfo()}", 1));
+                            default:
+                                // Why are we here ?
+                                var_dump($data);
+                                return Observable::error(new LogicException("Unknown data received : " . get_class($data)));
+                        }
                     }
                 )
                 ->subscribe($observer);
 
             return new CallbackDisposable(function () {
                 $event = new UnsubscribeFromStream();
-                $this->writer->composeAndWriteOnce(
+                $this->writer->composeAndWrite(
                     MessageType::UNSUBSCRIBE_FROM_STREAM,
                     $event
                 );
@@ -364,43 +472,34 @@ class EventStore
      * @param $streamId
      * @param int $number
      * @param bool $resolveLinkTos
+     * @param bool $requireMaster
      * @return Observable\AnonymousObservable
      */
-    public function readEvent($streamId, $number = 0, $resolveLinkTos = false)
+    public function readEvent($streamId, $number = 0, $resolveLinkTos = false, $requireMaster = false)
     {
         $event = new ReadEvent();
         $event->setEventStreamId($streamId);
         $event->setEventNumber($number);
         $event->setResolveLinkTos($resolveLinkTos);
-        $event->setRequireMaster(false);
+        $event->setRequireMaster($requireMaster);
 
         $correlationID = $this->writer->createUUIDIfNeeded();
-        return $this->writer->composeAndWriteOnce(MessageType::READ, $event, $correlationID)
-            ->concat(
-                $this->readBuffer
-                    ->filter(
-                        function (SocketMessage $message) use ($correlationID) {
-                            // Use same correlationID to pass by this filter
-                            return $message->getCorrelationID() == $correlationID;
-                        }
-                    )
-            )
-            ->take(1)
-            ->map(function (SocketMessage $message) {
-                $data = $message->getData();
-                /* @var  ReadEventCompleted $data */
+        return $this->writer->composeAndWrite(MessageType::READ, $event, $correlationID)
+            ->concat($this->readBuffer->waitFor($correlationID, 1))
+            ->map(function (ReadEventCompleted $data) {
                 return new EventRecord($data->getEvent()->getEvent());
             });
     }
 
     /**
      * @param bool $resolveLinkTos
+     * @param bool $requireMaster
      * @return Observable\AnonymousObservable
      */
-    public function readAllEvents($resolveLinkTos = false)
+    public function readAllEvents($resolveLinkTos = false, $requireMaster = false)
     {
         $query = new ReadAllEvents();
-        $query->setRequireMaster(false);
+        $query->setRequireMaster($requireMaster);
         $query->setResolveLinkTos($resolveLinkTos);
 
         return $this->readEvents($query, MessageType::READ_ALL_EVENTS_FORWARD);
@@ -411,12 +510,13 @@ class EventStore
      * @param int $fromEvent
      * @param int $max
      * @param bool $resolveLinkTos
+     * @param bool $requireMaster
      * @return Observable\AnonymousObservable
      */
-    public function readEventsForward($streamId, $fromEvent = self::POSITION_START, $max = self::POSITION_LATEST, $resolveLinkTos = false)
+    public function readEventsForward($streamId, $fromEvent = self::POSITION_START, $max = self::POSITION_LATEST, $resolveLinkTos = false, $requireMaster = false)
     {
         $query = new ReadStreamEvents();
-        $query->setRequireMaster(false);
+        $query->setRequireMaster($requireMaster);
         $query->setEventStreamId($streamId);
         $query->setFromEventNumber($fromEvent);
         $query->setMaxCount($max);
@@ -430,12 +530,13 @@ class EventStore
      * @param int $fromEvent
      * @param int $max
      * @param bool $resolveLinkTos
+     * @param bool $requireMaster
      * @return Observable\AnonymousObservable
      */
-    public function readEventsBackward($streamId, $fromEvent = self::POSITION_END, $max = 10, $resolveLinkTos = false)
+    public function readEventsBackward($streamId, $fromEvent = self::POSITION_END, $max = 10, $resolveLinkTos = false, $requireMaster = false)
     {
         $query = new ReadStreamEvents();
-        $query->setRequireMaster(false);
+        $query->setRequireMaster($requireMaster);
         $query->setEventStreamId($streamId);
         $query->setFromEventNumber($fromEvent);
         $query->setMaxCount($max);
@@ -464,34 +565,22 @@ class EventStore
 
         $correlationID = $this->writer->createUUIDIfNeeded();
 
-        // TODO backpressure, wait for event's array to be read before reading next
+        // TODO backpressure, wait for event's array to be readed completely before asking for more in stream
         // OnDemand ? onBackpressureBuffer ?
         return $this->writer
             // First query
-            ->composeAndWriteOnce($messageType, $query, $correlationID)
+            ->composeAndWrite($messageType, $query, $correlationID)
             // When written wait for all responses
-            ->concat(
-                $this->readBuffer
-                    ->filter(
-                        function (SocketMessage $message) use ($correlationID) {
-                            // Use same correlationID to pass by this filter
-                            return $message->getCorrelationID() == $correlationID;
-                        }
-                    )
-            )
+            ->concat($this->readBuffer->waitFor($correlationID, -1))
             // Throw if we have an error message
-            ->flatMap(function (SocketMessage $message) {
-                $event = $message->getData();
-                /* @var ReadStreamEventsCompleted $event */
+            ->flatMap(function (ReadStreamEventsCompleted $event) {
                 if ($error = $event->getError()) {
                     return Observable::error(new \Exception($error));
                 }
-                return Observable::just($message);
+                return Observable::just($event);
             })
             // If more data is needed do another query
-            ->doOnNext(function (SocketMessage $message) use ($query, $correlationID, &$end, &$asked, $max, $maxPossible, $messageType) {
-                $event = $message->getData();
-                /* @var ReadStreamEventsCompleted $event */
+            ->doOnNext(function (ReadStreamEventsCompleted $event) use ($query, $correlationID, &$end, &$asked, $max, $maxPossible, $messageType) {
                 $records = $event->getEvents();
                 $asked -= count($records);
                 if ($event->getIsEndOfStream()) {
@@ -507,7 +596,7 @@ class EventStore
                     $query->setMaxCount($asked > $maxPossible ? $maxPossible : $asked);
 
                     //echo "Not end of stream need slice from position {$start} next is {$event->getNextEventNumber()} \n";
-                    $this->writer->composeAndWriteOnce(
+                    $this->writer->composeAndWrite(
                         $messageType,
                         $query,
                         $correlationID
@@ -519,8 +608,7 @@ class EventStore
                 return !$end;
             })
             // Format EventRecord for easy reading
-            ->flatMap(function (SocketMessage $message) use (&$asked, &$end) {
-                $event = $message->getData();
+            ->flatMap(function (ReadStreamEventsCompleted $event) use (&$asked, &$end) {
                 /* @var ReadStreamEventsCompleted $event */
                 $records = [];
                 /* @var \Rxnet\EventStore\EventRecord[] $records */

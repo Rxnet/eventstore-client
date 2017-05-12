@@ -61,7 +61,7 @@ class AcknowledgeableEventRecord extends EventRecord
 
         $ack->setProcessedEventIds($events);
 
-        return $this->writer->composeAndWriteOnce(
+        return $this->writer->composeAndWrite(
             MessageType::PERSISTENT_SUBSCRIPTION_ACK_EVENTS,
             $ack,
             $this->correlationID
@@ -80,7 +80,7 @@ class AcknowledgeableEventRecord extends EventRecord
         $nack->setProcessedEventIds($events);
         $events[] = $this->binaryId;
 
-        return $this->writer->composeAndWriteOnce(
+        return $this->writer->composeAndWrite(
             MessageType::PERSISTENT_SUBSCRIPTION_NACK_EVENTS,
             $nack,
             $this->correlationID

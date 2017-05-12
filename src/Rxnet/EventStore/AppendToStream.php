@@ -7,6 +7,7 @@ use Google\Protobuf\Internal\GPBType;
 use Google\Protobuf\Internal\RepeatedField;
 use Ramsey\Uuid\Uuid;
 use Rxnet\EventStore\Data\NewEvent;
+use Rxnet\EventStore\Data\TransactionStart;
 use Rxnet\EventStore\Data\WriteEvents;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
@@ -45,7 +46,7 @@ class AppendToStream
         $event->setMetadata($metaData);
 
         $event->setDataContentType(1);
-        $event->setMetadataContentType(2);
+        $event->setMetadataContentType(1);
 
         $this->events[] = $event;
 
@@ -55,6 +56,7 @@ class AppendToStream
     public function event($name, $data, $id = null, $metaData = [])
     {
         $id = $id ?: Uuid::uuid4();
+        $id = hex2bin(str_replace('-', '', $id));
 
         $event = new NewEvent();
         $event->setEventType($name);
@@ -62,12 +64,13 @@ class AppendToStream
         $event->setEventId($id);
         $event->setMetadata($metaData);
 
-        $event->setDataContentType(1);
+        $event->setDataContentType(2);
         $event->setMetadataContentType(2);
 
         $this->events[] = $event;
         return $this;
     }
+
 
     public function commit()
     {
@@ -75,7 +78,7 @@ class AppendToStream
             throw new \LogicException('You commit events but added none');
         }
         $correlationID = $this->writer->createUUIDIfNeeded();
-        return $this->writer->composeAndWriteOnce(MessageType::WRITE_EVENTS, $this->writeEvents, $correlationID)
+        return $this->writer->composeAndWrite(MessageType::WRITE_EVENTS, $this->writeEvents, $correlationID)
             ->concat(
                 $this->readBuffer
                     ->filter(
