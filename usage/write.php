@@ -8,9 +8,9 @@ use Rxnet\EventStore\NewEvent\JsonEvent;
 require '../vendor/autoload.php';
 
 $eventStore = new \Rxnet\EventStore\EventStore();
-\Rxnet\await($eventStore->connect('online-10.4x.fr'));
+\Rxnet\await($eventStore->connect());
 
-\Rx\Observable::interval(5)
+\Rx\Observable::interval(1000)
     ->flatMap(
         function ($i) use ($eventStore) {
             $event = new JsonEvent('/truc/chose', ['i' => $i]);

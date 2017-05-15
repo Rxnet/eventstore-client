@@ -4,7 +4,7 @@ use EventLoop\EventLoop;
 require '../vendor/autoload.php';
 
 $eventStore = new \Rxnet\EventStore\EventStore();
-\Rxnet\await($eventStore->connect('online-10.4x.fr'));
+\Rxnet\await($eventStore->connect());
 
 
 $eventStore->catchUpSubscription('domain-test.fr', 0)

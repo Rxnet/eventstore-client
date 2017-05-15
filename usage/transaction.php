@@ -8,7 +8,7 @@ use Rxnet\EventStore\Transaction;
 require '../vendor/autoload.php';
 
 $eventStore = new \Rxnet\EventStore\EventStore();
-\Rxnet\await($eventStore->connect('online-10.4x.fr'));
+\Rxnet\await($eventStore->connect());
 
 $eventStore->startTransaction('domain-test.fr')
     ->subscribeCallback(
