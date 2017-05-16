@@ -1,6 +1,9 @@
 <?php
+
 namespace Rxnet\EventStore;
 
+
+use Carbon\Carbon;
 
 class EventRecord
 {
@@ -17,7 +20,13 @@ class EventRecord
         $this->stream_id = $event->getEventStreamId();
         $this->number = $event->getEventNumber();
         $this->id = bin2hex($event->getEventId());
-        $this->created = $event->getCreatedEpoch();
+
+        $created = $event->getCreatedEpoch();
+        $date = substr($created, 0, -3);
+        $micro = substr($created, -3);
+        $this->created = Carbon::createFromTimestamp($date . '.' . $micro);
+
+
         $this->type = $event->getEventType();
         $this->metadata = $event->getMetadata();
 
@@ -26,10 +35,9 @@ class EventRecord
         } else {
             $this->data = $event->getData();
         }
-        if($event->getMetadataContentType() === 1) {
+        if ($event->getMetadataContentType() === 1) {
             $this->metadata = json_decode($event->getMetadata(), true);
-        }
-        else {
+        } else {
             $this->metadata = $event->getMetadata();
         }
     }
@@ -75,7 +83,7 @@ class EventRecord
     }
 
     /**
-     * @return int
+     * @return \DateTime
      */
     public function getCreated()
     {
