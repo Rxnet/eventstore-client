@@ -8,7 +8,7 @@ use Rxnet\EventStore\Data\NewEvent;
 class JsonEvent implements NewEventInterface
 {
     protected $message;
-    protected $contentType = 2;
+    protected $contentType = 1;
 
     public function __construct($type, $data, $id = null, $meta = [])
     {
