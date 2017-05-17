@@ -45,6 +45,7 @@ use Rxnet\EventStore\Message\Credentials;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 use Rxnet\EventStore\NewEvent\NewEventInterface;
+use Rxnet\Socket;
 use Rxnet\Transport\Stream;
 use Zend\Stdlib\Exception\LogicException;
 
@@ -63,7 +64,7 @@ class EventStore
     protected $writer;
     /** @var Stream */
     protected $stream;
-    /** @var Tcp */
+    /** @var Socket */
     protected $connector;
     /** @var Subject */
     protected $connectionSubject;
@@ -84,20 +85,19 @@ class EventStore
      * @param ReadBuffer|null $readBuffer
      * @param Writer|null $writer
      */
-    public function __construct(LoopInterface $loop = null, Dns $dns = null, Tcp $tcp = null, ReadBuffer $readBuffer = null, Writer $writer = null)
+    public function __construct(LoopInterface $loop = null, ReadBuffer $readBuffer = null, Writer $writer = null)
     {
         $this->loop = $loop ?: EventLoop::getLoop();
-        $this->dns = $dns ?: new Dns();
         $this->readBuffer = $readBuffer ?: new ReadBuffer();
         $this->writer = $writer ?: new Writer();
-        $this->connector = $tcp ?: new Tcp($this->loop);
+        $this->connector = new Socket($this->loop);
     }
 
     /**
      * @param string $dsn tcp://user:password@host:port
      * @param int $connectTimeout in milliseconds
      * @param int $heartBeatRate in milliseconds
-     * @return Observable\AnonymousObservable
+     * @return Observable
      */
     public function connect($dsn = 'tcp://admin:changeit@localhost:1113', $connectTimeout = 1000, $heartBeatRate = 5000)
     {
@@ -124,17 +124,14 @@ class EventStore
         $this->dsn = $parsedDsn;
         // What you should observe if you want to auto reconnect
         $this->connectionSubject = new ReplaySubject(1, 1);
-        $this->connector->setTimeout($connectTimeout);
-        return Observable::create(function (ObserverInterface $observer) {
-            $this->dns
-                ->resolve($this->dsn['host'])
-                ->flatMap(
-                    function ($ip) {
-                        return $this->connector->connect($ip, $this->dsn['port']);
-                    })
-                ->flatMap(function (ConnectorEvent $connectorEvent) {
+
+
+
+        return Observable::create(function (ObserverInterface $observer) use($dsn) {
+            $this->connector->connect($dsn)
+                ->flatMap(function (Socket\Stream $stream) {
                     // send all data to our read buffer
-                    $this->stream = $connectorEvent->getStream();
+                    $this->stream = $stream;
                     $this->readBufferDisposable = $this->stream->subscribe($this->readBuffer);
                     $this->stream->resume();
 
