@@ -45,6 +45,7 @@ use Rxnet\EventStore\Message\Credentials;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 use Rxnet\EventStore\NewEvent\NewEventInterface;
+use Rxnet\Transport\BufferedStream;
 use Rxnet\Transport\Stream;
 use Zend\Stdlib\Exception\LogicException;
 
@@ -134,7 +135,7 @@ class EventStore
                     })
                 ->flatMap(function (ConnectorEvent $connectorEvent) {
                     // send all data to our read buffer
-                    $this->stream = $connectorEvent->getStream();
+                    $this->stream = new BufferedStream($connectorEvent->getStream()->getSocket(), $this->loop);
                     $this->readBufferDisposable = $this->stream->subscribe($this->readBuffer);
                     $this->stream->resume();
 
@@ -249,8 +250,19 @@ class EventStore
             $array[] = $event->getMessage();
         }
         $correlationID = $this->writer->createUUIDIfNeeded();
-        return $this->writer->composeAndWrite(MessageType::WRITE_EVENTS, $query, $correlationID)
-            ->concat($this->readBuffer->waitFor($correlationID, 1));
+        return Observable::create(function (ObserverInterface $observer) use ($query, $correlationID) {
+            $writeDisposable = $this->writer->composeAndWrite(MessageType::WRITE_EVENTS, $query, $correlationID)
+                ->subscribeCallback(null, [$observer, 'onError']);
+
+            $readDisposable = $this->readBuffer->waitFor($correlationID, 1)
+                ->subscribe($observer);
+
+            return new CallbackDisposable(function() use($writeDisposable, $readDisposable) {
+                $readDisposable->dispose();
+                $writeDisposable->dispose();
+            });
+        });
+
 
     }
 
@@ -270,7 +282,7 @@ class EventStore
         $correlationID = $this->writer->createUUIDIfNeeded();
         return $this->writer->composeAndWrite(MessageType::TRANSACTION_START, $query, $correlationID)
             ->concat($this->readBuffer->waitFor($correlationID, 1))
-            ->map(function (TransactionStartCompleted $startCompleted) use($requireMaster) {
+            ->map(function (TransactionStartCompleted $startCompleted) use ($requireMaster) {
                 return new Transaction($startCompleted->getTransactionId(), $requireMaster, $this->writer, $this->readBuffer);
             });
     }
@@ -581,6 +593,7 @@ class EventStore
             })
             // If more data is needed do another query
             ->doOnNext(function (ReadStreamEventsCompleted $event) use ($query, $correlationID, &$end, &$asked, $max, $maxPossible, $messageType) {
+                // TODO handle no results
                 $records = $event->getEvents();
                 $asked -= count($records);
                 if ($event->getIsEndOfStream()) {
@@ -590,6 +603,7 @@ class EventStore
                 }
                 if (!$end) {
                     $start = $records[count($records) - 1];
+
                     /* @var ResolvedIndexedEvent $start */
                     $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
                     $query->setFromEventNumber($start);

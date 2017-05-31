@@ -9,6 +9,9 @@
 namespace Rxnet\EventStore;
 
 
+use Rx\Disposable\CallbackDisposable;
+use Rx\Observable;
+use Rx\ObserverInterface;
 use Rx\Subject\Subject;
 use Rxnet\EventStore\Communication\CommunicationFactory;
 use Rxnet\EventStore\Message\MessageConfiguration;
@@ -75,21 +78,26 @@ class ReadBuffer extends Subject
 
     public function waitFor($correlationID, $take = 1)
     {
-        $observable = $this
-            ->filter(
-                function (SocketMessage $message) use ($correlationID) {
-                    return $message->getCorrelationID() == $correlationID;
-                }
-            )->map(
-                function (SocketMessage $message) {
-                    return $message->getData();
-                }
-            );
+        return Observable::create(function (ObserverInterface $observer) use ($correlationID, $take) {
+            $observable = $this
+                ->filter(
+                    function (SocketMessage $message) use ($correlationID) {
+                        return $message->getCorrelationID() == $correlationID;
+                    }
+                )->map(
+                    function (SocketMessage $message) {
+                        return $message->getData();
+                    }
+                );
+            if($take > 0) {
+                $observable = $observable->take($take);
+            }
 
-        if ($take >= 0) {
-            $observable = $observable->take($take);
-        }
-        return $observable;
+            $disposable = $observable->subscribe($observer);
+
+            return new CallbackDisposable([$disposable, 'dispose']);
+        });
+
     }
 
 

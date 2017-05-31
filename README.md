@@ -27,11 +27,25 @@ You can put as many event you want (max 2000)
 ```php
 <?php
 $eventA = new \Rxnet\EventStore\NewEvent\JsonEvent('event_type1', ['data' => 'a'], ['worker'=>'metadata']);
-$eventB = new \Rxnet\EventStore\RawEvent('event_type2', 'raw data', 'raw metadata');
+$eventB = new \Rxnet\EventStore\NewEvent\RawEvent('event_type2', 'raw data', 'raw metadata');
 
 $eventStore->write('category-test_stream_id', [$eventA, $eventB])
     ->subscribeCallback(function(\Rxnet\EventStore\Data\WriteEventsCompleted $eventsCompleted) {
         echo "Last event number {$eventsCompleted->getLastEventNumber()} on commit position {$eventsCompleted->getCommitPosition()} \n";
+    });
+```
+
+if you are on a fpm context or don't need persistent connection, you can use HTTP client
+
+```php
+<?php
+$eventA = new \Rxnet\EventStore\NewEvent\JsonEvent('event_type1', ['data' => 'a'], ['worker'=>'metadata']);
+$eventB = new \Rxnet\EventStore\NewEvent\RawEvent('event_type2', 'raw data', 'raw metadata');
+
+$eventStore = new \Rxnet\EventStore\HttpEventStore('http://admin:changeit@127.0.0.1:2113');
+$eventStore->write('category-test_stream_id', [$eventA, $eventB])
+    ->subscribeCallback(function($lastEventUrl) {
+        echo "Last event us at {$lastEventUrl} \n";
     });
 ```
 

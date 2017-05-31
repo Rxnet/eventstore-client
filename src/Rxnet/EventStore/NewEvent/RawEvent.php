@@ -1,6 +1,6 @@
 <?php
 
-namespace Rxnet\EventStore;
+namespace Rxnet\EventStore\NewEvent;
 
 
 use Rxnet\EventStore\NewEvent\JsonEvent;

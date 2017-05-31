@@ -68,6 +68,7 @@ class Writer
 
         $this->queue->push($data);
 
+        //return $this->stream->write($data);
         return $this->dequeue();
     }
 
@@ -78,7 +79,7 @@ class Writer
         }
         $data = $this->queue->pop();
         return $this->stream->write($data)
-            ->concatMapTo($this->dequeue());
+            ->concat($this->dequeue());
     }
 
 

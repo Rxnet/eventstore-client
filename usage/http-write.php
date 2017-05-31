@@ -7,22 +7,24 @@ use Rxnet\EventStore\NewEvent\JsonEvent;
 
 require '../vendor/autoload.php';
 
-$eventStore = new \Rxnet\EventStore\EventStore();
-\Rxnet\await($eventStore->connect());
+$eventStore = new \Rxnet\EventStore\HttpEventStore();
 
 \Rx\Observable::interval(10)
     ->flatMap(
         function ($i) use ($eventStore) {
             $event = new JsonEvent('/truc/chose', ['i' => $i]);
-            return $eventStore->write('domain-test-1.fr', [$event]);
+            $event2 = new JsonEvent('/truc/bidule', ['i' => $i]);
+            return $eventStore->write('domain-test-1.fr', [$event, $event2]);
         }
     )
     ->subscribe(
         new CallbackObserver(
-            function (WriteEventsCompleted $eventsCompleted) {
+            function ($eventsCompleted) {
+
                 gc_collect_cycles();
                 $memory = memory_get_usage(true) / 1024 / 1024;
-                echo "Last event number {$eventsCompleted->getLastEventNumber()} on commit position {$eventsCompleted->getCommitPosition()} {$memory}Mb \n";
+                echo $eventsCompleted." {$memory}Mb \n";
+                //echo "Last event number {$eventsCompleted->getLastEventNumber()} on commit position {$eventsCompleted->getCommitPosition()} {$memory}Mb \n";
             }
         ),
         new EventLoopScheduler(EventLoop::getLoop())

@@ -7,6 +7,7 @@ use Rxnet\EventStore\Data\NewEvent;
 
 class JsonEvent implements NewEventInterface
 {
+    use NewEventTrait;
     protected $message;
     protected $contentType = 2;
 
