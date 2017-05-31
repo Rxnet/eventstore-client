@@ -9,7 +9,7 @@ class JsonEvent implements NewEventInterface
 {
     use NewEventTrait;
     protected $message;
-    protected $contentType = 2;
+    protected $contentType = 1;
 
     public function __construct($type, $data, $id = null, $meta = [])
     {
