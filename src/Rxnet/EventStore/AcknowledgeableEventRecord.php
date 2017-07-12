@@ -28,8 +28,13 @@ class AcknowledgeableEventRecord extends EventRecord
     public function __construct(\Rxnet\EventStore\Data\EventRecord $event, $correlationID, $group, Writer $writer, \Rxnet\EventStore\Data\EventRecord $linkedEvent = null)
     {
         $this->binaryId = ($linkedEvent) ? $linkedEvent->getEventId() : $event->getEventId();
+        if($linkedEvent) {
+            parent::__construct($linkedEvent);
+        }
+        else {
+            parent::__construct($event);
+        }
 
-        parent::__construct($event);
         $this->correlationID = $correlationID;
         $this->writer = $writer;
         $this->group = $group;
@@ -72,6 +77,7 @@ class AcknowledgeableEventRecord extends EventRecord
     public function nack($action = self::NACK_ACTION_UNKNOWN, $msg = '')
     {
         $nack = new PersistentSubscriptionNakEvents();
+        var_dump($this);
         $nack->setSubscriptionId($this->stream_id."::".$this->group);
         $nack->setAction($action);
         $nack->setMessage($msg);

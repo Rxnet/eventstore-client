@@ -407,14 +407,15 @@ class EventStore
             ->map(
                 function (PersistentSubscriptionStreamEventAppeared $eventAppeared) use ($correlationID, $group) {
                     $record = $eventAppeared->getEvent()->getEvent();
-                    //$link = $eventAppeared->getEvent()->getLink();
+                    $link = $eventAppeared->getEvent()->getLink();
                     /* @var \Rxnet\EventStore\Data\EventRecord $record */
 
                     return new AcknowledgeableEventRecord(
                         $record,
                         $correlationID,
                         $group,
-                        $this->writer
+                        $this->writer,
+                        $link
                     );
                 }
             );

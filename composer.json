@@ -22,7 +22,7 @@
   "require": {
     "ramsey/uuid": "~3.5.1",
     "TrafficCophp/ByteBuffer": "0.3",
-    "google/protobuf": "^3.2",
+    "google/protobuf": "^3.3",
     "domraider/rxnet" : "dev-master",
     "nesbot/carbon": "^1.22"
   },

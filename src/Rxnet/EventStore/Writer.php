@@ -68,7 +68,6 @@ class Writer
 
         $this->queue->push($data);
 
-        //return $this->stream->write($data);
         return $this->dequeue();
     }
 
