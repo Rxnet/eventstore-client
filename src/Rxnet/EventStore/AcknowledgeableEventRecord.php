@@ -28,11 +28,12 @@ class AcknowledgeableEventRecord extends EventRecord
     public function __construct(\Rxnet\EventStore\Data\EventRecord $event, $correlationID, $group, Writer $writer, \Rxnet\EventStore\Data\EventRecord $linkedEvent = null)
     {
         $this->binaryId = ($linkedEvent) ? $linkedEvent->getEventId() : $event->getEventId();
+
+        parent::__construct($event);
+
         if($linkedEvent) {
-            parent::__construct($linkedEvent);
-        }
-        else {
-            parent::__construct($event);
+            $this->stream_id = $linkedEvent->getEventStreamId();
+            $this->number = $linkedEvent->getEventNumber();
         }
 
         $this->correlationID = $correlationID;
