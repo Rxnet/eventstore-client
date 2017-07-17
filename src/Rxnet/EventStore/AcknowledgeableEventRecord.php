@@ -78,7 +78,6 @@ class AcknowledgeableEventRecord extends EventRecord
     public function nack($action = self::NACK_ACTION_UNKNOWN, $msg = '')
     {
         $nack = new PersistentSubscriptionNakEvents();
-        var_dump($this);
         $nack->setSubscriptionId($this->stream_id."::".$this->group);
         $nack->setAction($action);
         $nack->setMessage($msg);
