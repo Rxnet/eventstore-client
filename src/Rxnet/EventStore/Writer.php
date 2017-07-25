@@ -11,7 +11,6 @@ use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 use Rxnet\Transport\Stream;
 use TrafficCophp\ByteBuffer\Buffer;
-use Zend\Stdlib\SplQueue;
 
 class Writer
 {
@@ -19,12 +18,12 @@ class Writer
     protected $stream;
     /** @var  Credentials */
     protected $credentials;
-    /** @var  SplQueue */
+    /** @var  \SplQueue */
     protected $queue;
 
     public function __construct()
     {
-        $this->queue = new SplQueue();
+        $this->queue = new \SplQueue();
     }
 
     public function setCredentials(Credentials $credentials)
