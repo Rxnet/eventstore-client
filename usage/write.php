@@ -6,13 +6,19 @@ use Rxnet\EventStore\Data\WriteEventsCompleted;
 use Rxnet\EventStore\NewEvent\JsonEvent;
 
 require '../vendor/autoload.php';
+//$loop = new \Rxnet\Loop\LibEvLoop();
+//EventLoop::setLoop($loop);
 
+echo 'connecting';
 $eventStore = new \Rxnet\EventStore\EventStore();
 \Rxnet\await($eventStore->connect());
+
+echo "connected \n";
 
 \Rx\Observable::interval(10)
     ->flatMap(
         function ($i) use ($eventStore) {
+            echo '.';
             $event = new JsonEvent('/truc/chose', ['i' => $i]);
             return $eventStore->write('domain-test-1.fr', [$event]);
         }

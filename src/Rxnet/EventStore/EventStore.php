@@ -124,7 +124,7 @@ class EventStore
         }
         $this->dsn = $parsedDsn;
         // What you should observe if you want to auto reconnect
-        $this->connectionSubject = new ReplaySubject(1, 1);
+        $this->connectionSubject = new Subject();
         $this->connector->setTimeout($connectTimeout);
         return Observable::create(function (ObserverInterface $observer) {
             $this->dns
@@ -133,7 +133,7 @@ class EventStore
                     function ($ip) {
                         return $this->connector->connect($ip, $this->dsn['port']);
                     })
-                ->flatMap(function (ConnectorEvent $connectorEvent) {
+                ->subscribe(new CallbackObserver(function (ConnectorEvent $connectorEvent) {
                     // send all data to our read buffer
                     $this->stream = new BufferedStream($connectorEvent->getStream()->getSocket(), $this->loop);
                     $this->readBufferDisposable = $this->stream->subscribe($this->readBuffer);
@@ -146,12 +146,10 @@ class EventStore
                     // start heartbeat listener
                     $this->heartBeatDisposable = $this->heartbeat();
 
-                    // Replay subject will do the magic
                     $this->connectionSubject->onNext(new Event('/eventstore/connected'));
-                    // Forward internal errors to the connect result
-                    return $this->connectionSubject;
-                })
-                ->subscribe($observer, new EventLoopScheduler($this->loop));
+                }), new EventLoopScheduler($this->loop));
+
+            $this->connectionSubject->subscribe($observer);
 
             return new CallbackDisposable(function () {
                 if ($this->readBufferDisposable instanceof DisposableInterface) {
@@ -257,7 +255,7 @@ class EventStore
             $readDisposable = $this->readBuffer->waitFor($correlationID, 1)
                 ->subscribe($observer);
 
-            return new CallbackDisposable(function() use($writeDisposable, $readDisposable) {
+            return new CallbackDisposable(function () use ($writeDisposable, $readDisposable) {
                 $readDisposable->dispose();
                 $writeDisposable->dispose();
             });
