@@ -36,7 +36,12 @@ class JsonEvent implements NewEventInterface
 
     public function setId($id)
     {
-        $id = $id ?: Uuid::uuid4()->toString();
+        if(!$id) {
+            $id = Uuid::uuid4()->toString();
+        }
+        elseif (!Uuid::isValid($id)) {
+            $id = Uuid::uuid3(Uuid::NAMESPACE_OID, $id)->toString();
+        }
         $id = hex2bin(str_replace('-', '', $id));
         $this->message->setEventId($id);
     }

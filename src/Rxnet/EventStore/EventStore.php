@@ -106,7 +106,7 @@ class EventStore
         $connectTimeout = ($connectTimeout > 0) ? $connectTimeout / 1000 : 0;
         $this->heartBeatRate = $heartBeatRate;
 
-        if (!stristr($dsn, '://')) {
+        if (false === stripos($dsn, '://')) {
             $dsn = 'tcp://' . $dsn;
         }
         $parsedDsn = parse_url($dsn);
@@ -228,10 +228,11 @@ class EventStore
      * @param int $expectedVersion
      * @param bool $requireMaster
      * @return ObservableInterface(WriteEventsCompleted) with WriteEventsCompleted
+     * @throws \LogicException
      */
     public function write($streamId, $events, $expectedVersion = -2, $requireMaster = false)
     {
-        if (!is_array($events)) {
+        if($events instanceof NewEventInterface) {
             $events = [$events];
         }
         if (!$events) {
@@ -604,7 +605,7 @@ class EventStore
                     $start = $records[count($records) - 1];
 
                     /* @var ResolvedIndexedEvent $start */
-                    $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
+                    $start = ($messageType === MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
                     $query->setFromEventNumber($start);
                     $query->setMaxCount($asked > $maxPossible ? $maxPossible : $asked);
 

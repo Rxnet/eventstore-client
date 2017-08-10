@@ -12,9 +12,10 @@ $eventStore = new \Rxnet\EventStore\HttpEventStore();
 \Rx\Observable::interval(10)
     ->flatMap(
         function ($i) use ($eventStore) {
-            $event = new JsonEvent('/truc/chose', ['i' => $i]);
-            $event2 = new JsonEvent('/truc/bidule', ['i' => $i]);
-            return $eventStore->write('domain-test-1.fr', [$event, $event2]);
+            $uid = \Ramsey\Uuid\Uuid::uuid3(\Ramsey\Uuid\Uuid::NAMESPACE_DNS, 'test.fr');
+            $event = new JsonEvent('/truc/chose', ['i' => $i], 'test.fr');
+
+            return $eventStore->write('domain-test3.fr', $event);
         }
     )
     ->subscribe(
