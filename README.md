@@ -72,10 +72,10 @@ $eventStore->startTransaction('category-test_stream')
 ```
 ### Subscription
 
-Connect to persistent subscription $ce-category (projection) has group my-group, then acknowledge or not
+Connect to persistent subscription projection-name  has group my-group, then acknowledge or not (take care, you can't ack $ce-category or other $projections)
 ```php
 <?php
-$eventStore->persistentSubscription('$projection-category', 'my-group')
+$eventStore->persistentSubscription('projection-name', 'my-group')
     ->subscribeCallback(function(\Rxnet\EventStore\AcknowledgeableEventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
         if($event->getNumber() %2) {
