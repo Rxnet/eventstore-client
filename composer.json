@@ -20,7 +20,6 @@
     }
   ],
   "require": {
-    "ramsey/uuid": "~3.5.1",
     "TrafficCophp/ByteBuffer": "0.3",
     "google/protobuf": "^3.3",
     "domraider/rxnet" : "^0.6",
