@@ -58,4 +58,13 @@ class JsonEvent implements NewEventInterface
     {
         return $this->message;
     }
+    public function toArray()
+    {
+        return [
+            'eventId' => $this->getId(),
+            'eventType' => $this->getType(),
+            'data' => json_decode($this->getData(), true),
+            'metadata' => json_decode($this->getMetaData(), true)
+        ];
+    }
 }
