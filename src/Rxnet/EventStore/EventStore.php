@@ -101,7 +101,7 @@ class EventStore
      * @param int $heartBeatRate in milliseconds
      * @return Observable\AnonymousObservable
      */
-    public function connect($dsn = 'tcp://admin:changeit@localhost:1113', $connectTimeout = 1000, $heartBeatRate = 5000)
+    public function connect($dsn = 'tcp://admin:changeit@127.0.0.1:1113', $connectTimeout = 1000, $heartBeatRate = 5000)
     {
         // connector compatibility
         $connectTimeout = ($connectTimeout > 0) ? $connectTimeout / 1000 : 0;

@@ -19,8 +19,10 @@ echo "connected \n";
     ->flatMap(
         function ($i) use ($eventStore) {
             echo '.';
-            $event = new JsonEvent('/truc/chose', ['i' => $i]);
-            return $eventStore->write('domain-test-1.fr', [$event]);
+            $event = new JsonEvent('/truc/chose', [ "crypto"=> "btc",
+      "user_id"=> "21433R4G523TO",
+      "wallet_id"=> "PIH21B4T93VB5T9G7V"]);
+            return $eventStore->write('test-test-1.fr', [$event]);
         }
     )
     ->subscribe(

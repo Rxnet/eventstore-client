@@ -37,12 +37,15 @@ class JsonEvent implements NewEventInterface
     public function setId($id)
     {
         if(!$id) {
-            $id = Uuid::uuid4()->toString();
+            $id = Uuid::uuid4()->getHex();
         }
         elseif (!Uuid::isValid($id)) {
-            $id = Uuid::uuid3(Uuid::NAMESPACE_OID, $id)->toString();
+            $id = Uuid::uuid3(Uuid::NAMESPACE_OID, $id)->getHex();
         }
-        $id = hex2bin(str_replace('-', '', $id));
+        else {
+            $id = str_replace('-', '', $id);
+        }
+        $id = hex2bin($id);
         $this->message->setEventId($id);
     }
 
@@ -54,5 +57,14 @@ class JsonEvent implements NewEventInterface
     public function getMessage()
     {
         return $this->message;
+    }
+    public function toArray()
+    {
+        return [
+            'eventId' => $this->getId(),
+            'eventType' => $this->getType(),
+            'data' => json_decode($this->getData(), true),
+            'metadata' => json_decode($this->getMetaData(), true)
+        ];
     }
 }

@@ -53,7 +53,6 @@ class HttpEventStore
             $headers['ES-ExpectedVersion'] = $expectedVersion;
         }
 
-
         $body = json_encode($json);
         $headers['Length'] = strlen($body);
         $options = compact('headers', 'body');

@@ -9,13 +9,16 @@ require '../vendor/autoload.php';
 
 $eventStore = new \Rxnet\EventStore\HttpEventStore();
 
-\Rx\Observable::interval(10)
+\Rx\Observable::interval(1000)
     ->flatMap(
         function ($i) use ($eventStore) {
-            $uid = \Ramsey\Uuid\Uuid::uuid3(\Ramsey\Uuid\Uuid::NAMESPACE_DNS, 'test.fr');
-            $event = new JsonEvent('/truc/chose', ['i' => $i], 'test.fr');
+            $event = new JsonEvent('/truc/chose', [
+                "crypto" => "btc",
+                "user_id" => "21433R4G523TO",
+                "wallet_id" => "PIH21B4T93VB5T9G7V"
+            ]);
 
-            return $eventStore->write('domain-test3.fr', $event);
+            return $eventStore->write('crypto-exchange-rate', $event);
         }
     )
     ->subscribe(
@@ -24,7 +27,7 @@ $eventStore = new \Rxnet\EventStore\HttpEventStore();
 
                 gc_collect_cycles();
                 $memory = memory_get_usage(true) / 1024 / 1024;
-                echo $eventsCompleted." {$memory}Mb \n";
+                echo $eventsCompleted . " {$memory}Mb \n";
                 //echo "Last event number {$eventsCompleted->getLastEventNumber()} on commit position {$eventsCompleted->getCommitPosition()} {$memory}Mb \n";
             }
         ),
