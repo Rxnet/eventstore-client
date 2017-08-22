@@ -17,7 +17,7 @@ class HttpEventStore
     protected $loop;
     protected $server;
 
-    public function __construct($server = "http://127.0.0.1:2113", Http $http = null, LoopInterface $loop = null)
+    public function __construct($server = 'http://admin:changeit@127.0.0.1:2113', Http $http = null, LoopInterface $loop = null)
     {
         $this->server = $server;
         $this->http = $http ?: new Http();

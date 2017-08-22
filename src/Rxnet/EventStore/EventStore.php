@@ -16,6 +16,7 @@ use Rx\ObserverInterface;
 use Rx\Scheduler\EventLoopScheduler;
 use Rx\Subject\ReplaySubject;
 use Rx\Subject\Subject;
+use function Rxnet\await;
 use Rxnet\Connector\Tcp;
 use Rxnet\Dns\Dns;
 use Rxnet\Event\ConnectorEvent;
@@ -303,8 +304,13 @@ class EventStore
      */
     public function catchUpSubscription($streamId, $startFrom = self::POSITION_START, $resolveLink = false)
     {
-        return $this->readEventsForward($streamId, $startFrom, self::POSITION_LATEST, $resolveLink)
-            ->concat($this->volatileSubscription($streamId, $resolveLink));
+        if($startFrom === self::POSITION_END) {
+            $observable = $this->readEvent($streamId, $startFrom);
+        }
+        else {
+            $observable = $this->readEventsForward($streamId, $startFrom, self::POSITION_LATEST, $resolveLink);
+        }
+        return $observable->concat($this->volatileSubscription($streamId, $resolveLink));
     }
 
     /**
