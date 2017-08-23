@@ -413,6 +413,10 @@ class EventStore
                 function (PersistentSubscriptionStreamEventAppeared $eventAppeared) use ($correlationID, $group) {
                     $record = $eventAppeared->getEvent()->getEvent();
                     $link = $eventAppeared->getEvent()->getLink();
+                    if(!$record) {
+                        // TODO ugly patch investigate why
+                        $record = $link;
+                    }
                     /* @var \Rxnet\EventStore\Data\EventRecord $record */
 
                     return new AcknowledgeableEventRecord(
