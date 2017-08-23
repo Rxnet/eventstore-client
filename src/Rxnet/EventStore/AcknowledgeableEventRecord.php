@@ -11,10 +11,26 @@ use Rxnet\EventStore\Message\MessageType;
 
 class AcknowledgeableEventRecord extends EventRecord
 {
+    /**
+     * Client unknown on action. Let server decide
+     */
     const NACK_ACTION_UNKNOWN = 0;
+    /**
+     * Park message do not resend. Put on poison queue
+     * Don't retry the message, park it until a request is sent to reply the parked messages
+     */
     const NACK_ACTION_PARK = 1;
+    /**
+     * Explicitly retry the message
+     */
     const NACK_ACTION_RETRY = 2;
+    /**
+     * Skip this message do not resend do not put in poison queue
+     */
     const NACK_ACTION_SKIP = 3;
+    /**
+     * Stop the subscription.
+     */
     const NACK_ACTION_STOP = 4;
 
 
