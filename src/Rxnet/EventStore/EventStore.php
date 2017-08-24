@@ -53,6 +53,10 @@ class EventStore
     const POSITION_START = 0;
     const POSITION_END = -1;
     const POSITION_LATEST = 999999;
+
+    const CONNECTED = 1;
+    const CONNECTING = 0;
+    const DISCONNECTED = -1;
     /** @var LoopInterface */
     protected $loop;
     /** @var Dns */
@@ -75,6 +79,8 @@ class EventStore
     protected $readBufferDisposable;
     /** @var  array */
     protected $dsn;
+    /** @var int  */
+    protected $state = self::DISCONNECTED;
 
     /**
      * EventStore constructor.
@@ -93,6 +99,10 @@ class EventStore
         $this->connector = $tcp ?: new Tcp($this->loop);
     }
 
+    public function isConnected() {
+        return $this->state === self::CONNECTED;
+    }
+
     /**
      * @param string $dsn tcp://user:password@host:port
      * @param int $connectTimeout in milliseconds
@@ -101,6 +111,23 @@ class EventStore
      */
     public function connect($dsn = 'tcp://admin:changeit@127.0.0.1:1113', $connectTimeout = 1000, $heartbeatTimeout = 5000)
     {
+
+        if($this->state === self::CONNECTING) {
+            while($this->state === self::CONNECTING) {
+                $this->loop->tick();
+            }
+            return Observable::create(function(ObserverInterface $observer) {
+                $this->connectionSubject->subscribe($observer);
+                $this->connectionSubject->onNext(new Event('/eventstore/connected'));
+            });
+        }
+        if($this->state === self::CONNECTED) {
+            return Observable::create(function(ObserverInterface $observer) {
+                $this->connectionSubject->subscribe($observer);
+                $this->connectionSubject->onNext(new Event('/eventstore/connected'));
+            });
+        }
+        $this->state = self::CONNECTING;
         // connector compatibility
         $connectTimeout = ($connectTimeout > 0) ? $connectTimeout / 1000 : 0;
         $this->heartbeatTimeout = $heartbeatTimeout;
@@ -146,6 +173,8 @@ class EventStore
                     $this->heartBeatDisposable = $this->heartbeat();
 
                     $this->connectionSubject->onNext(new Event('/eventstore/connected'));
+                    $this->state = self::CONNECTED;
+
                 }), new EventLoopScheduler($this->loop));
 
             $this->connectionSubject->subscribe($observer);
@@ -220,6 +249,7 @@ class EventStore
             ->filter(
                 function (SocketMessage $message) use (&$called) {
                     $called = microtime(true);
+                    echo '#';
                     return $message->getMessageType()->getType() === MessageType::HEARTBEAT_REQUEST;
                 }
             )
