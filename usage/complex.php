@@ -86,7 +86,7 @@ echo "HTTPD server listening on http://localhost:8082/test\n";
 // Listener part :
 // listen for events on given stream and to projection
 // persistent subscription is better here
-$eventStore->volatileSubscription('category-test', true)
+$eventStore->catchUpSubscription('category-test', $eventStore::POSITION_END, true)
     ->subscribeCallback(function (EventRecord $record) {
         echo "Event received {$record->getNumber()}@{$record->getStreamId()} {$record->getType()} with ID {$record->getId()}\n";
     });

@@ -218,14 +218,14 @@ class EventStore
 
         return $this->readBuffer
             ->filter(
-                function (SocketMessage $message) {
+                function (SocketMessage $message) use (&$called) {
+                    $called = microtime(true);
                     return $message->getMessageType()->getType() === MessageType::HEARTBEAT_REQUEST;
                 }
             )
             ->subscribe(
                 new CallbackObserver(
-                    function (SocketMessage $message) use (&$called) {
-                        $called = microtime(true);
+                    function (SocketMessage $message) {
                         $this->writer->composeAndWrite(MessageType::HEARTBEAT_RESPONSE, null, $message->getCorrelationID());
                     },
                     [$this->connectionSubject, 'onError']
