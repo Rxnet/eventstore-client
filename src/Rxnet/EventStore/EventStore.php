@@ -14,9 +14,7 @@ use Rx\ObservableInterface;
 use Rx\Observer\CallbackObserver;
 use Rx\ObserverInterface;
 use Rx\Scheduler\EventLoopScheduler;
-use Rx\Subject\ReplaySubject;
 use Rx\Subject\Subject;
-use function Rxnet\await;
 use Rxnet\Connector\Tcp;
 use Rxnet\Dns\Dns;
 use Rxnet\Event\ConnectorEvent;
@@ -72,7 +70,7 @@ class EventStore
     /** @var DisposableInterface */
     protected $heartBeatDisposable;
     /** @var  int */
-    protected $heartBeatRate;
+    protected $heartbeatTimeout;
     /** @var  DisposableInterface */
     protected $readBufferDisposable;
     /** @var  array */
@@ -98,14 +96,14 @@ class EventStore
     /**
      * @param string $dsn tcp://user:password@host:port
      * @param int $connectTimeout in milliseconds
-     * @param int $heartBeatRate in milliseconds
+     * @param int $heartbeatTimeout in milliseconds
      * @return Observable\AnonymousObservable
      */
-    public function connect($dsn = 'tcp://admin:changeit@127.0.0.1:1113', $connectTimeout = 1000, $heartBeatRate = 5000)
+    public function connect($dsn = 'tcp://admin:changeit@127.0.0.1:1113', $connectTimeout = 1000, $heartbeatTimeout = 5000)
     {
         // connector compatibility
         $connectTimeout = ($connectTimeout > 0) ? $connectTimeout / 1000 : 0;
-        $this->heartBeatRate = $heartBeatRate;
+        $this->heartbeatTimeout = $heartbeatTimeout;
 
         if (false === stripos($dsn, '://')) {
             $dsn = 'tcp://' . $dsn;
@@ -205,8 +203,20 @@ class EventStore
      */
     protected function heartbeat()
     {
+        $timeout = $this->heartbeatTimeout/1000;
+        $called = microtime(true);
+
+        Observable::interval($this->heartbeatTimeout)
+            ->doOnNext(function () use (&$called, &$timeout) {
+                $now = microtime(true);
+                if (($now - $called) > $timeout) {
+                    throw new \Exception("timeout");
+                }
+            })
+            ->subscribeCallback(null, [$this->connectionSubject, 'onError'], null, new EventLoopScheduler($this->loop));
+
+
         return $this->readBuffer
-            ->timeout($this->heartBeatRate)
             ->filter(
                 function (SocketMessage $message) {
                     return $message->getMessageType()->getType() === MessageType::HEARTBEAT_REQUEST;
@@ -214,7 +224,8 @@ class EventStore
             )
             ->subscribe(
                 new CallbackObserver(
-                    function (SocketMessage $message) {
+                    function (SocketMessage $message) use (&$called) {
+                        $called = microtime(true);
                         $this->writer->composeAndWrite(MessageType::HEARTBEAT_RESPONSE, null, $message->getCorrelationID());
                     },
                     [$this->connectionSubject, 'onError']
@@ -233,7 +244,7 @@ class EventStore
      */
     public function write($streamId, $events, $expectedVersion = -2, $requireMaster = false)
     {
-        if($events instanceof NewEventInterface) {
+        if ($events instanceof NewEventInterface) {
             $events = [$events];
         }
         if (!$events) {
@@ -304,10 +315,9 @@ class EventStore
      */
     public function catchUpSubscription($streamId, $startFrom = self::POSITION_START, $resolveLink = false)
     {
-        if($startFrom === self::POSITION_END) {
+        if ($startFrom === self::POSITION_END) {
             $observable = $this->readEvent($streamId, $startFrom);
-        }
-        else {
+        } else {
             $observable = $this->readEventsForward($streamId, $startFrom, self::POSITION_LATEST, $resolveLink);
         }
         return $observable->concat($this->volatileSubscription($streamId, $resolveLink));
@@ -413,7 +423,7 @@ class EventStore
                 function (PersistentSubscriptionStreamEventAppeared $eventAppeared) use ($correlationID, $group) {
                     $record = $eventAppeared->getEvent()->getEvent();
                     $link = $eventAppeared->getEvent()->getLink();
-                    if(!$record) {
+                    if (!$record) {
                         // TODO ugly patch investigate why
                         $record = $link;
                     }
