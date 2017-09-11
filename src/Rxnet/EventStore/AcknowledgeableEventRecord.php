@@ -47,7 +47,7 @@ class AcknowledgeableEventRecord extends EventRecord
 
         parent::__construct($event);
 
-        if($linkedEvent) {
+        if ($linkedEvent) {
             $this->stream_id = $linkedEvent->getEventStreamId();
             $this->number = $linkedEvent->getEventNumber();
         }
@@ -73,10 +73,15 @@ class AcknowledgeableEventRecord extends EventRecord
         return $this->data;
     }
 
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
     public function ack()
     {
         $ack = new PersistentSubscriptionAckEvents();
-        $ack->setSubscriptionId($this->stream_id."::".$this->group);
+        $ack->setSubscriptionId($this->stream_id . "::" . $this->group);
 
         $events = new RepeatedField(GPBType::BYTES);
         $events[] = $this->binaryId;
@@ -94,7 +99,7 @@ class AcknowledgeableEventRecord extends EventRecord
     public function nack($action = self::NACK_ACTION_UNKNOWN, $msg = '')
     {
         $nack = new PersistentSubscriptionNakEvents();
-        $nack->setSubscriptionId($this->stream_id."::".$this->group);
+        $nack->setSubscriptionId($this->stream_id . "::" . $this->group);
         $nack->setAction($action);
         $nack->setMessage($msg);
 

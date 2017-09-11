@@ -249,7 +249,6 @@ class EventStore
             ->filter(
                 function (SocketMessage $message) use (&$called) {
                     $called = microtime(true);
-                    echo '#';
                     return $message->getMessageType()->getType() === MessageType::HEARTBEAT_REQUEST;
                 }
             )
