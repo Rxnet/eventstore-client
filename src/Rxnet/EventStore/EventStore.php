@@ -79,7 +79,7 @@ class EventStore
     protected $readBufferDisposable;
     /** @var  array */
     protected $dsn;
-    /** @var int  */
+    /** @var int */
     protected $state = self::DISCONNECTED;
 
     /**
@@ -99,7 +99,8 @@ class EventStore
         $this->connector = $tcp ?: new Tcp($this->loop);
     }
 
-    public function isConnected() {
+    public function isConnected()
+    {
         return $this->state === self::CONNECTED;
     }
 
@@ -112,17 +113,17 @@ class EventStore
     public function connect($dsn = 'tcp://admin:changeit@127.0.0.1:1113', $connectTimeout = 1000, $heartbeatTimeout = 5000)
     {
 
-        if($this->state === self::CONNECTING) {
-            while($this->state === self::CONNECTING) {
+        if ($this->state === self::CONNECTING) {
+            while ($this->state === self::CONNECTING) {
                 $this->loop->tick();
             }
-            return Observable::create(function(ObserverInterface $observer) {
+            return Observable::create(function (ObserverInterface $observer) {
                 $this->connectionSubject->subscribe($observer);
                 $this->connectionSubject->onNext(new Event('/eventstore/connected'));
             });
         }
-        if($this->state === self::CONNECTED) {
-            return Observable::create(function(ObserverInterface $observer) {
+        if ($this->state === self::CONNECTED) {
+            return Observable::create(function (ObserverInterface $observer) {
                 $this->connectionSubject->subscribe($observer);
                 $this->connectionSubject->onNext(new Event('/eventstore/connected'));
             });
@@ -232,7 +233,7 @@ class EventStore
      */
     protected function heartbeat()
     {
-        $timeout = $this->heartbeatTimeout/1000;
+        $timeout = $this->heartbeatTimeout / 1000;
         $called = microtime(true);
 
         Observable::interval($this->heartbeatTimeout)
@@ -628,61 +629,75 @@ class EventStore
 
         // TODO backpressure, wait for event's array to be readed completely before asking for more in stream
         // OnDemand ? onBackpressureBuffer ?
-        return $this->writer
-            // First query
-            ->composeAndWrite($messageType, $query, $correlationID)
-            // When written wait for all responses
-            ->concat($this->readBuffer->waitFor($correlationID, -1))
-            // Throw if we have an error message
-            ->flatMap(function (ReadStreamEventsCompleted $event) {
-                if ($error = $event->getError()) {
-                    return Observable::error(new \Exception($error));
-                }
-                return Observable::just($event);
-            })
-            // If more data is needed do another query
-            ->doOnNext(function (ReadStreamEventsCompleted $event) use ($query, $correlationID, &$end, &$asked, $max, $maxPossible, $messageType) {
-                // TODO handle no results
-                $records = $event->getEvents();
-                $asked -= count($records);
-                if ($event->getIsEndOfStream()) {
-                    $end = true;
-                } elseif ($asked <= 0 && $max != self::POSITION_LATEST) {
-                    $end = true;
-                }
-                if (!$end) {
-                    $start = $records[count($records) - 1];
+        return Observable::create(function(ObserverInterface $observer) use(&$correlationID, &$maxPossible, &$asked, &$max, &$end, &$messageType, $query) {
+            $disposable = $this->writer
+                // First query
+                ->composeAndWrite($messageType, $query, $correlationID)
+                // When written wait for all responses
+                ->concat($this->readBuffer->waitFor($correlationID, -1))
+                // Throw if we have an error message
+                ->flatMap(function (ReadStreamEventsCompleted $event) use(&$end) {
+                    if ($error = $event->getError()) {
+                        return Observable::error(new \Exception($error));
+                    }
 
-                    /* @var ResolvedIndexedEvent $start */
-                    $start = ($messageType === MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
-                    $query->setFromEventNumber($start);
-                    $query->setMaxCount($asked > $maxPossible ? $maxPossible : $asked);
+                    return Observable::just($event);
+                })
+                // If more data is needed do another query
+                ->doOnNext(function (ReadStreamEventsCompleted $event) use ($query, $correlationID, &$end, &$asked, $max, $maxPossible, $messageType) {
+                    // TODO handle no results
+                    $records = $event->getEvents();
 
-                    //echo "Not end of stream need slice from position {$start} next is {$event->getNextEventNumber()} \n";
-                    $this->writer->composeAndWrite(
-                        $messageType,
-                        $query,
-                        $correlationID
-                    );
-                }
-            })
-            // Continue to watch until we have all our results (or end)
-            ->takeWhile(function () use (&$end) {
-                return !$end;
-            })
-            // Format EventRecord for easy reading
-            ->flatMap(function (ReadStreamEventsCompleted $event) use (&$asked, &$end) {
-                /* @var ReadStreamEventsCompleted $event */
-                $records = [];
-                /* @var \Rxnet\EventStore\EventRecord[] $records */
-                $events = $event->getEvents();
-                foreach ($events as $item) {
-                    /* @var \Rxnet\EventStore\Data\ResolvedIndexedEvent $item */
-                    $records[] = new EventRecord($item->getEvent());
-                }
-                // Will emit onNext for each event
-                return Observable::fromArray($records);
+                    $asked -= count($records);
+                    if ($event->getIsEndOfStream()) {
+                        $end = true;
+                    } elseif ($asked <= 0 && $max != self::POSITION_LATEST) {
+                        $end = true;
+                    }
+                    if (!$end) {
+                        $start = $records[count($records) - 1];
+
+                        /* @var ResolvedIndexedEvent $start */
+                        $start = ($messageType === MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
+                        $query->setFromEventNumber($start);
+                        $query->setMaxCount($asked > $maxPossible ? $maxPossible : $asked);
+
+                        //echo "Not end of stream need slice from position {$start} next is {$event->getNextEventNumber()} \n";
+                        $this->writer->composeAndWrite(
+                            $messageType,
+                            $query,
+                            $correlationID
+                        );
+                    }
+                })
+
+                // Format EventRecord for easy reading
+                ->flatMap(function (ReadStreamEventsCompleted $event) use (&$asked, &$end, $observer) {
+                    //dump($event);
+                    /* @var ReadStreamEventsCompleted $event */
+                    $records = [];
+                    /* @var \Rxnet\EventStore\EventRecord[] $records */
+                    $events = $event->getEvents();
+                    foreach ($events as $item) {
+                        /* @var \Rxnet\EventStore\Data\ResolvedIndexedEvent $item */
+                        $records[] = new EventRecord($item->getEvent());
+                    }
+                    // Will emit onNext for each event
+                    return Observable::fromArray($records)
+                        ->doOnCompleted(function() use(&$end, $observer) {
+                            if($end) {
+                                $observer->onCompleted();
+                            }
+                        });
+                })
+                ->subscribe($observer);
+
+
+            return new CallbackDisposable(function() use($disposable) {
+                $disposable->dispose();
             });
+        });
+
 
     }
 }
