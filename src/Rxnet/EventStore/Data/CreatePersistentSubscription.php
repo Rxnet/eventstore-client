@@ -26,7 +26,7 @@ class CreatePersistentSubscription extends \Google\Protobuf\Internal\Message
      */
     private $resolve_link_tos = false;
     /**
-     * <code>int32 start_from = 4;</code>
+     * <code>int64 start_from = 4;</code>
      */
     private $start_from = 0;
     /**
@@ -135,7 +135,7 @@ class CreatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 start_from = 4;</code>
+     * <code>int64 start_from = 4;</code>
      */
     public function getStartFrom()
     {
@@ -143,11 +143,11 @@ class CreatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 start_from = 4;</code>
+     * <code>int64 start_from = 4;</code>
      */
     public function setStartFrom($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkInt64($var);
         $this->start_from = $var;
     }
 

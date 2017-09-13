@@ -18,7 +18,7 @@ class WriteEvents extends \Google\Protobuf\Internal\Message
      */
     private $event_stream_id = '';
     /**
-     * <code>int32 expected_version = 2;</code>
+     * <code>int64 expected_version = 2;</code>
      */
     private $expected_version = 0;
     /**
@@ -53,7 +53,7 @@ class WriteEvents extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 expected_version = 2;</code>
+     * <code>int64 expected_version = 2;</code>
      */
     public function getExpectedVersion()
     {
@@ -61,11 +61,11 @@ class WriteEvents extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 expected_version = 2;</code>
+     * <code>int64 expected_version = 2;</code>
      */
     public function setExpectedVersion($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkInt64($var);
         $this->expected_version = $var;
     }
 
@@ -82,8 +82,8 @@ class WriteEvents extends \Google\Protobuf\Internal\Message
      */
     public function setEvents(&$var)
     {
-        GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Rxnet\EventStore\Data\NewEvent::class);
-        $this->events = $var;
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Rxnet\EventStore\Data\NewEvent::class);
+        $this->events = $arr;
     }
 
     /**

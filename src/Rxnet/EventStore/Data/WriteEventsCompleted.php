@@ -22,11 +22,11 @@ class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
      */
     private $message = '';
     /**
-     * <code>int32 first_event_number = 3;</code>
+     * <code>int64 first_event_number = 3;</code>
      */
     private $first_event_number = 0;
     /**
-     * <code>int32 last_event_number = 4;</code>
+     * <code>int64 last_event_number = 4;</code>
      */
     private $last_event_number = 0;
     /**
@@ -37,6 +37,10 @@ class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
      * <code>int64 commit_position = 6;</code>
      */
     private $commit_position = 0;
+    /**
+     * <code>int64 current_version = 7;</code>
+     */
+    private $current_version = 0;
 
     public function __construct() {
         \GPBMetadata\ClientMessageDtos::initOnce();
@@ -78,7 +82,7 @@ class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 first_event_number = 3;</code>
+     * <code>int64 first_event_number = 3;</code>
      */
     public function getFirstEventNumber()
     {
@@ -86,16 +90,16 @@ class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 first_event_number = 3;</code>
+     * <code>int64 first_event_number = 3;</code>
      */
     public function setFirstEventNumber($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkInt64($var);
         $this->first_event_number = $var;
     }
 
     /**
-     * <code>int32 last_event_number = 4;</code>
+     * <code>int64 last_event_number = 4;</code>
      */
     public function getLastEventNumber()
     {
@@ -103,11 +107,11 @@ class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 last_event_number = 4;</code>
+     * <code>int64 last_event_number = 4;</code>
      */
     public function setLastEventNumber($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkInt64($var);
         $this->last_event_number = $var;
     }
 
@@ -143,6 +147,23 @@ class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkInt64($var);
         $this->commit_position = $var;
+    }
+
+    /**
+     * <code>int64 current_version = 7;</code>
+     */
+    public function getCurrentVersion()
+    {
+        return $this->current_version;
+    }
+
+    /**
+     * <code>int64 current_version = 7;</code>
+     */
+    public function setCurrentVersion($var)
+    {
+        GPBUtil::checkInt64($var);
+        $this->current_version = $var;
     }
 
 }

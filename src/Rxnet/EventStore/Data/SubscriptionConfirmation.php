@@ -18,7 +18,7 @@ class SubscriptionConfirmation extends \Google\Protobuf\Internal\Message
      */
     private $last_commit_position = 0;
     /**
-     * <code>int32 last_event_number = 2;</code>
+     * <code>int64 last_event_number = 2;</code>
      */
     private $last_event_number = 0;
 
@@ -45,7 +45,7 @@ class SubscriptionConfirmation extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 last_event_number = 2;</code>
+     * <code>int64 last_event_number = 2;</code>
      */
     public function getLastEventNumber()
     {
@@ -53,11 +53,11 @@ class SubscriptionConfirmation extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 last_event_number = 2;</code>
+     * <code>int64 last_event_number = 2;</code>
      */
     public function setLastEventNumber($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkInt64($var);
         $this->last_event_number = $var;
     }
 
