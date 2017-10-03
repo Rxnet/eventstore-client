@@ -11,7 +11,7 @@ use Rxnet\Httpd\Httpd;
 use Rxnet\Httpd\HttpdEvent;
 use Rxnet\Operator\OnBackPressureBuffer;
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $eventStore = new EventStore();
 // Wait connexion to be up before starting
