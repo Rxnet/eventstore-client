@@ -5,7 +5,7 @@ use Rx\Scheduler\EventLoopScheduler;
 use Rxnet\EventStore\Data\WriteEventsCompleted;
 use Rxnet\EventStore\NewEvent\JsonEvent;
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 //$loop = new \Rxnet\Loop\LibEvLoop();
 //EventLoop::setLoop($loop);
 

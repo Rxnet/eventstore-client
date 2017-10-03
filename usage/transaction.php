@@ -5,7 +5,7 @@ use Rxnet\EventStore\Data\TransactionWriteCompleted;
 use Rxnet\EventStore\NewEvent\JsonEvent;
 use Rxnet\EventStore\Transaction;
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $eventStore = new \Rxnet\EventStore\EventStore();
 \Rxnet\await($eventStore->connect());
