@@ -7,8 +7,9 @@ use Rxnet\EventStore\Data\NewEvent;
 
 class JsonEvent implements NewEventInterface
 {
+    use NewEventTrait;
     protected $message;
-    protected $contentType = 2;
+    protected $contentType = 1;
 
     public function __construct($type, $data, $id = null, $meta = [])
     {
@@ -35,8 +36,16 @@ class JsonEvent implements NewEventInterface
 
     public function setId($id)
     {
-        $id = $id ?: Uuid::uuid4()->toString();
-        $id = hex2bin(str_replace('-', '', $id));
+        if(!$id) {
+            $id = Uuid::uuid4()->getHex();
+        }
+        elseif (!Uuid::isValid($id)) {
+            $id = Uuid::uuid3(Uuid::NAMESPACE_OID, $id)->getHex();
+        }
+        else {
+            $id = str_replace('-', '', $id);
+        }
+        $id = hex2bin($id);
         $this->message->setEventId($id);
     }
 
@@ -48,5 +57,14 @@ class JsonEvent implements NewEventInterface
     public function getMessage()
     {
         return $this->message;
+    }
+    public function toArray()
+    {
+        return [
+            'eventId' => $this->getId(),
+            'eventType' => $this->getType(),
+            'data' => json_decode($this->getData(), true),
+            'metadata' => json_decode($this->getMetaData(), true)
+        ];
     }
 }

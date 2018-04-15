@@ -11,10 +11,26 @@ use Rxnet\EventStore\Message\MessageType;
 
 class AcknowledgeableEventRecord extends EventRecord
 {
+    /**
+     * Client unknown on action. Let server decide
+     */
     const NACK_ACTION_UNKNOWN = 0;
+    /**
+     * Park message do not resend. Put on poison queue
+     * Don't retry the message, park it until a request is sent to reply the parked messages
+     */
     const NACK_ACTION_PARK = 1;
+    /**
+     * Explicitly retry the message
+     */
     const NACK_ACTION_RETRY = 2;
+    /**
+     * Skip this message do not resend do not put in poison queue
+     */
     const NACK_ACTION_SKIP = 3;
+    /**
+     * Stop the subscription.
+     */
     const NACK_ACTION_STOP = 4;
 
 
@@ -30,6 +46,12 @@ class AcknowledgeableEventRecord extends EventRecord
         $this->binaryId = ($linkedEvent) ? $linkedEvent->getEventId() : $event->getEventId();
 
         parent::__construct($event);
+
+        if ($linkedEvent) {
+            $this->stream_id = $linkedEvent->getEventStreamId();
+            $this->number = $linkedEvent->getEventNumber();
+        }
+
         $this->correlationID = $correlationID;
         $this->writer = $writer;
         $this->group = $group;
@@ -51,10 +73,15 @@ class AcknowledgeableEventRecord extends EventRecord
         return $this->data;
     }
 
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
     public function ack()
     {
         $ack = new PersistentSubscriptionAckEvents();
-        $ack->setSubscriptionId($this->stream_id."::".$this->group);
+        $ack->setSubscriptionId($this->stream_id . "::" . $this->group);
 
         $events = new RepeatedField(GPBType::BYTES);
         $events[] = $this->binaryId;
@@ -72,7 +99,7 @@ class AcknowledgeableEventRecord extends EventRecord
     public function nack($action = self::NACK_ACTION_UNKNOWN, $msg = '')
     {
         $nack = new PersistentSubscriptionNakEvents();
-        $nack->setSubscriptionId($this->stream_id."::".$this->group);
+        $nack->setSubscriptionId($this->stream_id . "::" . $this->group);
         $nack->setAction($action);
         $nack->setMessage($msg);
 

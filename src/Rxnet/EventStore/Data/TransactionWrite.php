@@ -61,8 +61,8 @@ class TransactionWrite extends \Google\Protobuf\Internal\Message
      */
     public function setEvents(&$var)
     {
-        GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Rxnet\EventStore\Data\NewEvent::class);
-        $this->events = $var;
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Rxnet\EventStore\Data\NewEvent::class);
+        $this->events = $arr;
     }
 
     /**

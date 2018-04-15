@@ -18,7 +18,7 @@ class ReadStreamEvents extends \Google\Protobuf\Internal\Message
      */
     private $event_stream_id = '';
     /**
-     * <code>int32 from_event_number = 2;</code>
+     * <code>int64 from_event_number = 2;</code>
      */
     private $from_event_number = 0;
     /**
@@ -57,7 +57,7 @@ class ReadStreamEvents extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 from_event_number = 2;</code>
+     * <code>int64 from_event_number = 2;</code>
      */
     public function getFromEventNumber()
     {
@@ -65,11 +65,11 @@ class ReadStreamEvents extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 from_event_number = 2;</code>
+     * <code>int64 from_event_number = 2;</code>
      */
     public function setFromEventNumber($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkInt64($var);
         $this->from_event_number = $var;
     }
 

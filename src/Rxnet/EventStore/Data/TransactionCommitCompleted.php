@@ -26,11 +26,11 @@ class TransactionCommitCompleted extends \Google\Protobuf\Internal\Message
      */
     private $message = '';
     /**
-     * <code>int32 first_event_number = 4;</code>
+     * <code>int64 first_event_number = 4;</code>
      */
     private $first_event_number = 0;
     /**
-     * <code>int32 last_event_number = 5;</code>
+     * <code>int64 last_event_number = 5;</code>
      */
     private $last_event_number = 0;
     /**
@@ -99,7 +99,7 @@ class TransactionCommitCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 first_event_number = 4;</code>
+     * <code>int64 first_event_number = 4;</code>
      */
     public function getFirstEventNumber()
     {
@@ -107,16 +107,16 @@ class TransactionCommitCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 first_event_number = 4;</code>
+     * <code>int64 first_event_number = 4;</code>
      */
     public function setFirstEventNumber($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkInt64($var);
         $this->first_event_number = $var;
     }
 
     /**
-     * <code>int32 last_event_number = 5;</code>
+     * <code>int64 last_event_number = 5;</code>
      */
     public function getLastEventNumber()
     {
@@ -124,11 +124,11 @@ class TransactionCommitCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 last_event_number = 5;</code>
+     * <code>int64 last_event_number = 5;</code>
      */
     public function setLastEventNumber($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkInt64($var);
         $this->last_event_number = $var;
     }
 

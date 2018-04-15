@@ -22,11 +22,11 @@ class ReadStreamEventsCompleted extends \Google\Protobuf\Internal\Message
      */
     private $result = 0;
     /**
-     * <code>int32 next_event_number = 3;</code>
+     * <code>int64 next_event_number = 3;</code>
      */
     private $next_event_number = 0;
     /**
-     * <code>int32 last_event_number = 4;</code>
+     * <code>int64 last_event_number = 4;</code>
      */
     private $last_event_number = 0;
     /**
@@ -60,8 +60,8 @@ class ReadStreamEventsCompleted extends \Google\Protobuf\Internal\Message
      */
     public function setEvents(&$var)
     {
-        GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Rxnet\EventStore\Data\ResolvedIndexedEvent::class);
-        $this->events = $var;
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Rxnet\EventStore\Data\ResolvedIndexedEvent::class);
+        $this->events = $arr;
     }
 
     /**
@@ -82,7 +82,7 @@ class ReadStreamEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 next_event_number = 3;</code>
+     * <code>int64 next_event_number = 3;</code>
      */
     public function getNextEventNumber()
     {
@@ -90,16 +90,16 @@ class ReadStreamEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 next_event_number = 3;</code>
+     * <code>int64 next_event_number = 3;</code>
      */
     public function setNextEventNumber($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkInt64($var);
         $this->next_event_number = $var;
     }
 
     /**
-     * <code>int32 last_event_number = 4;</code>
+     * <code>int64 last_event_number = 4;</code>
      */
     public function getLastEventNumber()
     {
@@ -107,11 +107,11 @@ class ReadStreamEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 last_event_number = 4;</code>
+     * <code>int64 last_event_number = 4;</code>
      */
     public function setLastEventNumber($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkInt64($var);
         $this->last_event_number = $var;
     }
 

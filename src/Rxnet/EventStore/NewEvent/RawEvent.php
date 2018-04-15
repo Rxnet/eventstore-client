@@ -1,6 +1,6 @@
 <?php
 
-namespace Rxnet\EventStore;
+namespace Rxnet\EventStore\NewEvent;
 
 
 use Rxnet\EventStore\NewEvent\JsonEvent;
@@ -8,7 +8,7 @@ use Rxnet\EventStore\NewEvent\NewEventInterface;
 
 class RawEvent extends JsonEvent implements NewEventInterface
 {
-    protected $contentType = 1;
+    protected $contentType = 2;
 
     public function setData($data)
     {

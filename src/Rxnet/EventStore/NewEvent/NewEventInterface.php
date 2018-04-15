@@ -13,4 +13,8 @@ interface NewEventInterface
     public function setType($type);
 
     public function getMessage();
+
+    public function getType();
+    public function getData();
+    public function getMetaData();
 }

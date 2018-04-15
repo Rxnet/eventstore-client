@@ -22,7 +22,7 @@ class PersistentSubscriptionConfirmation extends \Google\Protobuf\Internal\Messa
      */
     private $subscription_id = '';
     /**
-     * <code>int32 last_event_number = 3;</code>
+     * <code>int64 last_event_number = 3;</code>
      */
     private $last_event_number = 0;
 
@@ -66,7 +66,7 @@ class PersistentSubscriptionConfirmation extends \Google\Protobuf\Internal\Messa
     }
 
     /**
-     * <code>int32 last_event_number = 3;</code>
+     * <code>int64 last_event_number = 3;</code>
      */
     public function getLastEventNumber()
     {
@@ -74,11 +74,11 @@ class PersistentSubscriptionConfirmation extends \Google\Protobuf\Internal\Messa
     }
 
     /**
-     * <code>int32 last_event_number = 3;</code>
+     * <code>int64 last_event_number = 3;</code>
      */
     public function setLastEventNumber($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkInt64($var);
         $this->last_event_number = $var;
     }
 

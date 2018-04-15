@@ -57,8 +57,8 @@ class PersistentSubscriptionAckEvents extends \Google\Protobuf\Internal\Message
      */
     public function setProcessedEventIds(&$var)
     {
-        GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::BYTES);
-        $this->processed_event_ids = $var;
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::BYTES);
+        $this->processed_event_ids = $arr;
     }
 
 }

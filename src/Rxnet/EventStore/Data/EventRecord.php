@@ -18,7 +18,7 @@ class EventRecord extends \Google\Protobuf\Internal\Message
      */
     private $event_stream_id = '';
     /**
-     * <code>int32 event_number = 2;</code>
+     * <code>int64 event_number = 2;</code>
      */
     private $event_number = 0;
     /**
@@ -77,7 +77,7 @@ class EventRecord extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 event_number = 2;</code>
+     * <code>int64 event_number = 2;</code>
      */
     public function getEventNumber()
     {
@@ -85,11 +85,11 @@ class EventRecord extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 event_number = 2;</code>
+     * <code>int64 event_number = 2;</code>
      */
     public function setEventNumber($var)
     {
-        GPBUtil::checkInt32($var);
+        GPBUtil::checkInt64($var);
         $this->event_number = $var;
     }
 
