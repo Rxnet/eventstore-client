@@ -16,9 +16,9 @@ $eventStore->connect('tcp://admin:changeit@localhost:1113');
 
 $eventStore = new \Rxnet\EventStore\EventStore();
 // Lazy way, to connect
-\Rxnet\await($eventStore->connect());
+$eventStore->connect()
+->subscribe(function() { echo "connected"; });
 
-echo "connected \n";
 ```
 
 ### Write
@@ -30,7 +30,7 @@ $eventA = new \Rxnet\EventStore\NewEvent\JsonEvent('event_type1', ['data' => 'a'
 $eventB = new \Rxnet\EventStore\RawEvent('event_type2', 'raw data', 'raw metadata');
 
 $eventStore->write('category-test_stream_id', [$eventA, $eventB])
-    ->subscribeCallback(function(\Rxnet\EventStore\Data\WriteEventsCompleted $eventsCompleted) {
+    ->subscribe(function(\Rxnet\EventStore\Data\WriteEventsCompleted $eventsCompleted) {
         echo "Last event number {$eventsCompleted->getLastEventNumber()} on commit position {$eventsCompleted->getCommitPosition()} \n";
     });
 ```
@@ -40,7 +40,7 @@ $eventStore->write('category-test_stream_id', [$eventA, $eventB])
 ```php
 <?php
 $eventStore->startTransaction('category-test_stream')
-    ->subscribeCallback(
+    ->subscribe(
         function (\Rxnet\EventStore\Transaction $transaction) {
             $eventA = new JsonEvent('event_type', ['i' => "data"]);
             $eventB = new JsonEvent('event_type', ['i' => "data"]);
@@ -48,7 +48,7 @@ $eventStore->startTransaction('category-test_stream')
             return $transaction->write([$eventA, $eventB])
                 // Commit to make it work
                 ->flatMap([$transaction, 'commit'])
-                ->subscribeCallback(
+                ->subscribe(
                     function (TransactionCommitCompleted $commitCompleted) {
                         echo "Transaction {$commitCompleted->getTransactionId()} commit completed : events from {$commitCompleted->getFirstEventNumber()} to {$commitCompleted->getLastEventNumber()} \n";
                     }
@@ -62,7 +62,7 @@ Connect to persistent subscription $ce-category (projection) has group my-group,
 ```php
 <?php
 $eventStore->persistentSubscription('$projection-category', 'my-group')
-    ->subscribeCallback(function(\Rxnet\EventStore\AcknowledgeableEventRecord $event) {
+    ->subscribe(function(\Rxnet\EventStore\AcknowledgeableEventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
         if($event->getNumber() %2) {
             $event->ack();
@@ -79,7 +79,7 @@ SubscribeCallback will be called when a new event appeared
 ```php
 <?php
 $eventStore->volatileSubscription('category-test_stream_id')
-    ->subscribeCallback(function(\Rxnet\EventStore\EventRecord $event) {
+    ->subscribe(function(\Rxnet\EventStore\EventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
     });
 ```
@@ -88,7 +88,7 @@ Read all events from position 100, when everything is read, watch for new events
 ```php
 <?php
 $eventStore->catchUpSubscription('category-test_stream_id', 100)
-    ->subscribeCallback(function(\Rxnet\EventStore\EventRecord $event) {
+    ->subscribe(function(\Rxnet\EventStore\EventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
     });
 ```
@@ -99,7 +99,7 @@ Read from event 0 to event 100 on stream category-test_stream_id then end
 ```php
 <?php
 $eventStore->readEventsForward('category-test_stream_id', 0, 100)
-    ->subscribeCallback(function(\Rxnet\EventStore\EventRecord $event) {
+    ->subscribe(function(\Rxnet\EventStore\EventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
     });
 ```
@@ -108,7 +108,7 @@ Read backward (latest to oldest) from event 100 to event 90 on stream category-t
 ```php
 <?php
 $eventStore->readEventsBackWard('category-test_stream_id', 100, 10)
-    ->subscribeCallback(function(\Rxnet\EventStore\EventRecord $event) {
+    ->subscribe(function(\Rxnet\EventStore\EventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
     });
 ```
@@ -117,7 +117,7 @@ Read first event detail from category-test_stream_id
 ```php
 <?php
 $eventStore->readEvent('category-test_stream_id', 0)
-    ->subscribeCallback(function(\Rxnet\EventStore\EventRecord $event) {
+    ->subscribe(function(\Rxnet\EventStore\EventRecord $event) {
         echo "received {$event->getId()} event {$event->getType()} ({$event->getNumber()}) with id {$event->getId()} on {$event->getStreamId()} \n";
     });
 ```
@@ -135,7 +135,7 @@ $eventStore->readEvent('category-test_stream_id', 0)
  - [x] Auto re-connect to master if needed
  - [x] Reconnect and disconnected from remote
  - [x] Transactions
- - [ ] TLS connect
+ - [x] TLS connect
  - [ ] Write some specs
  - [ ] create / update / delete persistent subscription
  - [ ] create / update / delete projection

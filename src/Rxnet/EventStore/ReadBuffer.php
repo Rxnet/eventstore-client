@@ -30,39 +30,38 @@ class ReadBuffer extends Subject
     }
 
     /**
-     * @param StreamEvent $value
+     * @param string $value
      * @return null|void
      */
     public function onNext($value)
     {
-        $data = $value->getData();
-        if (!$data) {
+        if (!$value) {
             return null;
         }
 
         $socketMessages = array();
 
         if (!is_null($this->currentMessage)) {
-            $data = $this->currentMessage . $data;
+            $value = $this->currentMessage . $value;
         }
 
         do {
-            $buffer = new Buffer($data);
-            $dataLength = strlen($data);
+            $buffer = new Buffer($value);
+            $dataLength = strlen($value);
             $messageLength = $buffer->readInt32LE(0) + MessageConfiguration::INT_32_LENGTH;
 
             if ($dataLength == $messageLength) {
-                $socketMessages[] = $this->decomposeMessage($data);
+                $socketMessages[] = $this->decomposeMessage($value);
                 $this->currentMessage = null;
             } elseif ($dataLength > $messageLength) {
-                $message = substr($data, 0, $messageLength);
+                $message = substr($value, 0, $messageLength);
                 $socketMessages[] = $this->decomposeMessage($message);
 
                 // reset data to next message
-                $data = substr($data, $messageLength, $dataLength);
+                $value = substr($value, $messageLength, $dataLength);
                 $this->currentMessage = null;
             } else {
-                $this->currentMessage .= $data;
+                $this->currentMessage .= $value;
             }
 
         } while ($dataLength > $messageLength);
@@ -75,6 +74,7 @@ class ReadBuffer extends Subject
 
     public function waitFor($correlationID, $take = 1)
     {
+
         $observable = $this
             ->filter(
                 function (SocketMessage $message) use ($correlationID) {

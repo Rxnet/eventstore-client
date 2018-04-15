@@ -33,7 +33,7 @@ class Transaction
     /**
      * @param NewEventInterface[] $events
      * @param bool $requireMaster
-     * @return Observable\AnonymousObservable
+     * @return Observable
      */
     public function write($events , $requireMaster = false) {
         if(!is_array($events)) {
@@ -54,7 +54,7 @@ class Transaction
         $correlationID = $this->writer->createUUIDIfNeeded();
         return $this->writer
             ->composeAndWrite(MessageType::TRANSACTION_WRITE, $query, $correlationID)
-            ->concat($this->readBuffer->waitFor($correlationID, 1));
+            ->merge($this->readBuffer->waitFor($correlationID, 1));
     }
 
     /**

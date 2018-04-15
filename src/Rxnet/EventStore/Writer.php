@@ -2,20 +2,22 @@
 
 namespace Rxnet\EventStore;
 
+use EventLoop\EventLoop;
 use Google\Protobuf\Internal\Message;
 use Ramsey\Uuid\Uuid;
 use Rx\Observable;
+use Rx\ObserverInterface;
 use Rxnet\EventStore\Message\Credentials;
 use Rxnet\EventStore\Message\MessageConfiguration;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
-use Rxnet\Transport\Stream;
+use Rxnet\Socket\Connection;
 use TrafficCophp\ByteBuffer\Buffer;
 use Zend\Stdlib\SplQueue;
 
 class Writer
 {
-    /** @var  Stream */
+    /** @var  Connection */
     protected $stream;
     /** @var  Credentials */
     protected $credentials;
@@ -33,7 +35,7 @@ class Writer
     }
 
     /**
-     * @param Stream $stream
+     * @param Connection $stream
      */
     public function setSocketStream($stream)
     {
@@ -65,20 +67,10 @@ class Writer
     public function write(SocketMessage $message)
     {
         $data = $this->encode($message);
+        $this->stream->write($data);
 
-        $this->queue->push($data);
+        return Observable::empty();
 
-        return $this->dequeue();
-    }
-
-    protected function dequeue()
-    {
-        if (!$this->queue->count()) {
-            return Observable::emptyObservable();
-        }
-        $data = $this->queue->pop();
-        return $this->stream->write($data)
-            ->concatMapTo($this->dequeue());
     }
 
 

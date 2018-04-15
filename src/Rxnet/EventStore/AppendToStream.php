@@ -78,16 +78,15 @@ class AppendToStream
             throw new \LogicException('You commit events but added none');
         }
         $correlationID = $this->writer->createUUIDIfNeeded();
-        return $this->writer->composeAndWrite(MessageType::WRITE_EVENTS, $this->writeEvents, $correlationID)
-            ->concat(
-                $this->readBuffer
-                    ->filter(
-                        function (SocketMessage $message) use ($correlationID) {
-                            return $message->getCorrelationID() == $correlationID;
-                        }
-                    )
-                    ->take(1)
+        $this->writer->composeAndWrite(MessageType::WRITE_EVENTS, $this->writeEvents, $correlationID);
+
+        return $this->readBuffer
+            ->filter(
+                function (SocketMessage $message) use ($correlationID) {
+                    return $message->getCorrelationID() == $correlationID;
+                }
             )
+            ->take(1)
             ->map(function (SocketMessage $message) {
                 return $message->getData();
             })
