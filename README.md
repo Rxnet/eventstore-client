@@ -1,9 +1,12 @@
 Event Store Client
 ==================
+[![License](https://poser.pugx.org/rxnet/eventstore-client/license)](https://packagist.org/packages/rxnet/eventstore-client)
+[![Latest Stable Version](https://poser.pugx.org/rxnet/eventstore-client/v/stable)](https://packagist.org/packages/rxnet/eventstore-client)
+[![Total Downloads](https://poser.pugx.org/rxnet/eventstore-client/downloads)](https://packagist.org/packages/rxnet/eventstore-client)
+[![Latest Unstable Version](https://poser.pugx.org/rxnet/eventstore-client/v/unstable)](https://packagist.org/packages/rxnet/eventstore-client)
+[![composer.lock](https://poser.pugx.org/rxnet/eventstore-clientt/composerlock)](https://packagist.org/packages/rxnet/eventstore-client)
 
 Asynchronous client for [EventStore](https://geteventstore.com/) TCP Api
-
-based on [Madkom/event-store-client](https://github.com/madkom/event-store-client)
 
 
 ## Usage
