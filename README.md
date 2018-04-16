@@ -4,7 +4,7 @@ Event Store Client
 [![Latest Stable Version](https://poser.pugx.org/rxnet/eventstore-client/v/stable)](https://packagist.org/packages/rxnet/eventstore-client)
 [![Total Downloads](https://poser.pugx.org/rxnet/eventstore-client/downloads)](https://packagist.org/packages/rxnet/eventstore-client)
 [![Latest Unstable Version](https://poser.pugx.org/rxnet/eventstore-client/v/unstable)](https://packagist.org/packages/rxnet/eventstore-client)
-[![composer.lock](https://poser.pugx.org/rxnet/eventstore-clientt/composerlock)](https://packagist.org/packages/rxnet/eventstore-client)
+[![composer.lock](https://poser.pugx.org/rxnet/eventstore-client/composerlock)](https://packagist.org/packages/rxnet/eventstore-client)
 
 Asynchronous client for [EventStore](https://geteventstore.com/) TCP Api
 
@@ -139,7 +139,7 @@ $eventStore->readEvent('category-test_stream_id', 0)
  - [x] Reconnect and disconnected from remote
  - [x] Transactions
  - [x] TLS connect
- - [ ] Write some specs
+ - [x] Write some specs
  - [ ] create / update / delete persistent subscription
  - [ ] create / update / delete projection
  - [ ] delete stream
