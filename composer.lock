@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f2101d3481ac214df8cff350765b86e7",
+    "content-hash": "f09f8be493b8c4a8432a4e1729d8d7ea",
     "packages": [
         {
             "name": "TrafficCophp/ByteBuffer",
@@ -878,20 +878,23 @@
         },
         {
             "name": "voryx/event-loop",
-            "version": "2.0.2",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/voryx/event-loop.git",
-                "reference": "4cd6bc28465303bf6da63202201463e420d4ec79"
+                "reference": "ed7ee6236945b64591f8ef2be855e6244f1439e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/voryx/event-loop/zipball/4cd6bc28465303bf6da63202201463e420d4ec79",
-                "reference": "4cd6bc28465303bf6da63202201463e420d4ec79",
+                "url": "https://api.github.com/repos/voryx/event-loop/zipball/ed7ee6236945b64591f8ef2be855e6244f1439e6",
+                "reference": "ed7ee6236945b64591f8ef2be855e6244f1439e6",
                 "shasum": ""
             },
             "require": {
-                "react/event-loop": "^0.4.2"
+                "react/event-loop": "^1.0 || ^0.5 || ^0.4.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6"
             },
             "type": "library",
             "autoload": {
@@ -927,7 +930,7 @@
                 "static",
                 "timer"
             ],
-            "time": "2017-03-14T01:10:32+00:00"
+            "time": "2018-04-18T00:07:06+00:00"
         }
     ],
     "packages-dev": [
