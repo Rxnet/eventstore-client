@@ -570,7 +570,13 @@ class EventStore
                     if (!$end) {
                         $start = $records[count($records) - 1];
                         /* @var ResolvedIndexedEvent $start */
-                        $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
+                        
+                        if (null === $start->getLink()) {
+                            $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
+                        } else {
+                            $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getLink()->getEventNumber() + 1 : $start->getLink()->getEventNumber() - 1;
+                        }
+
                         $query->setFromEventNumber($start);
                         $query->setMaxCount($asked > $maxPossible ? $maxPossible : $asked);
 
