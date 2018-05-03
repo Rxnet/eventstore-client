@@ -5,6 +5,7 @@ Event Store Client
 [![Total Downloads](https://poser.pugx.org/rxnet/eventstore-client/downloads)](https://packagist.org/packages/rxnet/eventstore-client)
 [![Latest Unstable Version](https://poser.pugx.org/rxnet/eventstore-client/v/unstable)](https://packagist.org/packages/rxnet/eventstore-client)
 [![composer.lock](https://poser.pugx.org/rxnet/eventstore-client/composerlock)](https://packagist.org/packages/rxnet/eventstore-client)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FRxnet%2Feventstore-client.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FRxnet%2Feventstore-client?ref=badge_shield)
 
 Asynchronous client for [EventStore](https://geteventstore.com/) TCP Api
 
@@ -149,3 +150,7 @@ If ClientMessageDtos.proto is modified, you must generate new Data php class
 ```bash
 ./vendor/bin/protobuf --include-descriptors -i . -o ./src ./ClientMessageDtos.proto
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FRxnet%2Feventstore-client.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FRxnet%2Feventstore-client?ref=badge_large)
