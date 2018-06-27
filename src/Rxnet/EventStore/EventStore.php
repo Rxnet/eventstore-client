@@ -41,7 +41,6 @@ use Rxnet\EventStore\Message\Credentials;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 use Rxnet\EventStore\NewEvent\NewEventInterface;
-use Zend\Stdlib\Exception\LogicException;
 
 class EventStore
 {
@@ -428,13 +427,13 @@ class EventStore
                                 return Observable::error(new NotMasterException($data->getExternalTcpAddress(), $data->getExternalTcpPort()));
                             case NotHandled::class :
                                 if ($data->getReason() == 0) {
-                                    return Observable::error(new LogicException("Server is not ready {$data->getAdditionalInfo()}", 0));
+                                    return Observable::error(new \LogicException("Server is not ready {$data->getAdditionalInfo()}", 0));
                                 }
-                                return Observable::error(new LogicException("Server is too busy {$data->getAdditionalInfo()}", 1));
+                                return Observable::error(new \LogicException("Server is too busy {$data->getAdditionalInfo()}", 1));
                             default:
                                 // Why are we here ?
                                 var_dump($data);
-                                return Observable::error(new LogicException("Unknown data received : " . get_class($data)));
+                                return Observable::error(new \LogicException("Unknown data received : " . get_class($data)));
                         }
                     }
                 )
