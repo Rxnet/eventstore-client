@@ -22,7 +22,8 @@
     "reactivex/rxphp": "^2.0",
     "rxnet/socket": "^0.1",
     "voryx/event-loop": "^3.0 || ^2.0",
-    "nesbot/carbon": "^1.22"
+    "nesbot/carbon": "^1.22",
+    "zendframework/zend-stdlib": "^3.2"
   },
   "require-dev": {
     "peridot-php/peridot-list-reporter": "^1.0",
@@ -35,8 +36,7 @@
     "cloak/peridot-cloak-plugin": "^2.0",
     "holyshared/file-fixture": "^2.0",
     "mrkrstphr/peridot-automock-plugin": "^0.5.0",
-    "protobuf-php/protobuf-plugin": "^0.1.3",
-    "zendframework/zend-stdlib": "^3.2"
+    "protobuf-php/protobuf-plugin": "^0.1.3"
   },
   "autoload": {
     "psr-4": {
