@@ -16,11 +16,11 @@
     }
   ],
   "require": {
-    "ramsey/uuid": "~3.5.1",
-    "TrafficCophp/ByteBuffer": "0.3",
+    "ramsey/uuid": "^3.5",
+    "TrafficCophp/ByteBuffer": "^0.3",
     "google/protobuf": "^3.2",
-    "reactivex/rxphp": "2.0.*",
-    "rxnet/socket": "0.1.0",
+    "reactivex/rxphp": "^2.0",
+    "rxnet/socket": "^0.1",
     "voryx/event-loop": "^3.0 || ^2.0",
     "nesbot/carbon": "^1.22"
   },
