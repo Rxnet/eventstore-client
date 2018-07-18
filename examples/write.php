@@ -2,7 +2,6 @@
 
 use EventLoop\EventLoop;
 use Rx\Observer\CallbackObserver;
-use Rx\Scheduler\EventLoopScheduler;
 use Rxnet\EventStore\Data\WriteEventsCompleted;
 use Rxnet\EventStore\NewEvent\JsonEvent;
 
@@ -13,7 +12,7 @@ $eventStore = new \Rxnet\EventStore\EventStore();
 $eventStore->connect()
     ->subscribe(function () use ($eventStore) {
         echo "connected \n";
-        \Rx\Observable::interval(1000)
+        \Rx\Observable::interval(100)
             ->flatMap(
                 function ($i) use ($eventStore) {
                     echo 'write : ';
