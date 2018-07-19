@@ -538,6 +538,7 @@ class EventStore
         // OnDemand ? onBackpressureBuffer ?
         return Observable::create(function (ObserverInterface $observer) use ($messageType, $query) {
             $end = false;
+            $stop = false;
             $maxPossible = 10; //4096
             $max = ($query instanceof ReadStreamEvents) ? $query->getMaxCount() : self::POSITION_LATEST;
 
@@ -559,7 +560,7 @@ class EventStore
                     return Observable::of($event);
                 })
                 // If more data is needed do another query
-                ->doOnNext(function (ReadStreamEventsCompleted $event) use ($query, $correlationID, &$end, &$asked, $max, $maxPossible, $messageType) {
+                ->do(function (ReadStreamEventsCompleted $event) use ($query, $correlationID, &$asked, &$end, $max) {
                     $records = $event->getEvents();
                     $asked -= count($records);
                     if ($event->getIsEndOfStream()) {
@@ -567,33 +568,9 @@ class EventStore
                     } elseif ($asked <= 0 && $max != self::POSITION_LATEST) {
                         $end = true;
                     }
-                    if (!$end) {
-                        $start = $records[count($records) - 1];
-                        /* @var ResolvedIndexedEvent $start */
-                        
-                        if (null === $start->getLink()) {
-                            $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
-                        } else {
-                            $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getLink()->getEventNumber() + 1 : $start->getLink()->getEventNumber() - 1;
-                        }
-
-                        $query->setFromEventNumber($start);
-                        $query->setMaxCount($asked > $maxPossible ? $maxPossible : $asked);
-
-                        //echo "Not end of stream need slice from position {$start} next is {$event->getNextEventNumber()} \n";
-                        $this->writer->composeAndWrite(
-                            $messageType,
-                            $query,
-                            $correlationID
-                        );
-                    }
-                })
-                // Continue to watch until we have all our results (or end)
-                ->takeWhile(function () use (&$end) {
-                    return !$end;
                 })
                 // Format EventRecord for easy reading
-                ->flatMap(function (ReadStreamEventsCompleted $event) use (&$asked, &$end) {
+                ->flatMap(function (ReadStreamEventsCompleted $event) use (&$asked, &$end, &$stop, $max, $maxPossible, $messageType, $query, $correlationID) {
                     /* @var ReadStreamEventsCompleted $event */
                     $records = [];
                     /* @var \Rxnet\EventStore\EventRecord[] $records */
@@ -603,7 +580,34 @@ class EventStore
                         $records[] = new EventRecord($item->getEvent());
                     }
                     // Will emit onNext for each event
-                    return Observable::fromArray($records);
+                    return Observable::fromArray($records)
+                        ->doOnCompleted(function () use (&$end, &$stop, &$events, &$asked, $max, $maxPossible, $messageType, $query, $correlationID) {
+                            if ($end) $stop = true;
+                            else {
+                                $start = $events[count($events) - 1];
+                                /* @var ResolvedIndexedEvent $start */
+
+                                if (null === $start->getLink()) {
+                                    $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
+                                } else {
+                                    $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getLink()->getEventNumber() + 1 : $start->getLink()->getEventNumber() - 1;
+                                }
+
+                                $query->setFromEventNumber($start);
+                                $query->setMaxCount($asked > $maxPossible ? $maxPossible : $asked);
+
+                                //echo "Not end of stream need slice from position {$start} next is {$event->getNextEventNumber()} \n";
+                                $this->writer->composeAndWrite(
+                                    $messageType,
+                                    $query,
+                                    $correlationID
+                                );
+                            }
+                        });
+                })
+                // Continue to watch until we have all our results (or end)
+                ->takeWhile(function () use (&$stop) {
+                    return !$stop;
                 })
                 ->subscribe($observer);
         });
