@@ -1,20 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vincent
- * Date: 26/04/2017
- * Time: 15:56
- */
-
 namespace Rxnet\EventStore;
-
 
 use Rx\Subject\Subject;
 use Rxnet\EventStore\Communication\CommunicationFactory;
 use Rxnet\EventStore\Message\MessageConfiguration;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
-use Rxnet\Stream\StreamEvent;
 use TrafficCophp\ByteBuffer\Buffer;
 
 class ReadBuffer extends Subject

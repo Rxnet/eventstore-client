@@ -15,6 +15,7 @@ use Rx\Observer\CallbackObserver;
 use Rx\ObserverInterface;
 use Rx\Subject\ReplaySubject;
 use Rx\Subject\Subject;
+use Rxnet\Operator\OnBackPressureBuffer;
 use Rxnet\Socket;
 use Rxnet\EventStore\Data\ConnectToPersistentSubscription;
 use Rxnet\EventStore\Data\NewEvent;
@@ -41,6 +42,7 @@ use Rxnet\EventStore\Message\Credentials;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 use Rxnet\EventStore\NewEvent\NewEventInterface;
+
 
 class EventStore
 {
@@ -534,82 +536,78 @@ class EventStore
      */
     protected function readEvents(Message $query, $messageType)
     {
-        // TODO backpressure, wait for event's array to be readed completely before asking for more in stream
-        // OnDemand ? onBackpressureBuffer ?
-        return Observable::create(function (ObserverInterface $observer) use ($messageType, $query) {
-            $end = false;
-            $stop = false;
-            $maxPossible = 10; //4096
-            $max = ($query instanceof ReadStreamEvents) ? $query->getMaxCount() : self::POSITION_LATEST;
+        $maxPossible = 100;
+        $max = ($query instanceof ReadStreamEvents) ? $query->getMaxCount() : self::POSITION_LATEST;
 
-            $asked = $max;
-            if ($max >= $maxPossible) {
-                $max = $maxPossible;
-                $query->setMaxCount($max);
-            }
-            $correlationID = $this->writer->createUUIDIfNeeded();
+        $asked = $max;
+        if ($max >= $maxPossible) {
+            $max = $maxPossible;
+            $query->setMaxCount($max);
+        }
+        $backPressure = new OnBackPressureBuffer();
+        $correlationID = $this->writer->createUUIDIfNeeded();
+        // to master the output and transform it
+        $readUntilEnd = new Subject();
 
-            $this->writer->composeAndWrite($messageType, $query, $correlationID)
-                // When written wait for all responses
-                ->merge($this->readBuffer->waitFor($correlationID, -1))
-                // Throw if we have an error message
-                ->flatMap(function (ReadStreamEventsCompleted $event) {
-                    if ($error = $event->getError()) {
-                        return Observable::error(new \Exception($error));
-                    }
-                    return Observable::of($event);
-                })
-                // If more data is needed do another query
-                ->do(function (ReadStreamEventsCompleted $event) use ($query, $correlationID, &$asked, &$end, $max) {
+        // all the events with my correlation id will be here
+        $inputObs = $this->readBuffer->waitFor($correlationID, -1)
+            ->flatMap(function (ReadStreamEventsCompleted $event) {
+                if ($error = $event->getError()) {
+                    return Observable::error(new \Exception($error));
+                }
+                return Observable::of($event);
+            })
+            ->share();
+
+        // First slot of data
+        $this->writer->composeAndWrite($messageType, $query, $correlationID)
+            // When written wait for all responses
+            ->merge($inputObs)
+            ->subscribe($readUntilEnd);
+
+        // Detect the end and ask for more until its done
+        $inputObs->subscribe(function (ReadStreamEventsCompleted $event) use ($readUntilEnd, $maxPossible, $query, &$asked, &$max, $correlationID, $messageType) {
+                $records = $event->getEvents();
+                $asked -= count($records);
+
+                if (!$event->getIsEndOfStream() AND !($asked <= 0 && $max != self::POSITION_LATEST)) {
                     $records = $event->getEvents();
-                    $asked -= count($records);
-                    if ($event->getIsEndOfStream()) {
-                        $end = true;
-                    } elseif ($asked <= 0 && $max != self::POSITION_LATEST) {
-                        $end = true;
+                    $start = $records[count($records) - 1];
+                    /* @var ResolvedIndexedEvent $start */
+
+                    if (null === $start->getLink()) {
+                        $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
+                    } else {
+                        $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getLink()->getEventNumber() + 1 : $start->getLink()->getEventNumber() - 1;
                     }
-                })
-                // Format EventRecord for easy reading
-                ->flatMap(function (ReadStreamEventsCompleted $event) use (&$asked, &$end, &$stop, $max, $maxPossible, $messageType, $query, $correlationID) {
-                    /* @var ReadStreamEventsCompleted $event */
-                    $records = [];
-                    /* @var \Rxnet\EventStore\EventRecord[] $records */
-                    $events = $event->getEvents();
-                    foreach ($events as $item) {
-                        /* @var \Rxnet\EventStore\Data\ResolvedIndexedEvent $item */
-                        $records[] = new EventRecord($item->getEvent());
-                    }
-                    // Will emit onNext for each event
-                    return Observable::fromArray($records)
-                        ->doOnCompleted(function () use (&$end, &$stop, &$events, &$asked, $max, $maxPossible, $messageType, $query, $correlationID) {
-                            if ($end) $stop = true;
-                            else {
-                                $start = $events[count($events) - 1];
-                                /* @var ResolvedIndexedEvent $start */
 
-                                if (null === $start->getLink()) {
-                                    $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
-                                } else {
-                                    $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getLink()->getEventNumber() + 1 : $start->getLink()->getEventNumber() - 1;
-                                }
+                    $query->setFromEventNumber($start);
+                    $query->setMaxCount($asked > $maxPossible ? $maxPossible : $asked);
+                    $this->writer->composeAndWrite($messageType, $query, $correlationID);
+                }
+                else {
+                    $readUntilEnd->onNext($event);
+                    $readUntilEnd->onCompleted();
+                }
+            });
 
-                                $query->setFromEventNumber($start);
-                                $query->setMaxCount($asked > $maxPossible ? $maxPossible : $asked);
-
-                                //echo "Not end of stream need slice from position {$start} next is {$event->getNextEventNumber()} \n";
-                                $this->writer->composeAndWrite(
-                                    $messageType,
-                                    $query,
-                                    $correlationID
-                                );
-                            }
-                        });
-                })
-                // Continue to watch until we have all our results (or end)
-                ->takeWhile(function () use (&$stop) {
-                    return !$stop;
-                })
-                ->subscribe($observer);
-        });
+        // Give back our subject one event per row
+        return $readUntilEnd
+            ->asObservable()
+            ->lift($backPressure->operator())
+            // Format EventRecord for easy reading
+            ->flatMap(function (ReadStreamEventsCompleted $event) use ($backPressure, &$asked, &$end) {
+                /* @var ReadStreamEventsCompleted $event */
+                $records = [];
+                /* @var \Rxnet\EventStore\EventRecord[] $records */
+                $events = $event->getEvents();
+                foreach ($events as $item) {
+                    /* @var \Rxnet\EventStore\Data\ResolvedIndexedEvent $item */
+                    $records[] = new EventRecord($item->getEvent());
+                }
+                // Will emit onNext for each event
+                return Observable::fromArray($records)
+                    ->doOnCompleted([$backPressure, 'request']);
+            });
     }
 }

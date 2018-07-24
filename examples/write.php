@@ -12,7 +12,7 @@ $eventStore = new \Rxnet\EventStore\EventStore();
 $eventStore->connect()
     ->subscribe(function () use ($eventStore) {
         echo "connected \n";
-        \Rx\Observable::interval(100)
+        \Rx\Observable::interval(10)
             ->flatMap(
                 function ($i) use ($eventStore) {
                     echo 'write : ';

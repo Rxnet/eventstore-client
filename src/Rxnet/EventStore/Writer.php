@@ -2,11 +2,9 @@
 
 namespace Rxnet\EventStore;
 
-use EventLoop\EventLoop;
 use Google\Protobuf\Internal\Message;
 use Ramsey\Uuid\Uuid;
 use Rx\Observable;
-use Rx\ObserverInterface;
 use Rxnet\EventStore\Message\Credentials;
 use Rxnet\EventStore\Message\MessageConfiguration;
 use Rxnet\EventStore\Message\MessageType;
