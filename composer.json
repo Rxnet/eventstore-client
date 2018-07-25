@@ -16,7 +16,7 @@
     }
   ],
   "require": {
-    "php":"7.0.0",
+    "php":"^7.0.0",
     "ramsey/uuid": "^3.5",
     "TrafficCophp/ByteBuffer": "^0.3",
     "google/protobuf": "^3.2",
