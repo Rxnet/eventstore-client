@@ -153,6 +153,14 @@ class EventStore
     }
 
     /**
+     * Disconnect underlying socket
+     * @return void
+     */
+    public function disconnect() {
+        $this->connector->close();
+    }
+
+    /**
      * @param $host
      * @param $port
      * @return Observable\AnonymousObservable
