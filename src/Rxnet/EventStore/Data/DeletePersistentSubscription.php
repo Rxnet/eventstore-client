@@ -9,26 +9,37 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.DeletePersistentSubscription</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.DeletePersistentSubscription</code>
  */
 class DeletePersistentSubscription extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>string subscription_group_name = 1;</code>
+     * Generated from protobuf field <code>string subscription_group_name = 1;</code>
      */
     private $subscription_group_name = '';
     /**
-     * <code>string event_stream_id = 2;</code>
+     * Generated from protobuf field <code>string event_stream_id = 2;</code>
      */
     private $event_stream_id = '';
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type string $subscription_group_name
+     *     @type string $event_stream_id
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>string subscription_group_name = 1;</code>
+     * Generated from protobuf field <code>string subscription_group_name = 1;</code>
+     * @return string
      */
     public function getSubscriptionGroupName()
     {
@@ -36,16 +47,21 @@ class DeletePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string subscription_group_name = 1;</code>
+     * Generated from protobuf field <code>string subscription_group_name = 1;</code>
+     * @param string $var
+     * @return $this
      */
     public function setSubscriptionGroupName($var)
     {
         GPBUtil::checkString($var, True);
         $this->subscription_group_name = $var;
+
+        return $this;
     }
 
     /**
-     * <code>string event_stream_id = 2;</code>
+     * Generated from protobuf field <code>string event_stream_id = 2;</code>
+     * @return string
      */
     public function getEventStreamId()
     {
@@ -53,12 +69,16 @@ class DeletePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string event_stream_id = 2;</code>
+     * Generated from protobuf field <code>string event_stream_id = 2;</code>
+     * @param string $var
+     * @return $this
      */
     public function setEventStreamId($var)
     {
         GPBUtil::checkString($var, True);
         $this->event_stream_id = $var;
+
+        return $this;
     }
 
 }

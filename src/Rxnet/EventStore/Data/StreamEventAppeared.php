@@ -9,22 +9,32 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.StreamEventAppeared</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.StreamEventAppeared</code>
  */
 class StreamEventAppeared extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>.Rxnet.EventStore.Data.ResolvedEvent event = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ResolvedEvent event = 1;</code>
      */
     private $event = null;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type \Rxnet\EventStore\Data\ResolvedEvent $event
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.ResolvedEvent event = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ResolvedEvent event = 1;</code>
+     * @return \Rxnet\EventStore\Data\ResolvedEvent
      */
     public function getEvent()
     {
@@ -32,12 +42,16 @@ class StreamEventAppeared extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.ResolvedEvent event = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ResolvedEvent event = 1;</code>
+     * @param \Rxnet\EventStore\Data\ResolvedEvent $var
+     * @return $this
      */
-    public function setEvent(&$var)
+    public function setEvent($var)
     {
         GPBUtil::checkMessage($var, \Rxnet\EventStore\Data\ResolvedEvent::class);
         $this->event = $var;
+
+        return $this;
     }
 
 }

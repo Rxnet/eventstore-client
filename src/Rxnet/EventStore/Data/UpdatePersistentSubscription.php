@@ -9,82 +9,107 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.UpdatePersistentSubscription</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.UpdatePersistentSubscription</code>
  */
 class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>string subscription_group_name = 1;</code>
+     * Generated from protobuf field <code>string subscription_group_name = 1;</code>
      */
     private $subscription_group_name = '';
     /**
-     * <code>string event_stream_id = 2;</code>
+     * Generated from protobuf field <code>string event_stream_id = 2;</code>
      */
     private $event_stream_id = '';
     /**
-     * <code>bool resolve_link_tos = 3;</code>
+     * Generated from protobuf field <code>bool resolve_link_tos = 3;</code>
      */
     private $resolve_link_tos = false;
     /**
-     * <code>int64 start_from = 4;</code>
+     * Generated from protobuf field <code>int64 start_from = 4;</code>
      */
     private $start_from = 0;
     /**
-     * <code>int32 message_timeout_milliseconds = 5;</code>
+     * Generated from protobuf field <code>int32 message_timeout_milliseconds = 5;</code>
      */
     private $message_timeout_milliseconds = 0;
     /**
-     * <code>bool record_statistics = 6;</code>
+     * Generated from protobuf field <code>bool record_statistics = 6;</code>
      */
     private $record_statistics = false;
     /**
-     * <code>int32 live_buffer_size = 7;</code>
+     * Generated from protobuf field <code>int32 live_buffer_size = 7;</code>
      */
     private $live_buffer_size = 0;
     /**
-     * <code>int32 read_batch_size = 8;</code>
+     * Generated from protobuf field <code>int32 read_batch_size = 8;</code>
      */
     private $read_batch_size = 0;
     /**
-     * <code>int32 buffer_size = 9;</code>
+     * Generated from protobuf field <code>int32 buffer_size = 9;</code>
      */
     private $buffer_size = 0;
     /**
-     * <code>int32 max_retry_count = 10;</code>
+     * Generated from protobuf field <code>int32 max_retry_count = 10;</code>
      */
     private $max_retry_count = 0;
     /**
-     * <code>bool prefer_round_robin = 11;</code>
+     * Generated from protobuf field <code>bool prefer_round_robin = 11;</code>
      */
     private $prefer_round_robin = false;
     /**
-     * <code>int32 checkpoint_after_time = 12;</code>
+     * Generated from protobuf field <code>int32 checkpoint_after_time = 12;</code>
      */
     private $checkpoint_after_time = 0;
     /**
-     * <code>int32 checkpoint_max_count = 13;</code>
+     * Generated from protobuf field <code>int32 checkpoint_max_count = 13;</code>
      */
     private $checkpoint_max_count = 0;
     /**
-     * <code>int32 checkpoint_min_count = 14;</code>
+     * Generated from protobuf field <code>int32 checkpoint_min_count = 14;</code>
      */
     private $checkpoint_min_count = 0;
     /**
-     * <code>int32 subscriber_max_count = 15;</code>
+     * Generated from protobuf field <code>int32 subscriber_max_count = 15;</code>
      */
     private $subscriber_max_count = 0;
     /**
-     * <code>string named_consumer_strategy = 16;</code>
+     * Generated from protobuf field <code>string named_consumer_strategy = 16;</code>
      */
     private $named_consumer_strategy = '';
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type string $subscription_group_name
+     *     @type string $event_stream_id
+     *     @type bool $resolve_link_tos
+     *     @type int|string $start_from
+     *     @type int $message_timeout_milliseconds
+     *     @type bool $record_statistics
+     *     @type int $live_buffer_size
+     *     @type int $read_batch_size
+     *     @type int $buffer_size
+     *     @type int $max_retry_count
+     *     @type bool $prefer_round_robin
+     *     @type int $checkpoint_after_time
+     *     @type int $checkpoint_max_count
+     *     @type int $checkpoint_min_count
+     *     @type int $subscriber_max_count
+     *     @type string $named_consumer_strategy
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>string subscription_group_name = 1;</code>
+     * Generated from protobuf field <code>string subscription_group_name = 1;</code>
+     * @return string
      */
     public function getSubscriptionGroupName()
     {
@@ -92,16 +117,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string subscription_group_name = 1;</code>
+     * Generated from protobuf field <code>string subscription_group_name = 1;</code>
+     * @param string $var
+     * @return $this
      */
     public function setSubscriptionGroupName($var)
     {
         GPBUtil::checkString($var, True);
         $this->subscription_group_name = $var;
+
+        return $this;
     }
 
     /**
-     * <code>string event_stream_id = 2;</code>
+     * Generated from protobuf field <code>string event_stream_id = 2;</code>
+     * @return string
      */
     public function getEventStreamId()
     {
@@ -109,16 +139,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string event_stream_id = 2;</code>
+     * Generated from protobuf field <code>string event_stream_id = 2;</code>
+     * @param string $var
+     * @return $this
      */
     public function setEventStreamId($var)
     {
         GPBUtil::checkString($var, True);
         $this->event_stream_id = $var;
+
+        return $this;
     }
 
     /**
-     * <code>bool resolve_link_tos = 3;</code>
+     * Generated from protobuf field <code>bool resolve_link_tos = 3;</code>
+     * @return bool
      */
     public function getResolveLinkTos()
     {
@@ -126,16 +161,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bool resolve_link_tos = 3;</code>
+     * Generated from protobuf field <code>bool resolve_link_tos = 3;</code>
+     * @param bool $var
+     * @return $this
      */
     public function setResolveLinkTos($var)
     {
         GPBUtil::checkBool($var);
         $this->resolve_link_tos = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 start_from = 4;</code>
+     * Generated from protobuf field <code>int64 start_from = 4;</code>
+     * @return int|string
      */
     public function getStartFrom()
     {
@@ -143,16 +183,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 start_from = 4;</code>
+     * Generated from protobuf field <code>int64 start_from = 4;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setStartFrom($var)
     {
         GPBUtil::checkInt64($var);
         $this->start_from = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 message_timeout_milliseconds = 5;</code>
+     * Generated from protobuf field <code>int32 message_timeout_milliseconds = 5;</code>
+     * @return int
      */
     public function getMessageTimeoutMilliseconds()
     {
@@ -160,16 +205,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 message_timeout_milliseconds = 5;</code>
+     * Generated from protobuf field <code>int32 message_timeout_milliseconds = 5;</code>
+     * @param int $var
+     * @return $this
      */
     public function setMessageTimeoutMilliseconds($var)
     {
         GPBUtil::checkInt32($var);
         $this->message_timeout_milliseconds = $var;
+
+        return $this;
     }
 
     /**
-     * <code>bool record_statistics = 6;</code>
+     * Generated from protobuf field <code>bool record_statistics = 6;</code>
+     * @return bool
      */
     public function getRecordStatistics()
     {
@@ -177,16 +227,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bool record_statistics = 6;</code>
+     * Generated from protobuf field <code>bool record_statistics = 6;</code>
+     * @param bool $var
+     * @return $this
      */
     public function setRecordStatistics($var)
     {
         GPBUtil::checkBool($var);
         $this->record_statistics = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 live_buffer_size = 7;</code>
+     * Generated from protobuf field <code>int32 live_buffer_size = 7;</code>
+     * @return int
      */
     public function getLiveBufferSize()
     {
@@ -194,16 +249,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 live_buffer_size = 7;</code>
+     * Generated from protobuf field <code>int32 live_buffer_size = 7;</code>
+     * @param int $var
+     * @return $this
      */
     public function setLiveBufferSize($var)
     {
         GPBUtil::checkInt32($var);
         $this->live_buffer_size = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 read_batch_size = 8;</code>
+     * Generated from protobuf field <code>int32 read_batch_size = 8;</code>
+     * @return int
      */
     public function getReadBatchSize()
     {
@@ -211,16 +271,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 read_batch_size = 8;</code>
+     * Generated from protobuf field <code>int32 read_batch_size = 8;</code>
+     * @param int $var
+     * @return $this
      */
     public function setReadBatchSize($var)
     {
         GPBUtil::checkInt32($var);
         $this->read_batch_size = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 buffer_size = 9;</code>
+     * Generated from protobuf field <code>int32 buffer_size = 9;</code>
+     * @return int
      */
     public function getBufferSize()
     {
@@ -228,16 +293,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 buffer_size = 9;</code>
+     * Generated from protobuf field <code>int32 buffer_size = 9;</code>
+     * @param int $var
+     * @return $this
      */
     public function setBufferSize($var)
     {
         GPBUtil::checkInt32($var);
         $this->buffer_size = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 max_retry_count = 10;</code>
+     * Generated from protobuf field <code>int32 max_retry_count = 10;</code>
+     * @return int
      */
     public function getMaxRetryCount()
     {
@@ -245,16 +315,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 max_retry_count = 10;</code>
+     * Generated from protobuf field <code>int32 max_retry_count = 10;</code>
+     * @param int $var
+     * @return $this
      */
     public function setMaxRetryCount($var)
     {
         GPBUtil::checkInt32($var);
         $this->max_retry_count = $var;
+
+        return $this;
     }
 
     /**
-     * <code>bool prefer_round_robin = 11;</code>
+     * Generated from protobuf field <code>bool prefer_round_robin = 11;</code>
+     * @return bool
      */
     public function getPreferRoundRobin()
     {
@@ -262,16 +337,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bool prefer_round_robin = 11;</code>
+     * Generated from protobuf field <code>bool prefer_round_robin = 11;</code>
+     * @param bool $var
+     * @return $this
      */
     public function setPreferRoundRobin($var)
     {
         GPBUtil::checkBool($var);
         $this->prefer_round_robin = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 checkpoint_after_time = 12;</code>
+     * Generated from protobuf field <code>int32 checkpoint_after_time = 12;</code>
+     * @return int
      */
     public function getCheckpointAfterTime()
     {
@@ -279,16 +359,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 checkpoint_after_time = 12;</code>
+     * Generated from protobuf field <code>int32 checkpoint_after_time = 12;</code>
+     * @param int $var
+     * @return $this
      */
     public function setCheckpointAfterTime($var)
     {
         GPBUtil::checkInt32($var);
         $this->checkpoint_after_time = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 checkpoint_max_count = 13;</code>
+     * Generated from protobuf field <code>int32 checkpoint_max_count = 13;</code>
+     * @return int
      */
     public function getCheckpointMaxCount()
     {
@@ -296,16 +381,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 checkpoint_max_count = 13;</code>
+     * Generated from protobuf field <code>int32 checkpoint_max_count = 13;</code>
+     * @param int $var
+     * @return $this
      */
     public function setCheckpointMaxCount($var)
     {
         GPBUtil::checkInt32($var);
         $this->checkpoint_max_count = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 checkpoint_min_count = 14;</code>
+     * Generated from protobuf field <code>int32 checkpoint_min_count = 14;</code>
+     * @return int
      */
     public function getCheckpointMinCount()
     {
@@ -313,16 +403,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 checkpoint_min_count = 14;</code>
+     * Generated from protobuf field <code>int32 checkpoint_min_count = 14;</code>
+     * @param int $var
+     * @return $this
      */
     public function setCheckpointMinCount($var)
     {
         GPBUtil::checkInt32($var);
         $this->checkpoint_min_count = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 subscriber_max_count = 15;</code>
+     * Generated from protobuf field <code>int32 subscriber_max_count = 15;</code>
+     * @return int
      */
     public function getSubscriberMaxCount()
     {
@@ -330,16 +425,21 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 subscriber_max_count = 15;</code>
+     * Generated from protobuf field <code>int32 subscriber_max_count = 15;</code>
+     * @param int $var
+     * @return $this
      */
     public function setSubscriberMaxCount($var)
     {
         GPBUtil::checkInt32($var);
         $this->subscriber_max_count = $var;
+
+        return $this;
     }
 
     /**
-     * <code>string named_consumer_strategy = 16;</code>
+     * Generated from protobuf field <code>string named_consumer_strategy = 16;</code>
+     * @return string
      */
     public function getNamedConsumerStrategy()
     {
@@ -347,12 +447,16 @@ class UpdatePersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string named_consumer_strategy = 16;</code>
+     * Generated from protobuf field <code>string named_consumer_strategy = 16;</code>
+     * @param string $var
+     * @return $this
      */
     public function setNamedConsumerStrategy($var)
     {
         GPBUtil::checkString($var, True);
         $this->named_consumer_strategy = $var;
+
+        return $this;
     }
 
 }

@@ -9,46 +9,62 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.ReadStreamEventsCompleted</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.ReadStreamEventsCompleted</code>
  */
 class ReadStreamEventsCompleted extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>repeated .Rxnet.EventStore.Data.ResolvedIndexedEvent events = 1;</code>
+     * Generated from protobuf field <code>repeated .Rxnet.EventStore.Data.ResolvedIndexedEvent events = 1;</code>
      */
     private $events;
     /**
-     * <code>.Rxnet.EventStore.Data.ReadStreamEventsCompleted.ReadStreamResult result = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ReadStreamEventsCompleted.ReadStreamResult result = 2;</code>
      */
     private $result = 0;
     /**
-     * <code>int64 next_event_number = 3;</code>
+     * Generated from protobuf field <code>int64 next_event_number = 3;</code>
      */
     private $next_event_number = 0;
     /**
-     * <code>int64 last_event_number = 4;</code>
+     * Generated from protobuf field <code>int64 last_event_number = 4;</code>
      */
     private $last_event_number = 0;
     /**
-     * <code>bool is_end_of_stream = 5;</code>
+     * Generated from protobuf field <code>bool is_end_of_stream = 5;</code>
      */
     private $is_end_of_stream = false;
     /**
-     * <code>int64 last_commit_position = 6;</code>
+     * Generated from protobuf field <code>int64 last_commit_position = 6;</code>
      */
     private $last_commit_position = 0;
     /**
-     * <code>string error = 7;</code>
+     * Generated from protobuf field <code>string error = 7;</code>
      */
     private $error = '';
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type \Rxnet\EventStore\Data\ResolvedIndexedEvent[]|\Google\Protobuf\Internal\RepeatedField $events
+     *     @type int $result
+     *     @type int|string $next_event_number
+     *     @type int|string $last_event_number
+     *     @type bool $is_end_of_stream
+     *     @type int|string $last_commit_position
+     *     @type string $error
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>repeated .Rxnet.EventStore.Data.ResolvedIndexedEvent events = 1;</code>
+     * Generated from protobuf field <code>repeated .Rxnet.EventStore.Data.ResolvedIndexedEvent events = 1;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getEvents()
     {
@@ -56,16 +72,21 @@ class ReadStreamEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>repeated .Rxnet.EventStore.Data.ResolvedIndexedEvent events = 1;</code>
+     * Generated from protobuf field <code>repeated .Rxnet.EventStore.Data.ResolvedIndexedEvent events = 1;</code>
+     * @param \Rxnet\EventStore\Data\ResolvedIndexedEvent[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
      */
-    public function setEvents(&$var)
+    public function setEvents($var)
     {
         $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Rxnet\EventStore\Data\ResolvedIndexedEvent::class);
         $this->events = $arr;
+
+        return $this;
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.ReadStreamEventsCompleted.ReadStreamResult result = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ReadStreamEventsCompleted.ReadStreamResult result = 2;</code>
+     * @return int
      */
     public function getResult()
     {
@@ -73,16 +94,21 @@ class ReadStreamEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.ReadStreamEventsCompleted.ReadStreamResult result = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ReadStreamEventsCompleted.ReadStreamResult result = 2;</code>
+     * @param int $var
+     * @return $this
      */
     public function setResult($var)
     {
         GPBUtil::checkEnum($var, \Rxnet\EventStore\Data\ReadStreamEventsCompleted_ReadStreamResult::class);
         $this->result = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 next_event_number = 3;</code>
+     * Generated from protobuf field <code>int64 next_event_number = 3;</code>
+     * @return int|string
      */
     public function getNextEventNumber()
     {
@@ -90,16 +116,21 @@ class ReadStreamEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 next_event_number = 3;</code>
+     * Generated from protobuf field <code>int64 next_event_number = 3;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setNextEventNumber($var)
     {
         GPBUtil::checkInt64($var);
         $this->next_event_number = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 last_event_number = 4;</code>
+     * Generated from protobuf field <code>int64 last_event_number = 4;</code>
+     * @return int|string
      */
     public function getLastEventNumber()
     {
@@ -107,16 +138,21 @@ class ReadStreamEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 last_event_number = 4;</code>
+     * Generated from protobuf field <code>int64 last_event_number = 4;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setLastEventNumber($var)
     {
         GPBUtil::checkInt64($var);
         $this->last_event_number = $var;
+
+        return $this;
     }
 
     /**
-     * <code>bool is_end_of_stream = 5;</code>
+     * Generated from protobuf field <code>bool is_end_of_stream = 5;</code>
+     * @return bool
      */
     public function getIsEndOfStream()
     {
@@ -124,16 +160,21 @@ class ReadStreamEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bool is_end_of_stream = 5;</code>
+     * Generated from protobuf field <code>bool is_end_of_stream = 5;</code>
+     * @param bool $var
+     * @return $this
      */
     public function setIsEndOfStream($var)
     {
         GPBUtil::checkBool($var);
         $this->is_end_of_stream = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 last_commit_position = 6;</code>
+     * Generated from protobuf field <code>int64 last_commit_position = 6;</code>
+     * @return int|string
      */
     public function getLastCommitPosition()
     {
@@ -141,16 +182,21 @@ class ReadStreamEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 last_commit_position = 6;</code>
+     * Generated from protobuf field <code>int64 last_commit_position = 6;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setLastCommitPosition($var)
     {
         GPBUtil::checkInt64($var);
         $this->last_commit_position = $var;
+
+        return $this;
     }
 
     /**
-     * <code>string error = 7;</code>
+     * Generated from protobuf field <code>string error = 7;</code>
+     * @return string
      */
     public function getError()
     {
@@ -158,12 +204,16 @@ class ReadStreamEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string error = 7;</code>
+     * Generated from protobuf field <code>string error = 7;</code>
+     * @param string $var
+     * @return $this
      */
     public function setError($var)
     {
         GPBUtil::checkString($var, True);
         $this->error = $var;
+
+        return $this;
     }
 
 }

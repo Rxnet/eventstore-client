@@ -9,30 +9,42 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.TransactionWrite</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.TransactionWrite</code>
  */
 class TransactionWrite extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>int64 transaction_id = 1;</code>
+     * Generated from protobuf field <code>int64 transaction_id = 1;</code>
      */
     private $transaction_id = 0;
     /**
-     * <code>repeated .Rxnet.EventStore.Data.NewEvent events = 2;</code>
+     * Generated from protobuf field <code>repeated .Rxnet.EventStore.Data.NewEvent events = 2;</code>
      */
     private $events;
     /**
-     * <code>bool require_master = 3;</code>
+     * Generated from protobuf field <code>bool require_master = 3;</code>
      */
     private $require_master = false;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type int|string $transaction_id
+     *     @type \Rxnet\EventStore\Data\NewEvent[]|\Google\Protobuf\Internal\RepeatedField $events
+     *     @type bool $require_master
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>int64 transaction_id = 1;</code>
+     * Generated from protobuf field <code>int64 transaction_id = 1;</code>
+     * @return int|string
      */
     public function getTransactionId()
     {
@@ -40,16 +52,21 @@ class TransactionWrite extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 transaction_id = 1;</code>
+     * Generated from protobuf field <code>int64 transaction_id = 1;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setTransactionId($var)
     {
         GPBUtil::checkInt64($var);
         $this->transaction_id = $var;
+
+        return $this;
     }
 
     /**
-     * <code>repeated .Rxnet.EventStore.Data.NewEvent events = 2;</code>
+     * Generated from protobuf field <code>repeated .Rxnet.EventStore.Data.NewEvent events = 2;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getEvents()
     {
@@ -57,16 +74,21 @@ class TransactionWrite extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>repeated .Rxnet.EventStore.Data.NewEvent events = 2;</code>
+     * Generated from protobuf field <code>repeated .Rxnet.EventStore.Data.NewEvent events = 2;</code>
+     * @param \Rxnet\EventStore\Data\NewEvent[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
      */
-    public function setEvents(&$var)
+    public function setEvents($var)
     {
         $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Rxnet\EventStore\Data\NewEvent::class);
         $this->events = $arr;
+
+        return $this;
     }
 
     /**
-     * <code>bool require_master = 3;</code>
+     * Generated from protobuf field <code>bool require_master = 3;</code>
+     * @return bool
      */
     public function getRequireMaster()
     {
@@ -74,12 +96,16 @@ class TransactionWrite extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bool require_master = 3;</code>
+     * Generated from protobuf field <code>bool require_master = 3;</code>
+     * @param bool $var
+     * @return $this
      */
     public function setRequireMaster($var)
     {
         GPBUtil::checkBool($var);
         $this->require_master = $var;
+
+        return $this;
     }
 
 }

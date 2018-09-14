@@ -309,6 +309,7 @@ message PersistentSubscriptionConfirmation {
 
 message PersistentSubscriptionStreamEventAppeared {
 	ResolvedIndexedEvent event = 1;
+	int32 retryCount = 2;
 }
 
 message SubscribeToStream {
@@ -377,4 +378,12 @@ message ScavengeDatabaseCompleted {
 	string error = 2;
 	int32 total_time_ms = 3;
 	int64 total_space_saved = 4;
+}
+
+message IdentifyClient {
+	int32 version = 1;
+	string connection_name = 2;
+}
+
+message ClientIdentified {
 }

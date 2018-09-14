@@ -9,34 +9,47 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.ReadEvent</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.ReadEvent</code>
  */
 class ReadEvent extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>string event_stream_id = 1;</code>
+     * Generated from protobuf field <code>string event_stream_id = 1;</code>
      */
     private $event_stream_id = '';
     /**
-     * <code>int64 event_number = 2;</code>
+     * Generated from protobuf field <code>int64 event_number = 2;</code>
      */
     private $event_number = 0;
     /**
-     * <code>bool resolve_link_tos = 3;</code>
+     * Generated from protobuf field <code>bool resolve_link_tos = 3;</code>
      */
     private $resolve_link_tos = false;
     /**
-     * <code>bool require_master = 4;</code>
+     * Generated from protobuf field <code>bool require_master = 4;</code>
      */
     private $require_master = false;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type string $event_stream_id
+     *     @type int|string $event_number
+     *     @type bool $resolve_link_tos
+     *     @type bool $require_master
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>string event_stream_id = 1;</code>
+     * Generated from protobuf field <code>string event_stream_id = 1;</code>
+     * @return string
      */
     public function getEventStreamId()
     {
@@ -44,16 +57,21 @@ class ReadEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string event_stream_id = 1;</code>
+     * Generated from protobuf field <code>string event_stream_id = 1;</code>
+     * @param string $var
+     * @return $this
      */
     public function setEventStreamId($var)
     {
         GPBUtil::checkString($var, True);
         $this->event_stream_id = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 event_number = 2;</code>
+     * Generated from protobuf field <code>int64 event_number = 2;</code>
+     * @return int|string
      */
     public function getEventNumber()
     {
@@ -61,16 +79,21 @@ class ReadEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 event_number = 2;</code>
+     * Generated from protobuf field <code>int64 event_number = 2;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setEventNumber($var)
     {
         GPBUtil::checkInt64($var);
         $this->event_number = $var;
+
+        return $this;
     }
 
     /**
-     * <code>bool resolve_link_tos = 3;</code>
+     * Generated from protobuf field <code>bool resolve_link_tos = 3;</code>
+     * @return bool
      */
     public function getResolveLinkTos()
     {
@@ -78,16 +101,21 @@ class ReadEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bool resolve_link_tos = 3;</code>
+     * Generated from protobuf field <code>bool resolve_link_tos = 3;</code>
+     * @param bool $var
+     * @return $this
      */
     public function setResolveLinkTos($var)
     {
         GPBUtil::checkBool($var);
         $this->resolve_link_tos = $var;
+
+        return $this;
     }
 
     /**
-     * <code>bool require_master = 4;</code>
+     * Generated from protobuf field <code>bool require_master = 4;</code>
+     * @return bool
      */
     public function getRequireMaster()
     {
@@ -95,12 +123,16 @@ class ReadEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bool require_master = 4;</code>
+     * Generated from protobuf field <code>bool require_master = 4;</code>
+     * @param bool $var
+     * @return $this
      */
     public function setRequireMaster($var)
     {
         GPBUtil::checkBool($var);
         $this->require_master = $var;
+
+        return $this;
     }
 
 }
