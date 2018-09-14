@@ -9,26 +9,37 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.NotHandled</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.NotHandled</code>
  */
 class NotHandled extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>.Rxnet.EventStore.Data.NotHandled.NotHandledReason reason = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.NotHandled.NotHandledReason reason = 1;</code>
      */
     private $reason = 0;
     /**
-     * <code>bytes additional_info = 2;</code>
+     * Generated from protobuf field <code>bytes additional_info = 2;</code>
      */
     private $additional_info = '';
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type int $reason
+     *     @type string $additional_info
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.NotHandled.NotHandledReason reason = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.NotHandled.NotHandledReason reason = 1;</code>
+     * @return int
      */
     public function getReason()
     {
@@ -36,16 +47,21 @@ class NotHandled extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.NotHandled.NotHandledReason reason = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.NotHandled.NotHandledReason reason = 1;</code>
+     * @param int $var
+     * @return $this
      */
     public function setReason($var)
     {
         GPBUtil::checkEnum($var, \Rxnet\EventStore\Data\NotHandled_NotHandledReason::class);
         $this->reason = $var;
+
+        return $this;
     }
 
     /**
-     * <code>bytes additional_info = 2;</code>
+     * Generated from protobuf field <code>bytes additional_info = 2;</code>
+     * @return string
      */
     public function getAdditionalInfo()
     {
@@ -53,12 +69,16 @@ class NotHandled extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bytes additional_info = 2;</code>
+     * Generated from protobuf field <code>bytes additional_info = 2;</code>
+     * @param string $var
+     * @return $this
      */
     public function setAdditionalInfo($var)
     {
         GPBUtil::checkString($var, False);
         $this->additional_info = $var;
+
+        return $this;
     }
 
 }

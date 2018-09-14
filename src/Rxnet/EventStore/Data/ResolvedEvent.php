@@ -9,34 +9,47 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.ResolvedEvent</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.ResolvedEvent</code>
  */
 class ResolvedEvent extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>.Rxnet.EventStore.Data.EventRecord event = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.EventRecord event = 1;</code>
      */
     private $event = null;
     /**
-     * <code>.Rxnet.EventStore.Data.EventRecord link = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.EventRecord link = 2;</code>
      */
     private $link = null;
     /**
-     * <code>int64 commit_position = 3;</code>
+     * Generated from protobuf field <code>int64 commit_position = 3;</code>
      */
     private $commit_position = 0;
     /**
-     * <code>int64 prepare_position = 4;</code>
+     * Generated from protobuf field <code>int64 prepare_position = 4;</code>
      */
     private $prepare_position = 0;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type \Rxnet\EventStore\Data\EventRecord $event
+     *     @type \Rxnet\EventStore\Data\EventRecord $link
+     *     @type int|string $commit_position
+     *     @type int|string $prepare_position
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.EventRecord event = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.EventRecord event = 1;</code>
+     * @return \Rxnet\EventStore\Data\EventRecord
      */
     public function getEvent()
     {
@@ -44,16 +57,21 @@ class ResolvedEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.EventRecord event = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.EventRecord event = 1;</code>
+     * @param \Rxnet\EventStore\Data\EventRecord $var
+     * @return $this
      */
-    public function setEvent(&$var)
+    public function setEvent($var)
     {
         GPBUtil::checkMessage($var, \Rxnet\EventStore\Data\EventRecord::class);
         $this->event = $var;
+
+        return $this;
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.EventRecord link = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.EventRecord link = 2;</code>
+     * @return \Rxnet\EventStore\Data\EventRecord
      */
     public function getLink()
     {
@@ -61,16 +79,21 @@ class ResolvedEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.EventRecord link = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.EventRecord link = 2;</code>
+     * @param \Rxnet\EventStore\Data\EventRecord $var
+     * @return $this
      */
-    public function setLink(&$var)
+    public function setLink($var)
     {
         GPBUtil::checkMessage($var, \Rxnet\EventStore\Data\EventRecord::class);
         $this->link = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 commit_position = 3;</code>
+     * Generated from protobuf field <code>int64 commit_position = 3;</code>
+     * @return int|string
      */
     public function getCommitPosition()
     {
@@ -78,16 +101,21 @@ class ResolvedEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 commit_position = 3;</code>
+     * Generated from protobuf field <code>int64 commit_position = 3;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setCommitPosition($var)
     {
         GPBUtil::checkInt64($var);
         $this->commit_position = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 prepare_position = 4;</code>
+     * Generated from protobuf field <code>int64 prepare_position = 4;</code>
+     * @return int|string
      */
     public function getPreparePosition()
     {
@@ -95,12 +123,16 @@ class ResolvedEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 prepare_position = 4;</code>
+     * Generated from protobuf field <code>int64 prepare_position = 4;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setPreparePosition($var)
     {
         GPBUtil::checkInt64($var);
         $this->prepare_position = $var;
+
+        return $this;
     }
 
 }

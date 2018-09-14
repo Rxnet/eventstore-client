@@ -9,22 +9,37 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.PersistentSubscriptionStreamEventAppeared</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.PersistentSubscriptionStreamEventAppeared</code>
  */
 class PersistentSubscriptionStreamEventAppeared extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>.Rxnet.EventStore.Data.ResolvedIndexedEvent event = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ResolvedIndexedEvent event = 1;</code>
      */
     private $event = null;
+    /**
+     * Generated from protobuf field <code>int32 retryCount = 2;</code>
+     */
+    private $retryCount = 0;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type \Rxnet\EventStore\Data\ResolvedIndexedEvent $event
+     *     @type int $retryCount
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.ResolvedIndexedEvent event = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ResolvedIndexedEvent event = 1;</code>
+     * @return \Rxnet\EventStore\Data\ResolvedIndexedEvent
      */
     public function getEvent()
     {
@@ -32,12 +47,38 @@ class PersistentSubscriptionStreamEventAppeared extends \Google\Protobuf\Interna
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.ResolvedIndexedEvent event = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ResolvedIndexedEvent event = 1;</code>
+     * @param \Rxnet\EventStore\Data\ResolvedIndexedEvent $var
+     * @return $this
      */
-    public function setEvent(&$var)
+    public function setEvent($var)
     {
         GPBUtil::checkMessage($var, \Rxnet\EventStore\Data\ResolvedIndexedEvent::class);
         $this->event = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>int32 retryCount = 2;</code>
+     * @return int
+     */
+    public function getRetryCount()
+    {
+        return $this->retryCount;
+    }
+
+    /**
+     * Generated from protobuf field <code>int32 retryCount = 2;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setRetryCount($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->retryCount = $var;
+
+        return $this;
     }
 
 }

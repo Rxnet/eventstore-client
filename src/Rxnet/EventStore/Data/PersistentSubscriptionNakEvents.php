@@ -9,34 +9,47 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.PersistentSubscriptionNakEvents</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.PersistentSubscriptionNakEvents</code>
  */
 class PersistentSubscriptionNakEvents extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>string subscription_id = 1;</code>
+     * Generated from protobuf field <code>string subscription_id = 1;</code>
      */
     private $subscription_id = '';
     /**
-     * <code>repeated bytes processed_event_ids = 2;</code>
+     * Generated from protobuf field <code>repeated bytes processed_event_ids = 2;</code>
      */
     private $processed_event_ids;
     /**
-     * <code>string message = 3;</code>
+     * Generated from protobuf field <code>string message = 3;</code>
      */
     private $message = '';
     /**
-     * <code>.Rxnet.EventStore.Data.PersistentSubscriptionNakEvents.NakAction action = 4;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.PersistentSubscriptionNakEvents.NakAction action = 4;</code>
      */
     private $action = 0;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type string $subscription_id
+     *     @type string[]|\Google\Protobuf\Internal\RepeatedField $processed_event_ids
+     *     @type string $message
+     *     @type int $action
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>string subscription_id = 1;</code>
+     * Generated from protobuf field <code>string subscription_id = 1;</code>
+     * @return string
      */
     public function getSubscriptionId()
     {
@@ -44,16 +57,21 @@ class PersistentSubscriptionNakEvents extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string subscription_id = 1;</code>
+     * Generated from protobuf field <code>string subscription_id = 1;</code>
+     * @param string $var
+     * @return $this
      */
     public function setSubscriptionId($var)
     {
         GPBUtil::checkString($var, True);
         $this->subscription_id = $var;
+
+        return $this;
     }
 
     /**
-     * <code>repeated bytes processed_event_ids = 2;</code>
+     * Generated from protobuf field <code>repeated bytes processed_event_ids = 2;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
      */
     public function getProcessedEventIds()
     {
@@ -61,16 +79,21 @@ class PersistentSubscriptionNakEvents extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>repeated bytes processed_event_ids = 2;</code>
+     * Generated from protobuf field <code>repeated bytes processed_event_ids = 2;</code>
+     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
      */
-    public function setProcessedEventIds(&$var)
+    public function setProcessedEventIds($var)
     {
         $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::BYTES);
         $this->processed_event_ids = $arr;
+
+        return $this;
     }
 
     /**
-     * <code>string message = 3;</code>
+     * Generated from protobuf field <code>string message = 3;</code>
+     * @return string
      */
     public function getMessage()
     {
@@ -78,16 +101,21 @@ class PersistentSubscriptionNakEvents extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string message = 3;</code>
+     * Generated from protobuf field <code>string message = 3;</code>
+     * @param string $var
+     * @return $this
      */
     public function setMessage($var)
     {
         GPBUtil::checkString($var, True);
         $this->message = $var;
+
+        return $this;
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.PersistentSubscriptionNakEvents.NakAction action = 4;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.PersistentSubscriptionNakEvents.NakAction action = 4;</code>
+     * @return int
      */
     public function getAction()
     {
@@ -95,12 +123,16 @@ class PersistentSubscriptionNakEvents extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.PersistentSubscriptionNakEvents.NakAction action = 4;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.PersistentSubscriptionNakEvents.NakAction action = 4;</code>
+     * @param int $var
+     * @return $this
      */
     public function setAction($var)
     {
         GPBUtil::checkEnum($var, \Rxnet\EventStore\Data\PersistentSubscriptionNakEvents_NakAction::class);
         $this->action = $var;
+
+        return $this;
     }
 
 }

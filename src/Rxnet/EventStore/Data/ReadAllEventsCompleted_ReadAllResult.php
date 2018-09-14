@@ -4,26 +4,13 @@
 
 namespace Rxnet\EventStore\Data;
 
-/**
- * Protobuf enum <code>Rxnet.EventStore.Data.ReadAllEventsCompleted.ReadAllResult</code>
- */
-class ReadAllEventsCompleted_ReadAllResult
-{
+if (false) {
     /**
-     * <code>Success = 0;</code>
+     * This class is deprecated. Use Rxnet\EventStore\Data\ReadAllEventsCompleted\ReadAllResult instead.
+     * @deprecated
      */
-    const Success = 0;
-    /**
-     * <code>NotModified = 1;</code>
-     */
-    const NotModified = 1;
-    /**
-     * <code>Error = 2;</code>
-     */
-    const Error = 2;
-    /**
-     * <code>AccessDenied = 3;</code>
-     */
-    const AccessDenied = 3;
+    class ReadAllEventsCompleted_ReadAllResult {}
 }
+class_exists(ReadAllEventsCompleted\ReadAllResult::class);
+@trigger_error('Rxnet\EventStore\Data\ReadAllEventsCompleted_ReadAllResult is deprecated and will be removed in the next major release. Use Rxnet\EventStore\Data\ReadAllEventsCompleted\ReadAllResult instead', E_USER_DEPRECATED);
 

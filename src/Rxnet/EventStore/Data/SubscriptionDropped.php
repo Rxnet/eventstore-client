@@ -9,22 +9,32 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.SubscriptionDropped</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.SubscriptionDropped</code>
  */
 class SubscriptionDropped extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>.Rxnet.EventStore.Data.SubscriptionDropped.SubscriptionDropReason reason = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.SubscriptionDropped.SubscriptionDropReason reason = 1;</code>
      */
     private $reason = 0;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type int $reason
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.SubscriptionDropped.SubscriptionDropReason reason = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.SubscriptionDropped.SubscriptionDropReason reason = 1;</code>
+     * @return int
      */
     public function getReason()
     {
@@ -32,12 +42,16 @@ class SubscriptionDropped extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.SubscriptionDropped.SubscriptionDropReason reason = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.SubscriptionDropped.SubscriptionDropReason reason = 1;</code>
+     * @param int $var
+     * @return $this
      */
     public function setReason($var)
     {
         GPBUtil::checkEnum($var, \Rxnet\EventStore\Data\SubscriptionDropped_SubscriptionDropReason::class);
         $this->reason = $var;
+
+        return $this;
     }
 
 }

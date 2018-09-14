@@ -4,22 +4,13 @@
 
 namespace Rxnet\EventStore\Data;
 
-/**
- * Protobuf enum <code>Rxnet.EventStore.Data.NotHandled.NotHandledReason</code>
- */
-class NotHandled_NotHandledReason
-{
+if (false) {
     /**
-     * <code>NotReady = 0;</code>
+     * This class is deprecated. Use Rxnet\EventStore\Data\NotHandled\NotHandledReason instead.
+     * @deprecated
      */
-    const NotReady = 0;
-    /**
-     * <code>TooBusy = 1;</code>
-     */
-    const TooBusy = 1;
-    /**
-     * <code>NotMaster = 2;</code>
-     */
-    const NotMaster = 2;
+    class NotHandled_NotHandledReason {}
 }
+class_exists(NotHandled\NotHandledReason::class);
+@trigger_error('Rxnet\EventStore\Data\NotHandled_NotHandledReason is deprecated and will be removed in the next major release. Use Rxnet\EventStore\Data\NotHandled\NotHandledReason instead', E_USER_DEPRECATED);
 

@@ -9,42 +9,57 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.NewEvent</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.NewEvent</code>
  */
 class NewEvent extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>bytes event_id = 1;</code>
+     * Generated from protobuf field <code>bytes event_id = 1;</code>
      */
     private $event_id = '';
     /**
-     * <code>string event_type = 2;</code>
+     * Generated from protobuf field <code>string event_type = 2;</code>
      */
     private $event_type = '';
     /**
-     * <code>int32 data_content_type = 3;</code>
+     * Generated from protobuf field <code>int32 data_content_type = 3;</code>
      */
     private $data_content_type = 0;
     /**
-     * <code>int32 metadata_content_type = 4;</code>
+     * Generated from protobuf field <code>int32 metadata_content_type = 4;</code>
      */
     private $metadata_content_type = 0;
     /**
-     * <code>bytes data = 5;</code>
+     * Generated from protobuf field <code>bytes data = 5;</code>
      */
     private $data = '';
     /**
-     * <code>bytes metadata = 6;</code>
+     * Generated from protobuf field <code>bytes metadata = 6;</code>
      */
     private $metadata = '';
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type string $event_id
+     *     @type string $event_type
+     *     @type int $data_content_type
+     *     @type int $metadata_content_type
+     *     @type string $data
+     *     @type string $metadata
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>bytes event_id = 1;</code>
+     * Generated from protobuf field <code>bytes event_id = 1;</code>
+     * @return string
      */
     public function getEventId()
     {
@@ -52,16 +67,21 @@ class NewEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bytes event_id = 1;</code>
+     * Generated from protobuf field <code>bytes event_id = 1;</code>
+     * @param string $var
+     * @return $this
      */
     public function setEventId($var)
     {
         GPBUtil::checkString($var, False);
         $this->event_id = $var;
+
+        return $this;
     }
 
     /**
-     * <code>string event_type = 2;</code>
+     * Generated from protobuf field <code>string event_type = 2;</code>
+     * @return string
      */
     public function getEventType()
     {
@@ -69,16 +89,21 @@ class NewEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string event_type = 2;</code>
+     * Generated from protobuf field <code>string event_type = 2;</code>
+     * @param string $var
+     * @return $this
      */
     public function setEventType($var)
     {
         GPBUtil::checkString($var, True);
         $this->event_type = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 data_content_type = 3;</code>
+     * Generated from protobuf field <code>int32 data_content_type = 3;</code>
+     * @return int
      */
     public function getDataContentType()
     {
@@ -86,16 +111,21 @@ class NewEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 data_content_type = 3;</code>
+     * Generated from protobuf field <code>int32 data_content_type = 3;</code>
+     * @param int $var
+     * @return $this
      */
     public function setDataContentType($var)
     {
         GPBUtil::checkInt32($var);
         $this->data_content_type = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 metadata_content_type = 4;</code>
+     * Generated from protobuf field <code>int32 metadata_content_type = 4;</code>
+     * @return int
      */
     public function getMetadataContentType()
     {
@@ -103,16 +133,21 @@ class NewEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 metadata_content_type = 4;</code>
+     * Generated from protobuf field <code>int32 metadata_content_type = 4;</code>
+     * @param int $var
+     * @return $this
      */
     public function setMetadataContentType($var)
     {
         GPBUtil::checkInt32($var);
         $this->metadata_content_type = $var;
+
+        return $this;
     }
 
     /**
-     * <code>bytes data = 5;</code>
+     * Generated from protobuf field <code>bytes data = 5;</code>
+     * @return string
      */
     public function getData()
     {
@@ -120,16 +155,21 @@ class NewEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bytes data = 5;</code>
+     * Generated from protobuf field <code>bytes data = 5;</code>
+     * @param string $var
+     * @return $this
      */
     public function setData($var)
     {
         GPBUtil::checkString($var, False);
         $this->data = $var;
+
+        return $this;
     }
 
     /**
-     * <code>bytes metadata = 6;</code>
+     * Generated from protobuf field <code>bytes metadata = 6;</code>
+     * @return string
      */
     public function getMetadata()
     {
@@ -137,12 +177,16 @@ class NewEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bytes metadata = 6;</code>
+     * Generated from protobuf field <code>bytes metadata = 6;</code>
+     * @param string $var
+     * @return $this
      */
     public function setMetadata($var)
     {
         GPBUtil::checkString($var, False);
         $this->metadata = $var;
+
+        return $this;
     }
 
 }

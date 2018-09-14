@@ -9,30 +9,42 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.PersistentSubscriptionConfirmation</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.PersistentSubscriptionConfirmation</code>
  */
 class PersistentSubscriptionConfirmation extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>int64 last_commit_position = 1;</code>
+     * Generated from protobuf field <code>int64 last_commit_position = 1;</code>
      */
     private $last_commit_position = 0;
     /**
-     * <code>string subscription_id = 2;</code>
+     * Generated from protobuf field <code>string subscription_id = 2;</code>
      */
     private $subscription_id = '';
     /**
-     * <code>int64 last_event_number = 3;</code>
+     * Generated from protobuf field <code>int64 last_event_number = 3;</code>
      */
     private $last_event_number = 0;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type int|string $last_commit_position
+     *     @type string $subscription_id
+     *     @type int|string $last_event_number
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>int64 last_commit_position = 1;</code>
+     * Generated from protobuf field <code>int64 last_commit_position = 1;</code>
+     * @return int|string
      */
     public function getLastCommitPosition()
     {
@@ -40,16 +52,21 @@ class PersistentSubscriptionConfirmation extends \Google\Protobuf\Internal\Messa
     }
 
     /**
-     * <code>int64 last_commit_position = 1;</code>
+     * Generated from protobuf field <code>int64 last_commit_position = 1;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setLastCommitPosition($var)
     {
         GPBUtil::checkInt64($var);
         $this->last_commit_position = $var;
+
+        return $this;
     }
 
     /**
-     * <code>string subscription_id = 2;</code>
+     * Generated from protobuf field <code>string subscription_id = 2;</code>
+     * @return string
      */
     public function getSubscriptionId()
     {
@@ -57,16 +74,21 @@ class PersistentSubscriptionConfirmation extends \Google\Protobuf\Internal\Messa
     }
 
     /**
-     * <code>string subscription_id = 2;</code>
+     * Generated from protobuf field <code>string subscription_id = 2;</code>
+     * @param string $var
+     * @return $this
      */
     public function setSubscriptionId($var)
     {
         GPBUtil::checkString($var, True);
         $this->subscription_id = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 last_event_number = 3;</code>
+     * Generated from protobuf field <code>int64 last_event_number = 3;</code>
+     * @return int|string
      */
     public function getLastEventNumber()
     {
@@ -74,12 +96,16 @@ class PersistentSubscriptionConfirmation extends \Google\Protobuf\Internal\Messa
     }
 
     /**
-     * <code>int64 last_event_number = 3;</code>
+     * Generated from protobuf field <code>int64 last_event_number = 3;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setLastEventNumber($var)
     {
         GPBUtil::checkInt64($var);
         $this->last_event_number = $var;
+
+        return $this;
     }
 
 }

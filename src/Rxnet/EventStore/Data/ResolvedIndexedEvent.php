@@ -9,26 +9,37 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.ResolvedIndexedEvent</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.ResolvedIndexedEvent</code>
  */
 class ResolvedIndexedEvent extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>.Rxnet.EventStore.Data.EventRecord event = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.EventRecord event = 1;</code>
      */
     private $event = null;
     /**
-     * <code>.Rxnet.EventStore.Data.EventRecord link = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.EventRecord link = 2;</code>
      */
     private $link = null;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type \Rxnet\EventStore\Data\EventRecord $event
+     *     @type \Rxnet\EventStore\Data\EventRecord $link
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.EventRecord event = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.EventRecord event = 1;</code>
+     * @return \Rxnet\EventStore\Data\EventRecord
      */
     public function getEvent()
     {
@@ -36,16 +47,21 @@ class ResolvedIndexedEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.EventRecord event = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.EventRecord event = 1;</code>
+     * @param \Rxnet\EventStore\Data\EventRecord $var
+     * @return $this
      */
-    public function setEvent(&$var)
+    public function setEvent($var)
     {
         GPBUtil::checkMessage($var, \Rxnet\EventStore\Data\EventRecord::class);
         $this->event = $var;
+
+        return $this;
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.EventRecord link = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.EventRecord link = 2;</code>
+     * @return \Rxnet\EventStore\Data\EventRecord
      */
     public function getLink()
     {
@@ -53,12 +69,16 @@ class ResolvedIndexedEvent extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.EventRecord link = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.EventRecord link = 2;</code>
+     * @param \Rxnet\EventStore\Data\EventRecord $var
+     * @return $this
      */
-    public function setLink(&$var)
+    public function setLink($var)
     {
         GPBUtil::checkMessage($var, \Rxnet\EventStore\Data\EventRecord::class);
         $this->link = $var;
+
+        return $this;
     }
 
 }

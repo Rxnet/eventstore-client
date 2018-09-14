@@ -9,30 +9,42 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.ReadEventCompleted</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.ReadEventCompleted</code>
  */
 class ReadEventCompleted extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>.Rxnet.EventStore.Data.ReadEventCompleted.ReadEventResult result = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ReadEventCompleted.ReadEventResult result = 1;</code>
      */
     private $result = 0;
     /**
-     * <code>.Rxnet.EventStore.Data.ResolvedIndexedEvent event = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ResolvedIndexedEvent event = 2;</code>
      */
     private $event = null;
     /**
-     * <code>string error = 3;</code>
+     * Generated from protobuf field <code>string error = 3;</code>
      */
     private $error = '';
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type int $result
+     *     @type \Rxnet\EventStore\Data\ResolvedIndexedEvent $event
+     *     @type string $error
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.ReadEventCompleted.ReadEventResult result = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ReadEventCompleted.ReadEventResult result = 1;</code>
+     * @return int
      */
     public function getResult()
     {
@@ -40,16 +52,21 @@ class ReadEventCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.ReadEventCompleted.ReadEventResult result = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ReadEventCompleted.ReadEventResult result = 1;</code>
+     * @param int $var
+     * @return $this
      */
     public function setResult($var)
     {
         GPBUtil::checkEnum($var, \Rxnet\EventStore\Data\ReadEventCompleted_ReadEventResult::class);
         $this->result = $var;
+
+        return $this;
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.ResolvedIndexedEvent event = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ResolvedIndexedEvent event = 2;</code>
+     * @return \Rxnet\EventStore\Data\ResolvedIndexedEvent
      */
     public function getEvent()
     {
@@ -57,16 +74,21 @@ class ReadEventCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.ResolvedIndexedEvent event = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ResolvedIndexedEvent event = 2;</code>
+     * @param \Rxnet\EventStore\Data\ResolvedIndexedEvent $var
+     * @return $this
      */
-    public function setEvent(&$var)
+    public function setEvent($var)
     {
         GPBUtil::checkMessage($var, \Rxnet\EventStore\Data\ResolvedIndexedEvent::class);
         $this->event = $var;
+
+        return $this;
     }
 
     /**
-     * <code>string error = 3;</code>
+     * Generated from protobuf field <code>string error = 3;</code>
+     * @return string
      */
     public function getError()
     {
@@ -74,12 +96,16 @@ class ReadEventCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string error = 3;</code>
+     * Generated from protobuf field <code>string error = 3;</code>
+     * @param string $var
+     * @return $this
      */
     public function setError($var)
     {
         GPBUtil::checkString($var, True);
         $this->error = $var;
+
+        return $this;
     }
 
 }

@@ -9,30 +9,42 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.TransactionStartCompleted</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.TransactionStartCompleted</code>
  */
 class TransactionStartCompleted extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>int64 transaction_id = 1;</code>
+     * Generated from protobuf field <code>int64 transaction_id = 1;</code>
      */
     private $transaction_id = 0;
     /**
-     * <code>.Rxnet.EventStore.Data.OperationResult result = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.OperationResult result = 2;</code>
      */
     private $result = 0;
     /**
-     * <code>string message = 3;</code>
+     * Generated from protobuf field <code>string message = 3;</code>
      */
     private $message = '';
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type int|string $transaction_id
+     *     @type int $result
+     *     @type string $message
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>int64 transaction_id = 1;</code>
+     * Generated from protobuf field <code>int64 transaction_id = 1;</code>
+     * @return int|string
      */
     public function getTransactionId()
     {
@@ -40,16 +52,21 @@ class TransactionStartCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 transaction_id = 1;</code>
+     * Generated from protobuf field <code>int64 transaction_id = 1;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setTransactionId($var)
     {
         GPBUtil::checkInt64($var);
         $this->transaction_id = $var;
+
+        return $this;
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.OperationResult result = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.OperationResult result = 2;</code>
+     * @return int
      */
     public function getResult()
     {
@@ -57,16 +74,21 @@ class TransactionStartCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.OperationResult result = 2;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.OperationResult result = 2;</code>
+     * @param int $var
+     * @return $this
      */
     public function setResult($var)
     {
         GPBUtil::checkEnum($var, \Rxnet\EventStore\Data\OperationResult::class);
         $this->result = $var;
+
+        return $this;
     }
 
     /**
-     * <code>string message = 3;</code>
+     * Generated from protobuf field <code>string message = 3;</code>
+     * @return string
      */
     public function getMessage()
     {
@@ -74,12 +96,16 @@ class TransactionStartCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string message = 3;</code>
+     * Generated from protobuf field <code>string message = 3;</code>
+     * @param string $var
+     * @return $this
      */
     public function setMessage($var)
     {
         GPBUtil::checkString($var, True);
         $this->message = $var;
+
+        return $this;
     }
 
 }

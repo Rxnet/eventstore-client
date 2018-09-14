@@ -9,26 +9,37 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.SubscribeToStream</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.SubscribeToStream</code>
  */
 class SubscribeToStream extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>string event_stream_id = 1;</code>
+     * Generated from protobuf field <code>string event_stream_id = 1;</code>
      */
     private $event_stream_id = '';
     /**
-     * <code>bool resolve_link_tos = 2;</code>
+     * Generated from protobuf field <code>bool resolve_link_tos = 2;</code>
      */
     private $resolve_link_tos = false;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type string $event_stream_id
+     *     @type bool $resolve_link_tos
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>string event_stream_id = 1;</code>
+     * Generated from protobuf field <code>string event_stream_id = 1;</code>
+     * @return string
      */
     public function getEventStreamId()
     {
@@ -36,16 +47,21 @@ class SubscribeToStream extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string event_stream_id = 1;</code>
+     * Generated from protobuf field <code>string event_stream_id = 1;</code>
+     * @param string $var
+     * @return $this
      */
     public function setEventStreamId($var)
     {
         GPBUtil::checkString($var, True);
         $this->event_stream_id = $var;
+
+        return $this;
     }
 
     /**
-     * <code>bool resolve_link_tos = 2;</code>
+     * Generated from protobuf field <code>bool resolve_link_tos = 2;</code>
+     * @return bool
      */
     public function getResolveLinkTos()
     {
@@ -53,12 +69,16 @@ class SubscribeToStream extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bool resolve_link_tos = 2;</code>
+     * Generated from protobuf field <code>bool resolve_link_tos = 2;</code>
+     * @param bool $var
+     * @return $this
      */
     public function setResolveLinkTos($var)
     {
         GPBUtil::checkBool($var);
         $this->resolve_link_tos = $var;
+
+        return $this;
     }
 
 }

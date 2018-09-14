@@ -4,34 +4,13 @@
 
 namespace Rxnet\EventStore\Data;
 
-/**
- * Protobuf enum <code>Rxnet.EventStore.Data.ReadStreamEventsCompleted.ReadStreamResult</code>
- */
-class ReadStreamEventsCompleted_ReadStreamResult
-{
+if (false) {
     /**
-     * <code>Success = 0;</code>
+     * This class is deprecated. Use Rxnet\EventStore\Data\ReadStreamEventsCompleted\ReadStreamResult instead.
+     * @deprecated
      */
-    const Success = 0;
-    /**
-     * <code>NoStream = 1;</code>
-     */
-    const NoStream = 1;
-    /**
-     * <code>StreamDeleted = 2;</code>
-     */
-    const StreamDeleted = 2;
-    /**
-     * <code>NotModified = 3;</code>
-     */
-    const NotModified = 3;
-    /**
-     * <code>Error = 4;</code>
-     */
-    const Error = 4;
-    /**
-     * <code>AccessDenied = 5;</code>
-     */
-    const AccessDenied = 5;
+    class ReadStreamEventsCompleted_ReadStreamResult {}
 }
+class_exists(ReadStreamEventsCompleted\ReadStreamResult::class);
+@trigger_error('Rxnet\EventStore\Data\ReadStreamEventsCompleted_ReadStreamResult is deprecated and will be removed in the next major release. Use Rxnet\EventStore\Data\ReadStreamEventsCompleted\ReadStreamResult instead', E_USER_DEPRECATED);
 

@@ -9,58 +9,77 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.EventRecord</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.EventRecord</code>
  */
 class EventRecord extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>string event_stream_id = 1;</code>
+     * Generated from protobuf field <code>string event_stream_id = 1;</code>
      */
     private $event_stream_id = '';
     /**
-     * <code>int64 event_number = 2;</code>
+     * Generated from protobuf field <code>int64 event_number = 2;</code>
      */
     private $event_number = 0;
     /**
-     * <code>bytes event_id = 3;</code>
+     * Generated from protobuf field <code>bytes event_id = 3;</code>
      */
     private $event_id = '';
     /**
-     * <code>string event_type = 4;</code>
+     * Generated from protobuf field <code>string event_type = 4;</code>
      */
     private $event_type = '';
     /**
-     * <code>int32 data_content_type = 5;</code>
+     * Generated from protobuf field <code>int32 data_content_type = 5;</code>
      */
     private $data_content_type = 0;
     /**
-     * <code>int32 metadata_content_type = 6;</code>
+     * Generated from protobuf field <code>int32 metadata_content_type = 6;</code>
      */
     private $metadata_content_type = 0;
     /**
-     * <code>bytes data = 7;</code>
+     * Generated from protobuf field <code>bytes data = 7;</code>
      */
     private $data = '';
     /**
-     * <code>bytes metadata = 8;</code>
+     * Generated from protobuf field <code>bytes metadata = 8;</code>
      */
     private $metadata = '';
     /**
-     * <code>int64 created = 9;</code>
+     * Generated from protobuf field <code>int64 created = 9;</code>
      */
     private $created = 0;
     /**
-     * <code>int64 created_epoch = 10;</code>
+     * Generated from protobuf field <code>int64 created_epoch = 10;</code>
      */
     private $created_epoch = 0;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type string $event_stream_id
+     *     @type int|string $event_number
+     *     @type string $event_id
+     *     @type string $event_type
+     *     @type int $data_content_type
+     *     @type int $metadata_content_type
+     *     @type string $data
+     *     @type string $metadata
+     *     @type int|string $created
+     *     @type int|string $created_epoch
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>string event_stream_id = 1;</code>
+     * Generated from protobuf field <code>string event_stream_id = 1;</code>
+     * @return string
      */
     public function getEventStreamId()
     {
@@ -68,16 +87,21 @@ class EventRecord extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string event_stream_id = 1;</code>
+     * Generated from protobuf field <code>string event_stream_id = 1;</code>
+     * @param string $var
+     * @return $this
      */
     public function setEventStreamId($var)
     {
         GPBUtil::checkString($var, True);
         $this->event_stream_id = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 event_number = 2;</code>
+     * Generated from protobuf field <code>int64 event_number = 2;</code>
+     * @return int|string
      */
     public function getEventNumber()
     {
@@ -85,16 +109,21 @@ class EventRecord extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 event_number = 2;</code>
+     * Generated from protobuf field <code>int64 event_number = 2;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setEventNumber($var)
     {
         GPBUtil::checkInt64($var);
         $this->event_number = $var;
+
+        return $this;
     }
 
     /**
-     * <code>bytes event_id = 3;</code>
+     * Generated from protobuf field <code>bytes event_id = 3;</code>
+     * @return string
      */
     public function getEventId()
     {
@@ -102,16 +131,21 @@ class EventRecord extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bytes event_id = 3;</code>
+     * Generated from protobuf field <code>bytes event_id = 3;</code>
+     * @param string $var
+     * @return $this
      */
     public function setEventId($var)
     {
         GPBUtil::checkString($var, False);
         $this->event_id = $var;
+
+        return $this;
     }
 
     /**
-     * <code>string event_type = 4;</code>
+     * Generated from protobuf field <code>string event_type = 4;</code>
+     * @return string
      */
     public function getEventType()
     {
@@ -119,16 +153,21 @@ class EventRecord extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string event_type = 4;</code>
+     * Generated from protobuf field <code>string event_type = 4;</code>
+     * @param string $var
+     * @return $this
      */
     public function setEventType($var)
     {
         GPBUtil::checkString($var, True);
         $this->event_type = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 data_content_type = 5;</code>
+     * Generated from protobuf field <code>int32 data_content_type = 5;</code>
+     * @return int
      */
     public function getDataContentType()
     {
@@ -136,16 +175,21 @@ class EventRecord extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 data_content_type = 5;</code>
+     * Generated from protobuf field <code>int32 data_content_type = 5;</code>
+     * @param int $var
+     * @return $this
      */
     public function setDataContentType($var)
     {
         GPBUtil::checkInt32($var);
         $this->data_content_type = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 metadata_content_type = 6;</code>
+     * Generated from protobuf field <code>int32 metadata_content_type = 6;</code>
+     * @return int
      */
     public function getMetadataContentType()
     {
@@ -153,16 +197,21 @@ class EventRecord extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 metadata_content_type = 6;</code>
+     * Generated from protobuf field <code>int32 metadata_content_type = 6;</code>
+     * @param int $var
+     * @return $this
      */
     public function setMetadataContentType($var)
     {
         GPBUtil::checkInt32($var);
         $this->metadata_content_type = $var;
+
+        return $this;
     }
 
     /**
-     * <code>bytes data = 7;</code>
+     * Generated from protobuf field <code>bytes data = 7;</code>
+     * @return string
      */
     public function getData()
     {
@@ -170,16 +219,21 @@ class EventRecord extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bytes data = 7;</code>
+     * Generated from protobuf field <code>bytes data = 7;</code>
+     * @param string $var
+     * @return $this
      */
     public function setData($var)
     {
         GPBUtil::checkString($var, False);
         $this->data = $var;
+
+        return $this;
     }
 
     /**
-     * <code>bytes metadata = 8;</code>
+     * Generated from protobuf field <code>bytes metadata = 8;</code>
+     * @return string
      */
     public function getMetadata()
     {
@@ -187,16 +241,21 @@ class EventRecord extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>bytes metadata = 8;</code>
+     * Generated from protobuf field <code>bytes metadata = 8;</code>
+     * @param string $var
+     * @return $this
      */
     public function setMetadata($var)
     {
         GPBUtil::checkString($var, False);
         $this->metadata = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 created = 9;</code>
+     * Generated from protobuf field <code>int64 created = 9;</code>
+     * @return int|string
      */
     public function getCreated()
     {
@@ -204,16 +263,21 @@ class EventRecord extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 created = 9;</code>
+     * Generated from protobuf field <code>int64 created = 9;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setCreated($var)
     {
         GPBUtil::checkInt64($var);
         $this->created = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 created_epoch = 10;</code>
+     * Generated from protobuf field <code>int64 created_epoch = 10;</code>
+     * @return int|string
      */
     public function getCreatedEpoch()
     {
@@ -221,12 +285,16 @@ class EventRecord extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 created_epoch = 10;</code>
+     * Generated from protobuf field <code>int64 created_epoch = 10;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setCreatedEpoch($var)
     {
         GPBUtil::checkInt64($var);
         $this->created_epoch = $var;
+
+        return $this;
     }
 
 }

@@ -9,26 +9,37 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.SubscriptionConfirmation</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.SubscriptionConfirmation</code>
  */
 class SubscriptionConfirmation extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>int64 last_commit_position = 1;</code>
+     * Generated from protobuf field <code>int64 last_commit_position = 1;</code>
      */
     private $last_commit_position = 0;
     /**
-     * <code>int64 last_event_number = 2;</code>
+     * Generated from protobuf field <code>int64 last_event_number = 2;</code>
      */
     private $last_event_number = 0;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type int|string $last_commit_position
+     *     @type int|string $last_event_number
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>int64 last_commit_position = 1;</code>
+     * Generated from protobuf field <code>int64 last_commit_position = 1;</code>
+     * @return int|string
      */
     public function getLastCommitPosition()
     {
@@ -36,16 +47,21 @@ class SubscriptionConfirmation extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 last_commit_position = 1;</code>
+     * Generated from protobuf field <code>int64 last_commit_position = 1;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setLastCommitPosition($var)
     {
         GPBUtil::checkInt64($var);
         $this->last_commit_position = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 last_event_number = 2;</code>
+     * Generated from protobuf field <code>int64 last_event_number = 2;</code>
+     * @return int|string
      */
     public function getLastEventNumber()
     {
@@ -53,12 +69,16 @@ class SubscriptionConfirmation extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 last_event_number = 2;</code>
+     * Generated from protobuf field <code>int64 last_event_number = 2;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setLastEventNumber($var)
     {
         GPBUtil::checkInt64($var);
         $this->last_event_number = $var;
+
+        return $this;
     }
 
 }
