@@ -2,9 +2,6 @@
 
 namespace Rxnet\EventStore;
 
-
-use Carbon\Carbon;
-
 class EventRecord
 {
     protected $stream_id;
@@ -24,8 +21,7 @@ class EventRecord
         $created = $event->getCreatedEpoch();
         $date = substr($created, 0, -3);
         $micro = substr($created, -3);
-        $this->created = Carbon::createFromTimestamp($date . '.' . $micro);
-
+        $this->created = \DateTimeImmutable::createFromFormat('U.u', "{$date}.{$micro}");
 
         $this->type = $event->getEventType();
         $this->metadata = $event->getMetadata();
@@ -83,7 +79,7 @@ class EventRecord
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTimeInterface
      */
     public function getCreated()
     {
