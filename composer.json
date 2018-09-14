@@ -23,7 +23,6 @@
     "reactivex/rxphp": "^2.0",
     "rxnet/socket": "0.2.0",
     "voryx/event-loop": "^3.0 || ^2.0",
-    "nesbot/carbon": "^1.22",
     "zendframework/zend-stdlib": "^3.2"
   },
   "require-dev": {
