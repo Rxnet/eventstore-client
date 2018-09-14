@@ -49,8 +49,9 @@ class EventStore
     const POSITION_START = 0;
     const POSITION_END = -1;
     const POSITION_LATEST = 999999;
+
     /** @var LoopInterface */
-    protected $dns;
+    protected $loop;
     /** @var ReadBuffer */
     protected $readBuffer;
     /** @var Writer */
@@ -67,7 +68,6 @@ class EventStore
     protected $heartBeatRate;
     /** @var  DisposableInterface */
     protected $readBufferDisposable;
-    protected $loop;
     /** @var  array */
     protected $dsn;
 
