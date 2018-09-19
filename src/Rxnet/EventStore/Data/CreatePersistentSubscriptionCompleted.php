@@ -9,26 +9,37 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.CreatePersistentSubscriptionCompleted</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.CreatePersistentSubscriptionCompleted</code>
  */
 class CreatePersistentSubscriptionCompleted extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>.Rxnet.EventStore.Data.CreatePersistentSubscriptionCompleted.CreatePersistentSubscriptionResult result = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.CreatePersistentSubscriptionCompleted.CreatePersistentSubscriptionResult result = 1;</code>
      */
     private $result = 0;
     /**
-     * <code>string reason = 2;</code>
+     * Generated from protobuf field <code>string reason = 2;</code>
      */
     private $reason = '';
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type int $result
+     *     @type string $reason
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.CreatePersistentSubscriptionCompleted.CreatePersistentSubscriptionResult result = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.CreatePersistentSubscriptionCompleted.CreatePersistentSubscriptionResult result = 1;</code>
+     * @return int
      */
     public function getResult()
     {
@@ -36,16 +47,21 @@ class CreatePersistentSubscriptionCompleted extends \Google\Protobuf\Internal\Me
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.CreatePersistentSubscriptionCompleted.CreatePersistentSubscriptionResult result = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.CreatePersistentSubscriptionCompleted.CreatePersistentSubscriptionResult result = 1;</code>
+     * @param int $var
+     * @return $this
      */
     public function setResult($var)
     {
         GPBUtil::checkEnum($var, \Rxnet\EventStore\Data\CreatePersistentSubscriptionCompleted_CreatePersistentSubscriptionResult::class);
         $this->result = $var;
+
+        return $this;
     }
 
     /**
-     * <code>string reason = 2;</code>
+     * Generated from protobuf field <code>string reason = 2;</code>
+     * @return string
      */
     public function getReason()
     {
@@ -53,12 +69,16 @@ class CreatePersistentSubscriptionCompleted extends \Google\Protobuf\Internal\Me
     }
 
     /**
-     * <code>string reason = 2;</code>
+     * Generated from protobuf field <code>string reason = 2;</code>
+     * @param string $var
+     * @return $this
      */
     public function setReason($var)
     {
         GPBUtil::checkString($var, True);
         $this->reason = $var;
+
+        return $this;
     }
 
 }

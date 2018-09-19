@@ -4,30 +4,13 @@
 
 namespace Rxnet\EventStore\Data;
 
-/**
- * Protobuf enum <code>Rxnet.EventStore.Data.PersistentSubscriptionNakEvents.NakAction</code>
- */
-class PersistentSubscriptionNakEvents_NakAction
-{
+if (false) {
     /**
-     * <code>Unknown = 0;</code>
+     * This class is deprecated. Use Rxnet\EventStore\Data\PersistentSubscriptionNakEvents\NakAction instead.
+     * @deprecated
      */
-    const Unknown = 0;
-    /**
-     * <code>Park = 1;</code>
-     */
-    const Park = 1;
-    /**
-     * <code>Retry = 2;</code>
-     */
-    const Retry = 2;
-    /**
-     * <code>Skip = 3;</code>
-     */
-    const Skip = 3;
-    /**
-     * <code>Stop = 4;</code>
-     */
-    const Stop = 4;
+    class PersistentSubscriptionNakEvents_NakAction {}
 }
+class_exists(PersistentSubscriptionNakEvents\NakAction::class);
+@trigger_error('Rxnet\EventStore\Data\PersistentSubscriptionNakEvents_NakAction is deprecated and will be removed in the next major release. Use Rxnet\EventStore\Data\PersistentSubscriptionNakEvents\NakAction instead', E_USER_DEPRECATED);
 

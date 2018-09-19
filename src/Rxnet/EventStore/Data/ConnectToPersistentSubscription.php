@@ -9,30 +9,42 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.ConnectToPersistentSubscription</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.ConnectToPersistentSubscription</code>
  */
 class ConnectToPersistentSubscription extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>string subscription_id = 1;</code>
+     * Generated from protobuf field <code>string subscription_id = 1;</code>
      */
     private $subscription_id = '';
     /**
-     * <code>string event_stream_id = 2;</code>
+     * Generated from protobuf field <code>string event_stream_id = 2;</code>
      */
     private $event_stream_id = '';
     /**
-     * <code>int32 allowed_in_flight_messages = 3;</code>
+     * Generated from protobuf field <code>int32 allowed_in_flight_messages = 3;</code>
      */
     private $allowed_in_flight_messages = 0;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type string $subscription_id
+     *     @type string $event_stream_id
+     *     @type int $allowed_in_flight_messages
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>string subscription_id = 1;</code>
+     * Generated from protobuf field <code>string subscription_id = 1;</code>
+     * @return string
      */
     public function getSubscriptionId()
     {
@@ -40,16 +52,21 @@ class ConnectToPersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string subscription_id = 1;</code>
+     * Generated from protobuf field <code>string subscription_id = 1;</code>
+     * @param string $var
+     * @return $this
      */
     public function setSubscriptionId($var)
     {
         GPBUtil::checkString($var, True);
         $this->subscription_id = $var;
+
+        return $this;
     }
 
     /**
-     * <code>string event_stream_id = 2;</code>
+     * Generated from protobuf field <code>string event_stream_id = 2;</code>
+     * @return string
      */
     public function getEventStreamId()
     {
@@ -57,16 +74,21 @@ class ConnectToPersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string event_stream_id = 2;</code>
+     * Generated from protobuf field <code>string event_stream_id = 2;</code>
+     * @param string $var
+     * @return $this
      */
     public function setEventStreamId($var)
     {
         GPBUtil::checkString($var, True);
         $this->event_stream_id = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 allowed_in_flight_messages = 3;</code>
+     * Generated from protobuf field <code>int32 allowed_in_flight_messages = 3;</code>
+     * @return int
      */
     public function getAllowedInFlightMessages()
     {
@@ -74,12 +96,16 @@ class ConnectToPersistentSubscription extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 allowed_in_flight_messages = 3;</code>
+     * Generated from protobuf field <code>int32 allowed_in_flight_messages = 3;</code>
+     * @param int $var
+     * @return $this
      */
     public function setAllowedInFlightMessages($var)
     {
         GPBUtil::checkInt32($var);
         $this->allowed_in_flight_messages = $var;
+
+        return $this;
     }
 
 }

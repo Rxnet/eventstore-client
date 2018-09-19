@@ -9,14 +9,22 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.ScavengeDatabase</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.ScavengeDatabase</code>
  */
 class ScavengeDatabase extends \Google\Protobuf\Internal\Message
 {
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
 }

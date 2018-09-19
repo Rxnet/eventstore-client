@@ -4,22 +4,13 @@
 
 namespace Rxnet\EventStore\Data;
 
-/**
- * Protobuf enum <code>Rxnet.EventStore.Data.ScavengeDatabaseCompleted.ScavengeResult</code>
- */
-class ScavengeDatabaseCompleted_ScavengeResult
-{
+if (false) {
     /**
-     * <code>Success = 0;</code>
+     * This class is deprecated. Use Rxnet\EventStore\Data\ScavengeDatabaseCompleted\ScavengeResult instead.
+     * @deprecated
      */
-    const Success = 0;
-    /**
-     * <code>InProgress = 1;</code>
-     */
-    const InProgress = 1;
-    /**
-     * <code>Failed = 2;</code>
-     */
-    const Failed = 2;
+    class ScavengeDatabaseCompleted_ScavengeResult {}
 }
+class_exists(ScavengeDatabaseCompleted\ScavengeResult::class);
+@trigger_error('Rxnet\EventStore\Data\ScavengeDatabaseCompleted_ScavengeResult is deprecated and will be removed in the next major release. Use Rxnet\EventStore\Data\ScavengeDatabaseCompleted\ScavengeResult instead', E_USER_DEPRECATED);
 

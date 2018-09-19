@@ -9,46 +9,62 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.WriteEventsCompleted</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.WriteEventsCompleted</code>
  */
 class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>.Rxnet.EventStore.Data.OperationResult result = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.OperationResult result = 1;</code>
      */
     private $result = 0;
     /**
-     * <code>string message = 2;</code>
+     * Generated from protobuf field <code>string message = 2;</code>
      */
     private $message = '';
     /**
-     * <code>int64 first_event_number = 3;</code>
+     * Generated from protobuf field <code>int64 first_event_number = 3;</code>
      */
     private $first_event_number = 0;
     /**
-     * <code>int64 last_event_number = 4;</code>
+     * Generated from protobuf field <code>int64 last_event_number = 4;</code>
      */
     private $last_event_number = 0;
     /**
-     * <code>int64 prepare_position = 5;</code>
+     * Generated from protobuf field <code>int64 prepare_position = 5;</code>
      */
     private $prepare_position = 0;
     /**
-     * <code>int64 commit_position = 6;</code>
+     * Generated from protobuf field <code>int64 commit_position = 6;</code>
      */
     private $commit_position = 0;
     /**
-     * <code>int64 current_version = 7;</code>
+     * Generated from protobuf field <code>int64 current_version = 7;</code>
      */
     private $current_version = 0;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type int $result
+     *     @type string $message
+     *     @type int|string $first_event_number
+     *     @type int|string $last_event_number
+     *     @type int|string $prepare_position
+     *     @type int|string $commit_position
+     *     @type int|string $current_version
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.OperationResult result = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.OperationResult result = 1;</code>
+     * @return int
      */
     public function getResult()
     {
@@ -56,16 +72,21 @@ class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.OperationResult result = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.OperationResult result = 1;</code>
+     * @param int $var
+     * @return $this
      */
     public function setResult($var)
     {
         GPBUtil::checkEnum($var, \Rxnet\EventStore\Data\OperationResult::class);
         $this->result = $var;
+
+        return $this;
     }
 
     /**
-     * <code>string message = 2;</code>
+     * Generated from protobuf field <code>string message = 2;</code>
+     * @return string
      */
     public function getMessage()
     {
@@ -73,16 +94,21 @@ class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string message = 2;</code>
+     * Generated from protobuf field <code>string message = 2;</code>
+     * @param string $var
+     * @return $this
      */
     public function setMessage($var)
     {
         GPBUtil::checkString($var, True);
         $this->message = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 first_event_number = 3;</code>
+     * Generated from protobuf field <code>int64 first_event_number = 3;</code>
+     * @return int|string
      */
     public function getFirstEventNumber()
     {
@@ -90,16 +116,21 @@ class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 first_event_number = 3;</code>
+     * Generated from protobuf field <code>int64 first_event_number = 3;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setFirstEventNumber($var)
     {
         GPBUtil::checkInt64($var);
         $this->first_event_number = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 last_event_number = 4;</code>
+     * Generated from protobuf field <code>int64 last_event_number = 4;</code>
+     * @return int|string
      */
     public function getLastEventNumber()
     {
@@ -107,16 +138,21 @@ class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 last_event_number = 4;</code>
+     * Generated from protobuf field <code>int64 last_event_number = 4;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setLastEventNumber($var)
     {
         GPBUtil::checkInt64($var);
         $this->last_event_number = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 prepare_position = 5;</code>
+     * Generated from protobuf field <code>int64 prepare_position = 5;</code>
+     * @return int|string
      */
     public function getPreparePosition()
     {
@@ -124,16 +160,21 @@ class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 prepare_position = 5;</code>
+     * Generated from protobuf field <code>int64 prepare_position = 5;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setPreparePosition($var)
     {
         GPBUtil::checkInt64($var);
         $this->prepare_position = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 commit_position = 6;</code>
+     * Generated from protobuf field <code>int64 commit_position = 6;</code>
+     * @return int|string
      */
     public function getCommitPosition()
     {
@@ -141,16 +182,21 @@ class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 commit_position = 6;</code>
+     * Generated from protobuf field <code>int64 commit_position = 6;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setCommitPosition($var)
     {
         GPBUtil::checkInt64($var);
         $this->commit_position = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 current_version = 7;</code>
+     * Generated from protobuf field <code>int64 current_version = 7;</code>
+     * @return int|string
      */
     public function getCurrentVersion()
     {
@@ -158,12 +204,16 @@ class WriteEventsCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 current_version = 7;</code>
+     * Generated from protobuf field <code>int64 current_version = 7;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setCurrentVersion($var)
     {
         GPBUtil::checkInt64($var);
         $this->current_version = $var;
+
+        return $this;
     }
 
 }

@@ -9,34 +9,47 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- * Protobuf type <code>Rxnet.EventStore.Data.ScavengeDatabaseCompleted</code>
+ * Generated from protobuf message <code>Rxnet.EventStore.Data.ScavengeDatabaseCompleted</code>
  */
 class ScavengeDatabaseCompleted extends \Google\Protobuf\Internal\Message
 {
     /**
-     * <code>.Rxnet.EventStore.Data.ScavengeDatabaseCompleted.ScavengeResult result = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ScavengeDatabaseCompleted.ScavengeResult result = 1;</code>
      */
     private $result = 0;
     /**
-     * <code>string error = 2;</code>
+     * Generated from protobuf field <code>string error = 2;</code>
      */
     private $error = '';
     /**
-     * <code>int32 total_time_ms = 3;</code>
+     * Generated from protobuf field <code>int32 total_time_ms = 3;</code>
      */
     private $total_time_ms = 0;
     /**
-     * <code>int64 total_space_saved = 4;</code>
+     * Generated from protobuf field <code>int64 total_space_saved = 4;</code>
      */
     private $total_space_saved = 0;
 
-    public function __construct() {
+    /**
+     * Constructor.
+     *
+     * @param array $data {
+     *     Optional. Data for populating the Message object.
+     *
+     *     @type int $result
+     *     @type string $error
+     *     @type int $total_time_ms
+     *     @type int|string $total_space_saved
+     * }
+     */
+    public function __construct($data = NULL) {
         \GPBMetadata\ClientMessageDtos::initOnce();
-        parent::__construct();
+        parent::__construct($data);
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.ScavengeDatabaseCompleted.ScavengeResult result = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ScavengeDatabaseCompleted.ScavengeResult result = 1;</code>
+     * @return int
      */
     public function getResult()
     {
@@ -44,16 +57,21 @@ class ScavengeDatabaseCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>.Rxnet.EventStore.Data.ScavengeDatabaseCompleted.ScavengeResult result = 1;</code>
+     * Generated from protobuf field <code>.Rxnet.EventStore.Data.ScavengeDatabaseCompleted.ScavengeResult result = 1;</code>
+     * @param int $var
+     * @return $this
      */
     public function setResult($var)
     {
         GPBUtil::checkEnum($var, \Rxnet\EventStore\Data\ScavengeDatabaseCompleted_ScavengeResult::class);
         $this->result = $var;
+
+        return $this;
     }
 
     /**
-     * <code>string error = 2;</code>
+     * Generated from protobuf field <code>string error = 2;</code>
+     * @return string
      */
     public function getError()
     {
@@ -61,16 +79,21 @@ class ScavengeDatabaseCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>string error = 2;</code>
+     * Generated from protobuf field <code>string error = 2;</code>
+     * @param string $var
+     * @return $this
      */
     public function setError($var)
     {
         GPBUtil::checkString($var, True);
         $this->error = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int32 total_time_ms = 3;</code>
+     * Generated from protobuf field <code>int32 total_time_ms = 3;</code>
+     * @return int
      */
     public function getTotalTimeMs()
     {
@@ -78,16 +101,21 @@ class ScavengeDatabaseCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int32 total_time_ms = 3;</code>
+     * Generated from protobuf field <code>int32 total_time_ms = 3;</code>
+     * @param int $var
+     * @return $this
      */
     public function setTotalTimeMs($var)
     {
         GPBUtil::checkInt32($var);
         $this->total_time_ms = $var;
+
+        return $this;
     }
 
     /**
-     * <code>int64 total_space_saved = 4;</code>
+     * Generated from protobuf field <code>int64 total_space_saved = 4;</code>
+     * @return int|string
      */
     public function getTotalSpaceSaved()
     {
@@ -95,12 +123,16 @@ class ScavengeDatabaseCompleted extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * <code>int64 total_space_saved = 4;</code>
+     * Generated from protobuf field <code>int64 total_space_saved = 4;</code>
+     * @param int|string $var
+     * @return $this
      */
     public function setTotalSpaceSaved($var)
     {
         GPBUtil::checkInt64($var);
         $this->total_space_saved = $var;
+
+        return $this;
     }
 
 }

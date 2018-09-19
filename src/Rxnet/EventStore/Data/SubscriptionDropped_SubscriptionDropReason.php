@@ -4,30 +4,13 @@
 
 namespace Rxnet\EventStore\Data;
 
-/**
- * Protobuf enum <code>Rxnet.EventStore.Data.SubscriptionDropped.SubscriptionDropReason</code>
- */
-class SubscriptionDropped_SubscriptionDropReason
-{
+if (false) {
     /**
-     * <code>Unsubscribed = 0;</code>
+     * This class is deprecated. Use Rxnet\EventStore\Data\SubscriptionDropped\SubscriptionDropReason instead.
+     * @deprecated
      */
-    const Unsubscribed = 0;
-    /**
-     * <code>AccessDenied = 1;</code>
-     */
-    const AccessDenied = 1;
-    /**
-     * <code>NotFound = 2;</code>
-     */
-    const NotFound = 2;
-    /**
-     * <code>PersistentSubscriptionDeleted = 3;</code>
-     */
-    const PersistentSubscriptionDeleted = 3;
-    /**
-     * <code>SubscriberMaxCountReached = 4;</code>
-     */
-    const SubscriberMaxCountReached = 4;
+    class SubscriptionDropped_SubscriptionDropReason {}
 }
+class_exists(SubscriptionDropped\SubscriptionDropReason::class);
+@trigger_error('Rxnet\EventStore\Data\SubscriptionDropped_SubscriptionDropReason is deprecated and will be removed in the next major release. Use Rxnet\EventStore\Data\SubscriptionDropped\SubscriptionDropReason instead', E_USER_DEPRECATED);
 

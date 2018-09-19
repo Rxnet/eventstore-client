@@ -4,26 +4,13 @@
 
 namespace Rxnet\EventStore\Data;
 
-/**
- * Protobuf enum <code>Rxnet.EventStore.Data.DeletePersistentSubscriptionCompleted.DeletePersistentSubscriptionResult</code>
- */
-class DeletePersistentSubscriptionCompleted_DeletePersistentSubscriptionResult
-{
+if (false) {
     /**
-     * <code>Success = 0;</code>
+     * This class is deprecated. Use Rxnet\EventStore\Data\DeletePersistentSubscriptionCompleted\DeletePersistentSubscriptionResult instead.
+     * @deprecated
      */
-    const Success = 0;
-    /**
-     * <code>DoesNotExist = 1;</code>
-     */
-    const DoesNotExist = 1;
-    /**
-     * <code>Fail = 2;</code>
-     */
-    const Fail = 2;
-    /**
-     * <code>AccessDenied = 3;</code>
-     */
-    const AccessDenied = 3;
+    class DeletePersistentSubscriptionCompleted_DeletePersistentSubscriptionResult {}
 }
+class_exists(DeletePersistentSubscriptionCompleted\DeletePersistentSubscriptionResult::class);
+@trigger_error('Rxnet\EventStore\Data\DeletePersistentSubscriptionCompleted_DeletePersistentSubscriptionResult is deprecated and will be removed in the next major release. Use Rxnet\EventStore\Data\DeletePersistentSubscriptionCompleted\DeletePersistentSubscriptionResult instead', E_USER_DEPRECATED);
 
