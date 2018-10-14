@@ -20,7 +20,6 @@ use Rxnet\Socket;
 use Rxnet\EventStore\Data\ConnectToPersistentSubscription;
 use Rxnet\EventStore\Data\NewEvent;
 use Rxnet\EventStore\Data\NotHandled;
-use Rxnet\EventStore\Data\NotHandled_MasterInfo;
 use Rxnet\EventStore\Data\PersistentSubscriptionConfirmation;
 use Rxnet\EventStore\Data\PersistentSubscriptionStreamEventAppeared;
 use Rxnet\EventStore\Data\ReadAllEvents;
@@ -432,8 +431,8 @@ class EventStore
                             case PersistentSubscriptionStreamEventAppeared::class :
                                 return Observable::of($data);
 
-                            case NotHandled_MasterInfo::class:
-                                /* @var NotHandled_MasterInfo $data */
+                            case NotHandled\MasterInfo::class:
+                                /* @var NotHandled\MasterInfo $data */
                                 return Observable::error(new NotMasterException($data->getExternalTcpAddress(), $data->getExternalTcpPort()));
                             case NotHandled::class :
                                 if ($data->getReason() == 0) {
