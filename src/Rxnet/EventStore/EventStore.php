@@ -168,7 +168,10 @@ class EventStore
     {
         $this->dsn['host'] = $host;
         $this->dsn['port'] = $port;
-        return $this->connector->connect($host, $this->dsn['port'])
+
+        $dsn = $this->dsn['user'].':'.$this->dsn['pass'].'@'.$this->dsn['host'].':'.$this->dsn['port'];
+
+        return $this->connector->connect($dsn)
             ->flatMap(function (Socket\Connection $connection) {
                 // send all data to our read buffer
                 $this->stream = $connection;
