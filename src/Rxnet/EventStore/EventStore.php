@@ -370,17 +370,6 @@ class EventStore
     {
         $correlationID = $this->writer->createUUIDIfNeeded();
         return $this->connectToPersistentSubscription($streamID, $group, $parallel, $correlationID)
-            ->catch(function (\Exception $e) use ($streamID, $group, $parallel, $correlationID) {
-                if ($e instanceOf NotMasterException) {
-                    // Reconnect if not master
-                    return $this->reconnect($e->getMasterIp(), $e->getMasterPort())
-                        ->concat($this->connectToPersistentSubscription($streamID, $group, $parallel, $correlationID))
-                        ->flatMap(function () use ($streamID, $group, $parallel, $correlationID) {
-                            return $this->connectToPersistentSubscription($streamID, $group, $parallel, $correlationID);
-                        });
-                }
-                throw $e;
-            })
             ->map(
                 function (PersistentSubscriptionStreamEventAppeared $eventAppeared) use ($correlationID, $group) {
                     $record = $eventAppeared->getEvent()->getEvent();
