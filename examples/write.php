@@ -3,7 +3,7 @@
 use EventLoop\EventLoop;
 use Rx\Observer\CallbackObserver;
 use Rxnet\EventStore\Data\WriteEventsCompleted;
-use Rxnet\EventStore\NewEvent\JsonEvent;
+use Rxnet\EventStore\Event\JsonEvent;
 
 require __DIR__ . '/../vendor/autoload.php';
 

@@ -40,7 +40,7 @@ use Rxnet\EventStore\Exception\NotMasterException;
 use Rxnet\EventStore\Message\Credentials;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
-use Rxnet\EventStore\NewEvent\NewEventInterface;
+use Rxnet\EventStore\Event\EventInterface;
 
 
 class EventStore
@@ -218,7 +218,7 @@ class EventStore
 
     /**
      * @param string $streamId
-     * @param NewEventInterface[] $events
+     * @param EventInterface[] $events
      * @param int $expectedVersion
      * @param bool $requireMaster
      * @return ObservableInterface(WriteEventsCompleted) with WriteEventsCompleted

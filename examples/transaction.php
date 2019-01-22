@@ -3,7 +3,7 @@
 use EventLoop\EventLoop;
 use Rxnet\EventStore\Data\TransactionCommitCompleted;
 use Rxnet\EventStore\Data\TransactionWriteCompleted;
-use Rxnet\EventStore\NewEvent\JsonEvent;
+use Rxnet\EventStore\Event\JsonEvent;
 use Rxnet\EventStore\Transaction;
 
 require __DIR__.'/../vendor/autoload.php';

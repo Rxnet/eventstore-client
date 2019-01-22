@@ -10,7 +10,7 @@ use Rxnet\EventStore\Data\NewEvent;
 use Rxnet\EventStore\Data\TransactionCommit;
 use Rxnet\EventStore\Data\TransactionWrite;
 use Rxnet\EventStore\Message\MessageType;
-use Rxnet\EventStore\NewEvent\NewEventInterface;
+use Rxnet\EventStore\Event\EventInterface;
 
 class Transaction
 {
@@ -31,7 +31,7 @@ class Transaction
     }
 
     /**
-     * @param NewEventInterface[] $events
+     * @param EventInterface[] $events
      * @param bool $requireMaster
      * @return Observable
      */
