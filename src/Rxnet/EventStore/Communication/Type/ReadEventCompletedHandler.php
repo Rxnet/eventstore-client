@@ -1,10 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Rxnet\EventStore\Communication\Type;
 
 use Rxnet\EventStore\Communication\Communicable;
 use Rxnet\EventStore\Data\ReadEventCompleted;
-use Rxnet\EventStore\Data\ReadStreamEventsCompleted;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 
@@ -26,5 +25,4 @@ class ReadEventCompletedHandler implements Communicable
 
         return new SocketMessage($messageType, $correlationID, $dataObject);
     }
-
 }

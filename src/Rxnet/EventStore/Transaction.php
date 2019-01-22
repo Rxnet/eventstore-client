@@ -1,7 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Rxnet\EventStore;
-
 
 use Google\Protobuf\Internal\GPBType;
 use Google\Protobuf\Internal\RepeatedField;
@@ -9,8 +8,8 @@ use Rx\Observable;
 use Rxnet\EventStore\Data\NewEvent;
 use Rxnet\EventStore\Data\TransactionCommit;
 use Rxnet\EventStore\Data\TransactionWrite;
-use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Event\EventInterface;
+use Rxnet\EventStore\Message\MessageType;
 
 class Transaction
 {
@@ -24,9 +23,9 @@ class Transaction
         $this->transactionId = $transactionId;
         $this->writer = $writer;
         $this->readBuffer = $readBuffer;
-
     }
-    public function getId() {
+    public function getId()
+    {
         return $this->transactionId;
     }
 
@@ -35,14 +34,16 @@ class Transaction
      * @param bool $requireMaster
      * @return Observable
      */
-    public function write($events , $requireMaster = false) {
-        if(!is_array($events)) {
+    public function write($events, $requireMaster = false)
+    {
+        if (!is_array($events)) {
             $events = [$events];
         }
         if (!$events) {
             throw new \LogicException('No events added');
         }
-        $query = new TransactionWrite();;
+        $query = new TransactionWrite();
+        ;
         $query->setRequireMaster($requireMaster);
         $query->setTransactionId($this->transactionId);
 
@@ -60,7 +61,8 @@ class Transaction
     /**
      * @return Observable\AnonymousObservable
      */
-    public function commit() {
+    public function commit()
+    {
         $query = new TransactionCommit();
         $query->setTransactionId($this->transactionId);
         $query->setRequireMaster($this->requireMaster);

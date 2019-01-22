@@ -1,17 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Rxnet\EventStore;
-
 
 use Google\Protobuf\Internal\GPBType;
 use Google\Protobuf\Internal\RepeatedField;
 use Ramsey\Uuid\Uuid;
 use Rxnet\EventStore\Data\NewEvent;
-use Rxnet\EventStore\Data\TransactionStart;
 use Rxnet\EventStore\Data\WriteEvents;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
-
 
 class AppendToStream
 {
@@ -99,7 +96,5 @@ class AppendToStream
                 $writeEvents->setEvents($this->events);
                 $this->writeEvents = $writeEvents;
             });
-
-
     }
 }

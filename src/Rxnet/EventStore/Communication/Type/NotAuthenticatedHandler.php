@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Rxnet\EventStore\Communication\Type;
 
@@ -16,5 +16,4 @@ class NotAuthenticatedHandler implements Communicable
     {
         throw new EventStoreHandlerException("Not Authenticated: " . $data);
     }
-
 }

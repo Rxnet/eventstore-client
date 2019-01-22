@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace Rxnet\EventStore;
 
 use Rx\Subject\Subject;
@@ -30,7 +30,7 @@ class ReadBuffer extends Subject
             return null;
         }
 
-        $socketMessages = array();
+        $socketMessages = [];
 
         if (!is_null($this->currentMessage)) {
             $value = $this->currentMessage . $value;
@@ -54,7 +54,6 @@ class ReadBuffer extends Subject
             } else {
                 $this->currentMessage .= $value;
             }
-
         } while ($dataLength > $messageLength);
 
         //echo "messages : ".count($socketMessages) ." for ".count($this->observers)." observers \n";
@@ -65,7 +64,6 @@ class ReadBuffer extends Subject
 
     public function waitFor($correlationID, $take = 1)
     {
-
         $observable = $this
             ->filter(
                 function (SocketMessage $message) use ($correlationID) {

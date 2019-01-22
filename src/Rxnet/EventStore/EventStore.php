@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Rxnet\EventStore;
 
@@ -15,8 +15,6 @@ use Rx\Observer\CallbackObserver;
 use Rx\ObserverInterface;
 use Rx\Subject\ReplaySubject;
 use Rx\Subject\Subject;
-use Rxnet\Operator\OnBackPressureBuffer;
-use Rxnet\Socket;
 use Rxnet\EventStore\Data\ConnectToPersistentSubscription;
 use Rxnet\EventStore\Data\NewEvent;
 use Rxnet\EventStore\Data\NotHandled;
@@ -36,12 +34,13 @@ use Rxnet\EventStore\Data\TransactionStart;
 use Rxnet\EventStore\Data\TransactionStartCompleted;
 use Rxnet\EventStore\Data\UnsubscribeFromStream;
 use Rxnet\EventStore\Data\WriteEvents;
+use Rxnet\EventStore\Event\EventInterface;
 use Rxnet\EventStore\Exception\NotMasterException;
 use Rxnet\EventStore\Message\Credentials;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
-use Rxnet\EventStore\Event\EventInterface;
-
+use Rxnet\Operator\OnBackPressureBuffer;
+use Rxnet\Socket;
 
 class EventStore
 {
@@ -155,7 +154,8 @@ class EventStore
      * Disconnect underlying socket
      * @return void
      */
-    public function disconnect() {
+    public function disconnect()
+    {
         $this->connector->close();
     }
 
@@ -190,7 +190,6 @@ class EventStore
                 // Forward internal errors to the connect result
                 return $this->connectionSubject->startWith('/eventstore/re-connected');
             });
-
     }
 
     /**
@@ -244,7 +243,6 @@ class EventStore
         $correlationID = $this->writer->createUUIDIfNeeded();
         return $this->writer->composeAndWrite(MessageType::WRITE_EVENTS, $query, $correlationID)
             ->merge($this->readBuffer->waitFor($correlationID, 1));
-
     }
 
     /**
@@ -330,11 +328,11 @@ class EventStore
                         $data = $message->getData();
                         //var_dump($data);
                         switch (get_class($data)) {
-                            case SubscriptionDropped::class :
+                            case SubscriptionDropped::class:
                                 return Observable::error(new \Exception("Subscription dropped, for reason : {$data->getReason()}"));
-                            case SubscriptionConfirmation::class :
+                            case SubscriptionConfirmation::class:
                                 return Observable::empty();
-                            default :
+                            default:
                                 return Observable::of($data);
                         }
                     }
@@ -412,17 +410,17 @@ class EventStore
                 ->flatMap(
                     function ($data) {
                         switch (get_class($data)) {
-                            case SubscriptionDropped::class :
+                            case SubscriptionDropped::class:
                                 return Observable::error(new \Exception("Subscription dropped, for reason : {$data->getReason()}"));
-                            case PersistentSubscriptionConfirmation::class :
+                            case PersistentSubscriptionConfirmation::class:
                                 return Observable::empty();
-                            case PersistentSubscriptionStreamEventAppeared::class :
+                            case PersistentSubscriptionStreamEventAppeared::class:
                                 return Observable::of($data);
 
                             case NotHandled\MasterInfo::class:
                                 /* @var NotHandled\MasterInfo $data */
                                 return Observable::error(new NotMasterException($data->getExternalTcpAddress(), $data->getExternalTcpPort()));
-                            case NotHandled::class :
+                            case NotHandled::class:
                                 if ($data->getReason() == 0) {
                                     return Observable::error(new \LogicException("Server is not ready {$data->getAdditionalInfo()}", 0));
                                 }
@@ -562,29 +560,28 @@ class EventStore
 
         // Detect the end and ask for more until its done
         $inputObs->subscribe(function (ReadStreamEventsCompleted $event) use ($readUntilEnd, $maxPossible, $query, &$asked, &$max, $correlationID, $messageType) {
+            $records = $event->getEvents();
+            $asked -= count($records);
+
+            if (!$event->getIsEndOfStream() and !($asked <= 0 && $max != self::POSITION_LATEST)) {
                 $records = $event->getEvents();
-                $asked -= count($records);
+                $start = $records[count($records) - 1];
+                /* @var ResolvedIndexedEvent $start */
 
-                if (!$event->getIsEndOfStream() AND !($asked <= 0 && $max != self::POSITION_LATEST)) {
-                    $records = $event->getEvents();
-                    $start = $records[count($records) - 1];
-                    /* @var ResolvedIndexedEvent $start */
-
-                    if (null === $start->getLink()) {
-                        $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
-                    } else {
-                        $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getLink()->getEventNumber() + 1 : $start->getLink()->getEventNumber() - 1;
-                    }
-
-                    $query->setFromEventNumber($start);
-                    $query->setMaxCount($asked > $maxPossible ? $maxPossible : $asked);
-                    $this->writer->composeAndWrite($messageType, $query, $correlationID);
+                if (null === $start->getLink()) {
+                    $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
+                } else {
+                    $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getLink()->getEventNumber() + 1 : $start->getLink()->getEventNumber() - 1;
                 }
-                else {
-                    $readUntilEnd->onNext($event);
-                    $readUntilEnd->onCompleted();
-                }
-            });
+
+                $query->setFromEventNumber($start);
+                $query->setMaxCount($asked > $maxPossible ? $maxPossible : $asked);
+                $this->writer->composeAndWrite($messageType, $query, $correlationID);
+            } else {
+                $readUntilEnd->onNext($event);
+                $readUntilEnd->onCompleted();
+            }
+        });
 
         // Give back our subject one event per row
         return $readUntilEnd

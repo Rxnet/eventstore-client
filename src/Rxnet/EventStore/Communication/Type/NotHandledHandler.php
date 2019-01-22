@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace Rxnet\EventStore\Communication\Type;
 
 use Rxnet\EventStore\Communication\Communicable;
@@ -6,6 +6,7 @@ use Rxnet\EventStore\Data\NotHandled;
 use Rxnet\EventStore\Data\NotHandled\MasterInfo;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
+
 /**
  * Class SubscriptionDroppedHandler
  *
@@ -23,7 +24,7 @@ class NotHandledHandler implements Communicable
         $dataObject = new NotHandled();
         $dataObject->mergeFromString($data);
 
-        if($dataObject->getReason() == 2) {
+        if ($dataObject->getReason() == 2) {
             $additional_info = $dataObject->getAdditionalInfo();
             $dataObject = new MasterInfo();
             $dataObject->mergeFromString($additional_info);
@@ -31,5 +32,4 @@ class NotHandledHandler implements Communicable
 
         return new SocketMessage($messageType, $correlationID, $dataObject);
     }
-
 }

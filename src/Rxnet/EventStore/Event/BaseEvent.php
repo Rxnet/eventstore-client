@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Rxnet\EventStore\Event;
 
@@ -37,13 +37,11 @@ abstract class BaseEvent implements EventInterface
 
     public function setId(string $id): void
     {
-        if(!$id) {
+        if (!$id) {
             $id = Uuid::uuid4()->getHex();
-        }
-        elseif (!Uuid::isValid($id)) {
+        } elseif (!Uuid::isValid($id)) {
             $id = Uuid::uuid3(Uuid::NAMESPACE_OID, $id)->getHex();
-        }
-        else {
+        } else {
             $id = str_replace('-', '', $id);
         }
         $id = hex2bin($id);
@@ -90,8 +88,7 @@ abstract class BaseEvent implements EventInterface
      */
     public function getContentType(): string
     {
-        if (!static::CONTENT_TYPE)
-        {
+        if (!static::CONTENT_TYPE) {
             throw new ContentTypeNotDefined(get_class(static::class));
         }
 
