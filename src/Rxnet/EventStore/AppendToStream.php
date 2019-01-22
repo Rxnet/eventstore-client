@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Rxnet\EventStore;
 
@@ -33,12 +35,12 @@ class AppendToStream
         return $this;
     }
 
-
     public function commit()
     {
         if ($this->events->count() == 0) {
             throw new \LogicException('You commit events but added none');
         }
+
         $correlationID = $this->writer->createUUIDIfNeeded();
         $this->writer->composeAndWrite(MessageType::WRITE_EVENTS, $this->writeEvents, $correlationID);
 

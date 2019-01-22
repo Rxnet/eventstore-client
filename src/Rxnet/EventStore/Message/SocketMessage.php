@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace Rxnet\EventStore\Message;
 
 /**
@@ -22,16 +25,12 @@ class SocketMessage
     /** @var Credentials  */
     private $credentials;
 
-    /**
-     * @param MessageType $messageType
-     * @param string      $correlationID
-     * @param \Google\Protobuf\Internal\Message $data
-     * @param Credentials $credentials
-     *
-     * @internal param string $flag
-     */
-    public function __construct(MessageType $messageType, $correlationID, \Google\Protobuf\Internal\Message $data = null, Credentials $credentials = null)
-    {
+    public function __construct(
+        MessageType $messageType,
+        string $correlationID,
+        \Google\Protobuf\Internal\Message $data = null,
+        Credentials $credentials = null
+    ) {
         $this->messageType 	= $messageType;
         $this->correlationID = $correlationID;
         $this->data    		= $data;
@@ -69,7 +68,7 @@ class SocketMessage
     {
         return $this->messageType;
     }
-    
+
     /**
      * @return string
      */

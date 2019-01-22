@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Rxnet\EventStore;
 
@@ -19,31 +21,34 @@ class Writer
     /** @var  Credentials */
     protected $credentials;
 
-    public function setCredentials(Credentials $credentials)
+    public function setCredentials(Credentials $credentials): void
     {
         $this->credentials = $credentials;
     }
 
-    /**
-     * @param Connection $stream
-     */
-    public function setSocketStream($stream)
+    public function setSocketStream(Connection $stream): void
     {
         $this->stream = $stream;
     }
 
-    public function createUUIDIfNeeded($uuid = null)
+    public function createUUIDIfNeeded(string $uuid = null)
     {
         return $uuid ?: str_replace('-', '', Uuid::uuid4());
     }
 
-    public function composeAndWrite($messageType, Message $event = null, $correlationID = null)
-    {
+    public function composeAndWrite(
+        int $messageType,
+        Message $event = null,
+        string $correlationID = null
+    ): Observable {
         return $this->write($this->compose($messageType, $event, $correlationID));
     }
 
-    public function compose($messageType, Message $event = null, $correlationID = null)
-    {
+    public function compose(
+        int $messageType,
+        Message $event = null,
+        string $correlationID = null
+    ): SocketMessage {
         $correlationID = $this->createUUIDIfNeeded($correlationID);
         return new SocketMessage(
             new MessageType($messageType),
@@ -53,8 +58,7 @@ class Writer
         );
     }
 
-
-    public function write(SocketMessage $message)
+    public function write(SocketMessage $message): Observable
     {
         $data = $this->encode($message);
         $this->stream->write($data);
@@ -62,8 +66,7 @@ class Writer
         return Observable::empty();
     }
 
-
-    public function encode(SocketMessage $socketMessage)
+    public function encode(SocketMessage $socketMessage): string
     {
         //Correlation + flag length + command length
         $messageLength = MessageConfiguration::HEADER_LENGTH;

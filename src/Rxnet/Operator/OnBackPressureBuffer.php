@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace Rxnet\Operator;
 
 use Rx\DisposableInterface;
@@ -8,12 +11,6 @@ use Rx\ObserverInterface;
 use Rx\Operator\OperatorInterface;
 use Rx\Subject\Subject;
 
-/**
- * Class OnBackPressureBuffer
- * Store event stream until the consumer request next
- *
- * @package Rxnet\Operator
- */
 class OnBackPressureBuffer implements OperatorInterface
 {
     const OVERFLOW_STRATEGY_DROP_OLDEST = "drop_oldest";

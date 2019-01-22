@@ -1,5 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace Rxnet\EventStore\Event;
+
+use Rxnet\EventStore\Data\NewEvent;
 
 interface EventInterface
 {
@@ -11,5 +16,5 @@ interface EventInterface
     public function getType(): string;
     public function getData();
     public function getMetaData();
-    public function getMessage(): string;
+    public function getMessage(): NewEvent;
 }

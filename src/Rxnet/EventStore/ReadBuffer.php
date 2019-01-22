@@ -1,6 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace Rxnet\EventStore;
 
+use Rx\Observable;
 use Rx\Subject\Subject;
 use Rxnet\EventStore\Communication\CommunicationFactory;
 use Rxnet\EventStore\Message\MessageConfiguration;
@@ -62,7 +66,7 @@ class ReadBuffer extends Subject
         }
     }
 
-    public function waitFor($correlationID, $take = 1)
+    public function waitFor(string $correlationID, int $take = 1): Observable
     {
         $observable = $this
             ->filter(

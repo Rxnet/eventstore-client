@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Rxnet\EventStore;
 
@@ -89,8 +91,11 @@ class EventStore
      * @param int $heartBeatRate in milliseconds
      * @return Observable
      */
-    public function connect($dsn = 'tcp://admin:changeit@localhost:1113', $connectTimeout = 1000, $heartBeatRate = 5000)
-    {
+    public function connect(
+        string $dsn = 'tcp://admin:changeit@localhost:1113',
+        int $connectTimeout = 1000,
+        int $heartBeatRate = 5000
+    ): Observable {
         // connector compatibility
         $connectTimeout = ($connectTimeout > 0) ? $connectTimeout / 1000 : 0;
         $this->heartBeatRate = $heartBeatRate;
@@ -152,19 +157,13 @@ class EventStore
 
     /**
      * Disconnect underlying socket
-     * @return void
      */
-    public function disconnect()
+    public function disconnect(): void
     {
         $this->connector->close();
     }
 
-    /**
-     * @param $host
-     * @param $port
-     * @return Observable\AnonymousObservable
-     */
-    protected function reconnect($host, $port)
+    protected function reconnect(string $host, string $port): Observable
     {
         $this->dsn['host'] = $host;
         $this->dsn['port'] = $port;
@@ -194,9 +193,8 @@ class EventStore
 
     /**
      * Intercept heartbeat message and answer automatically
-     * @return DisposableInterface
      */
-    protected function heartbeat()
+    protected function heartbeat(): DisposableInterface
     {
         return $this->readBuffer
             ->timeout($this->heartBeatRate)
@@ -216,14 +214,15 @@ class EventStore
     }
 
     /**
-     * @param string $streamId
      * @param EventInterface[] $events
-     * @param int $expectedVersion
-     * @param bool $requireMaster
      * @return ObservableInterface(WriteEventsCompleted) with WriteEventsCompleted
      */
-    public function write($streamId, $events, $expectedVersion = -2, $requireMaster = false)
-    {
+    public function write(
+        string $streamId,
+        $events,
+        int $expectedVersion = -2,
+        bool $requireMaster = false
+    ): ObservableInterface {
         if (!is_array($events)) {
             $events = [$events];
         }
@@ -245,14 +244,11 @@ class EventStore
             ->merge($this->readBuffer->waitFor($correlationID, 1));
     }
 
-    /**
-     * @param $streamId
-     * @param int $expectedVersion
-     * @param bool $requireMaster
-     * @return Observable
-     */
-    public function startTransaction($streamId, $expectedVersion = -2, $requireMaster = false)
-    {
+    public function startTransaction(
+        string $streamId,
+        int $expectedVersion = -2,
+        bool $requireMaster = false
+    ): Observable {
         $query = new TransactionStart();
         $query->setEventStreamId($streamId);
         $query->setRequireMaster($requireMaster);
@@ -275,14 +271,12 @@ class EventStore
      * For example, if a starting point of 50 is specified when a stream has 100 events in it,
      * the subscriber can expect to see events 51 through 100, and then any events subsequently
      * written until such time as the subscription is dropped or closed.
-     *
-     * @param $streamId
-     * @param int $startFrom
-     * @param bool $resolveLink
-     * @return Observable
      */
-    public function catchUpSubscription($streamId, $startFrom = self::POSITION_START, $resolveLink = false)
-    {
+    public function catchUpSubscription(
+        string $streamId,
+        int $startFrom = self::POSITION_START,
+        bool $resolveLink = false
+    ): Observable {
         return $this->readEventsForward($streamId, $startFrom, self::POSITION_LATEST, $resolveLink)
             ->concat($this->volatileSubscription($streamId, $resolveLink));
     }
@@ -294,12 +288,8 @@ class EventStore
      * For example, if a stream has 100 events in it when a subscriber connects,
      * the subscriber can expect to see event number 101 onwards until the time
      * the subscription is closed or dropped.
-     *
-     * @param string $streamId
-     * @param bool $resolveLink
-     * @return Observable
      */
-    public function volatileSubscription($streamId, $resolveLink = false)
+    public function volatileSubscription(string $streamId, bool $resolveLink = false): Observable
     {
         $event = new SubscribeToStream();
         $event->setEventStreamId($streamId);
@@ -357,16 +347,13 @@ class EventStore
         });
     }
 
-    /**
-     * @param $streamID
-     * @param $group
-     * @param $parallel
-     * @return Observable
-     */
-    public function persistentSubscription($streamID, $group, $parallel = 1)
-    {
+    public function persistentSubscription(
+        string $streamID,
+        string $group,
+        int $parallel = 1
+    ): Observable {
         $correlationID = $this->writer->createUUIDIfNeeded();
-        return $this->connectToPersistentSubscription($streamID, $group, $parallel, $correlationID)
+        return $this->connectToPersistentSubscription($streamID, $group, $correlationID, $parallel)
             ->map(
                 function (PersistentSubscriptionStreamEventAppeared $eventAppeared) use ($correlationID, $group) {
                     $record = $eventAppeared->getEvent()->getEvent();
@@ -384,15 +371,12 @@ class EventStore
             );
     }
 
-    /**
-     * @param $streamID
-     * @param $group
-     * @param int $parallel
-     * @param $correlationID
-     * @return Observable
-     */
-    protected function connectToPersistentSubscription($streamID, $group, $parallel = 1, $correlationID)
-    {
+    protected function connectToPersistentSubscription(
+        string $streamID,
+        string $group,
+        string $correlationID,
+        int $parallel = 1
+    ): Observable {
         $query = new ConnectToPersistentSubscription();
         $query->setEventStreamId($streamID);
         $query->setSubscriptionId($group);
@@ -444,15 +428,12 @@ class EventStore
         });
     }
 
-    /**
-     * @param $streamId
-     * @param int $number
-     * @param bool $resolveLinkTos
-     * @param bool $requireMaster
-     * @return Observable
-     */
-    public function readEvent($streamId, $number = 0, $resolveLinkTos = false, $requireMaster = false)
-    {
+    public function readEvent(
+        string $streamId,
+        int $number = 0,
+        bool $resolveLinkTos = false,
+        bool $requireMaster = false
+    ): Observable {
         $event = new ReadEvent();
         $event->setEventStreamId($streamId);
         $event->setEventNumber($number);
@@ -467,12 +448,7 @@ class EventStore
             });
     }
 
-    /**
-     * @param bool $resolveLinkTos
-     * @param bool $requireMaster
-     * @return Observable
-     */
-    public function readAllEvents($resolveLinkTos = false, $requireMaster = false)
+    public function readAllEvents(bool $resolveLinkTos = false, bool $requireMaster = false): Observable
     {
         $query = new ReadAllEvents();
         $query->setRequireMaster($requireMaster);
@@ -481,16 +457,13 @@ class EventStore
         return $this->readEvents($query, MessageType::READ_ALL_EVENTS_FORWARD);
     }
 
-    /**
-     * @param $streamId
-     * @param int $fromEvent
-     * @param int $max
-     * @param bool $resolveLinkTos
-     * @param bool $requireMaster
-     * @return Observable
-     */
-    public function readEventsForward($streamId, $fromEvent = self::POSITION_START, $max = self::POSITION_LATEST, $resolveLinkTos = false, $requireMaster = false)
-    {
+    public function readEventsForward(
+        string $streamId,
+        int $fromEvent = self::POSITION_START,
+        int $max = self::POSITION_LATEST,
+        bool $resolveLinkTos = false,
+        bool $requireMaster = false
+    ): Observable {
         $query = new ReadStreamEvents();
         $query->setRequireMaster($requireMaster);
         $query->setEventStreamId($streamId);
@@ -501,16 +474,13 @@ class EventStore
         return $this->readEvents($query, MessageType::READ_STREAM_EVENTS_FORWARD);
     }
 
-    /**
-     * @param $streamId
-     * @param int $fromEvent
-     * @param int $max
-     * @param bool $resolveLinkTos
-     * @param bool $requireMaster
-     * @return Observable
-     */
-    public function readEventsBackward($streamId, $fromEvent = self::POSITION_END, $max = 10, $resolveLinkTos = false, $requireMaster = false)
-    {
+    public function readEventsBackward(
+        string $streamId,
+        int $fromEvent = self::POSITION_END,
+        int $max = 10,
+        bool $resolveLinkTos = false,
+        bool $requireMaster = false
+    ): Observable {
         $query = new ReadStreamEvents();
         $query->setRequireMaster($requireMaster);
         $query->setEventStreamId($streamId);
@@ -523,11 +493,8 @@ class EventStore
 
     /**
      * Helper to read all events, repeat query until end reached
-     * @param Message $query
-     * @param int $messageType
-     * @return Observable
      */
-    protected function readEvents(Message $query, $messageType)
+    protected function readEvents(Message $query, int $messageType): Observable
     {
         $maxPossible = 100;
         $max = ($query instanceof ReadStreamEvents) ? $query->getMaxCount() : self::POSITION_LATEST;
