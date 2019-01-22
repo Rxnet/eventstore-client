@@ -1,7 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Rxnet\EventStore;
-
 
 use Google\Protobuf\Internal\GPBType;
 use Google\Protobuf\Internal\RepeatedField;
@@ -56,7 +55,6 @@ class AcknowledgeableEventRecord extends EventRecord
         $this->writer = $writer;
         $this->group = $group;
         $this->linkedEvent = $linkedEvent;
-
     }
 
     public function setLinkedEvent(EventRecord $record)
@@ -93,7 +91,6 @@ class AcknowledgeableEventRecord extends EventRecord
             $ack,
             $this->correlationID
         );
-
     }
 
     public function nack($action = self::NACK_ACTION_UNKNOWN, $msg = '')
@@ -112,6 +109,5 @@ class AcknowledgeableEventRecord extends EventRecord
             $nack,
             $this->correlationID
         );
-
     }
 }

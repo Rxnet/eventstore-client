@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Rxnet\EventStore\Communication\Type;
 
@@ -21,5 +21,4 @@ class BadRequestHandler implements Communicable
     {
         throw new EventStoreHandlerException("Bad Request: " . $data);
     }
-
 }

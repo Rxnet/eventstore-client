@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Rxnet\EventStore;
 
@@ -11,7 +11,6 @@ use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 use Rxnet\Socket\Connection;
 use TrafficCophp\ByteBuffer\Buffer;
-
 
 class Writer
 {
@@ -61,7 +60,6 @@ class Writer
         $this->stream->write($data);
 
         return Observable::empty();
-
     }
 
 

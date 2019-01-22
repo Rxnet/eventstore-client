@@ -1,7 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Rxnet\EventStore\Message;
-
 
 /**
  * Class MessageConfiguration
@@ -40,6 +39,7 @@ class MessageConfiguration
 
     const FLAG_AUTHORIZATION = 0x01;
 
-    private function __construct(){}
-
+    private function __construct()
+    {
+    }
 }

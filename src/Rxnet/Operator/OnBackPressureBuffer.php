@@ -1,12 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 namespace Rxnet\Operator;
+
 use Rx\DisposableInterface;
 use Rx\ObservableInterface;
 use Rx\Observer\CallbackObserver;
 use Rx\ObserverInterface;
 use Rx\Operator\OperatorInterface;
-use Rx\SchedulerInterface;
 use Rx\Subject\Subject;
+
 /**
  * Class OnBackPressureBuffer
  * Store event stream until the consumer request next
@@ -57,7 +58,7 @@ class OnBackPressureBuffer implements OperatorInterface
                         return;
                     }
                     if ($this->capacity != -1 && $this->queue->count() >= $this->capacity -1) {
-                        if($this->onOverflow) {
+                        if ($this->onOverflow) {
                             $closure = $this->onOverflow;
                             $closure($next);
                         }
@@ -76,11 +77,10 @@ class OnBackPressureBuffer implements OperatorInterface
                     $this->queue->push($next);
                 },
                 [$this->subject, 'onError'],
-                function() {
-                    if(!$this->pending) {
+                function () {
+                    if (!$this->pending) {
                         $this->subject->onCompleted();
-                    }
-                    else {
+                    } else {
                         $this->sourceCompleted = true;
                     }
                 }
@@ -98,7 +98,7 @@ class OnBackPressureBuffer implements OperatorInterface
         // Queue is finished we can return to live stream
         if ($this->queue->isEmpty()) {
             $this->pending = false;
-            if($this->sourceCompleted) {
+            if ($this->sourceCompleted) {
                 $this->subject->onCompleted();
             }
             return;

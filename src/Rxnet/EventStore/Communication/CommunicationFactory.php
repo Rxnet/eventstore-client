@@ -1,8 +1,7 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Rxnet\EventStore\Communication;
 
-use Rxnet\EventStore\Communication\Type;
 use Rxnet\EventStore\EventStoreHandlerException;
 use Rxnet\EventStore\Message\MessageType;
 
@@ -22,7 +21,6 @@ class CommunicationFactory
      */
     public function create(MessageType $messageType)
     {
-
         $communicable = null;
 
         switch ($messageType->getType()) {
@@ -88,7 +86,5 @@ class CommunicationFactory
         }
 
         return $communicable;
-
     }
-
 }

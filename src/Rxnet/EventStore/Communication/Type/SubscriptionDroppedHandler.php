@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 namespace Rxnet\EventStore\Communication\Type;
 
 use Rxnet\EventStore\Communication\Communicable;
 use Rxnet\EventStore\Data\SubscriptionDropped;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
+
 /**
  * Class SubscriptionDroppedHandler
  *
@@ -24,5 +25,4 @@ class SubscriptionDroppedHandler implements Communicable
 
         return new SocketMessage($messageType, $correlationID, $dataObject);
     }
-
 }
