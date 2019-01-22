@@ -3,7 +3,7 @@
 namespace Rxnet\EventStore\Communication\Type;
 
 use Rxnet\EventStore\Communication\Communicable;
-use Rxnet\EventStore\EventStoreHandlerException;
+use Rxnet\EventStore\Exception\EventStoreHandlerException;
 use Rxnet\EventStore\Message\MessageType;
 
 class NotAuthenticatedHandler implements Communicable
