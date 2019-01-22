@@ -340,15 +340,11 @@ class EventStore
                     }
                 )
                 ->map(
-                    function (StreamEventAppeared $eventAppeared) use ($correlationID) {
+                    function (StreamEventAppeared $eventAppeared) {
                         $record = $eventAppeared->getEvent()->getEvent();
                         /* @var \Rxnet\EventStore\Data\EventRecord $record */
 
-                        return new EventRecord(
-                            $record,
-                            $correlationID,
-                            $this->writer
-                        );
+                        return new EventRecord($record);
                     }
                 )
                 ->subscribe($observer);
@@ -404,7 +400,7 @@ class EventStore
         $query->setSubscriptionId($group);
         $query->setAllowedInFlightMessages($parallel);
 
-        return Observable::create(function (ObserverInterface $observer) use ($correlationID, $query, $group) {
+        return Observable::create(function (ObserverInterface $observer) use ($correlationID, $query) {
             $this->writer
                 ->composeAndWrite(
                     MessageType::CONNECT_TO_PERSISTENT_SUBSCRIPTION,
@@ -414,7 +410,7 @@ class EventStore
                 // When written wait for all responses
                 ->merge($this->readBuffer->waitFor($correlationID, -1))
                 ->flatMap(
-                    function ($data) use ($query) {
+                    function ($data) {
                         switch (get_class($data)) {
                             case SubscriptionDropped::class :
                                 return Observable::error(new \Exception("Subscription dropped, for reason : {$data->getReason()}"));
@@ -595,7 +591,7 @@ class EventStore
             ->asObservable()
             ->lift($backPressure->operator())
             // Format EventRecord for easy reading
-            ->flatMap(function (ReadStreamEventsCompleted $event) use ($backPressure, &$asked, &$end) {
+            ->flatMap(function (ReadStreamEventsCompleted $event) use ($backPressure) {
                 /* @var ReadStreamEventsCompleted $event */
                 $records = [];
                 /* @var \Rxnet\EventStore\EventRecord[] $records */

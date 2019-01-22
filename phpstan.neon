@@ -1,0 +1,6 @@
+parameters:
+    level: 0
+    paths: ['src']
+    excludes_analyse:
+        - %rootDir%/../../../src/GPBMetadata
+        - %rootDir%/../../../src/Rxnet/EventStore/Data
