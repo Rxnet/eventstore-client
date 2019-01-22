@@ -1,9 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Rxnet\EventStore;
 
 use Google\Protobuf\Internal\GPBType;
 use Google\Protobuf\Internal\RepeatedField;
+use Rx\Observable;
 use Rxnet\EventStore\Data\PersistentSubscriptionAckEvents;
 use Rxnet\EventStore\Data\PersistentSubscriptionNakEvents;
 use Rxnet\EventStore\Message\MessageType;
@@ -32,16 +35,19 @@ class AcknowledgeableEventRecord extends EventRecord
      */
     const NACK_ACTION_STOP = 4;
 
-
     protected $binaryId;
     protected $correlationID;
     protected $writer;
     protected $group;
     protected $linkedEvent;
 
-
-    public function __construct(\Rxnet\EventStore\Data\EventRecord $event, $correlationID, $group, Writer $writer, \Rxnet\EventStore\Data\EventRecord $linkedEvent = null)
-    {
+    public function __construct(
+        \Rxnet\EventStore\Data\EventRecord $event,
+        string $correlationID,
+        string $group,
+        Writer $writer,
+        \Rxnet\EventStore\Data\EventRecord $linkedEvent = null
+    ) {
         $this->binaryId = ($linkedEvent) ? $linkedEvent->getEventId() : $event->getEventId();
 
         parent::__construct($event);
@@ -57,7 +63,7 @@ class AcknowledgeableEventRecord extends EventRecord
         $this->linkedEvent = $linkedEvent;
     }
 
-    public function setLinkedEvent(EventRecord $record)
+    public function setLinkedEvent(EventRecord $record): self
     {
         $this->linkedEvent = $record;
         return $this;
@@ -71,12 +77,12 @@ class AcknowledgeableEventRecord extends EventRecord
         return $this->data;
     }
 
-    public function getGroup()
+    public function getGroup(): string
     {
         return $this->group;
     }
 
-    public function ack()
+    public function ack(): Observable
     {
         $ack = new PersistentSubscriptionAckEvents();
         $ack->setSubscriptionId($this->stream_id . "::" . $this->group);
@@ -93,7 +99,7 @@ class AcknowledgeableEventRecord extends EventRecord
         );
     }
 
-    public function nack($action = self::NACK_ACTION_UNKNOWN, $msg = '')
+    public function nack($action = self::NACK_ACTION_UNKNOWN, $msg = ''): Observable
     {
         $nack = new PersistentSubscriptionNakEvents();
         $nack->setSubscriptionId($this->stream_id . "::" . $this->group);

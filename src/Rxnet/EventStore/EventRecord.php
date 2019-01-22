@@ -1,6 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Rxnet\EventStore;
+
+use Rxnet\EventStore\Event\JsonEvent;
 
 class EventRecord
 {
@@ -26,71 +30,50 @@ class EventRecord
         $this->type = $event->getEventType();
         $this->metadata = $event->getMetadata();
 
-        if ($event->getDataContentType() === 1) {
+        if ($event->getDataContentType() === JsonEvent::CONTENT_TYPE) {
             $this->data = json_decode($event->getData(), true);
         } else {
             $this->data = $event->getData();
         }
-        if ($event->getMetadataContentType() === 1) {
+        if ($event->getMetadataContentType() === JsonEvent::CONTENT_TYPE) {
             $this->metadata = json_decode($event->getMetadata(), true);
         } else {
             $this->metadata = $event->getMetadata();
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getStreamId()
+    public function getStreamId(): string
     {
         return $this->stream_id;
     }
 
-    /**
-     * @return int
-     */
-    public function getNumber()
+    public function getNumber(): int
     {
         return $this->number;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
-    public function getData()
+    public function getData(): string
     {
         return $this->data;
     }
 
-    /**
-     * @return \DateTimeInterface
-     */
-    public function getCreated()
-    {
-        return $this->created;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMetadata()
+    public function getMetadata(): string
     {
         return $this->metadata;
+    }
+
+    public function getCreated(): \DateTimeInterface
+    {
+        return $this->created;
     }
 }

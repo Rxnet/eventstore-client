@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Rxnet\EventStore\Communication\Type;
 
@@ -7,19 +9,13 @@ use Rxnet\EventStore\Data\ReadStreamEventsCompleted;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 
-/**
- * Class ReadStreamEventsForwardCompleted
- * @package Madkom\EventStore\Client\Domain\Socket\Communication\Type
- * @author  Dariusz Gafka <d.gafka@madkom.pl>
- */
 class ReadStreamEventsCompletedHandler implements Communicable
 {
-
-    /**
-     * @inheritDoc
-     */
-    public function handle(MessageType $messageType, $correlationID, $data)
-    {
+    public function handle(
+        MessageType $messageType,
+        string $correlationID,
+        string $data
+    ): SocketMessage {
         $dataObject = new ReadStreamEventsCompleted();
         $dataObject->mergeFromString($data);
 

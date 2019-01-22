@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Rxnet\EventStore\Event;
 
@@ -78,7 +80,7 @@ abstract class BaseEvent implements EventInterface
         $this->message->setMetadata($meta);
     }
 
-    public function getMessage(): string
+    public function getMessage(): NewEvent
     {
         return $this->message;
     }

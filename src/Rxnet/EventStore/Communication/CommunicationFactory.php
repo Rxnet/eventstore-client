@@ -1,25 +1,18 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Rxnet\EventStore\Communication;
 
 use Rxnet\EventStore\Exception\EventStoreHandlerException;
 use Rxnet\EventStore\Message\MessageType;
 
-/**
- * Class CommunicationFactory
- * @package Madkom\EventStore\Client\Domain\Socket\Communication
- * @author  Dariusz Gafka <dgafka.mail@gmail.com>
- */
 class CommunicationFactory
 {
-
     /**
-     * @param MessageType $messageType
-     *
-     * @return Communicable
      * @throws EventStoreHandlerException
      */
-    public function create(MessageType $messageType)
+    public function create(MessageType $messageType): Communicable
     {
         $communicable = null;
 
@@ -81,7 +74,6 @@ class CommunicationFactory
                 $communicable = new Type\TransactionCommitCompletedHandler();
                 break;
             default:
-                var_dump($messageType);
                 throw new EventStoreHandlerException('Unsupported message type ' . $messageType->getType());
         }
 
