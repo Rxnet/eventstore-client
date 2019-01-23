@@ -22,7 +22,7 @@ class EventRecord
         $this->number = $event->getEventNumber();
         $this->id = bin2hex($event->getEventId());
 
-        $created = $event->getCreatedEpoch();
+        $created = (string) $event->getCreatedEpoch();
         $date = substr($created, 0, -3);
         $micro = substr($created, -3);
         $this->created = \DateTimeImmutable::createFromFormat('U.u', "{$date}.{$micro}");

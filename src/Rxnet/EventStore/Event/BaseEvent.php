@@ -37,7 +37,7 @@ abstract class BaseEvent implements EventInterface
         return bin2hex($this->message->getEventId());
     }
 
-    public function setId(string $id): void
+    public function setId(?string $id): void
     {
         if (!$id) {
             $id = Uuid::uuid4()->getHex();
@@ -88,7 +88,7 @@ abstract class BaseEvent implements EventInterface
     /**
      * @throws ContentTypeNotDefined
      */
-    public function getContentType(): string
+    public function getContentType(): int
     {
         if (!static::CONTENT_TYPE) {
             throw new ContentTypeNotDefined(get_class(static::class));
