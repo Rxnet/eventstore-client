@@ -12,30 +12,30 @@ $eventStore = new \Rxnet\EventStore\EventStore();
 
 $eventStore->connect()
     ->subscribe(function () use ($eventStore) {
-        echo "connected\n";
+        echo "connected".PHP_EOL;
         $eventStore->startTransaction('domain-test.fr')
             ->subscribe(
                 function (Transaction $transaction) {
-                    echo "Started transaction {$transaction->getId()} \n";
-                    $eventA = new JsonEvent('/truc/chose', ['i' => "coucou"]);
-                    $eventB = new JsonEvent('/truc/chose', ['i' => "coucou"]);
-                    $eventC = new JsonEvent('/truc/chose', ['i' => "coucou"]);
+                    echo "Started transaction {$transaction->getId()}".PHP_EOL;
+                    $eventA = new JsonEvent('/foo/bar', ['i' => "coucou"]);
+                    $eventB = new JsonEvent('/foo/pub', ['i' => "coucou"]);
+                    $eventC = new JsonEvent('/foo/tavern', ['i' => "coucou"]);
 
                     return $transaction->write([$eventA, $eventB, $eventC])
                         ->do(
                             function (TransactionWriteCompleted $completed) {
-                                echo "Written transaction {$completed->getTransactionId()} \n";
+                                echo "Written transaction {$completed->getTransactionId()}".PHP_EOL;
                             }
                         )
                         ->flatMap(
                             function () use ($transaction) {
-                                echo "Commit \n";
+                                echo 'Commit'.PHP_EOL;
                                 return $transaction->commit();
                             }
                         )
                         ->subscribe(
                             function (TransactionCommitCompleted $commitCompleted) {
-                                echo "Transaction {$commitCompleted->getTransactionId()} commit completed : events from {$commitCompleted->getFirstEventNumber()} to {$commitCompleted->getLastEventNumber()} \n";
+                                echo "Transaction {$commitCompleted->getTransactionId()} commit completed : events from {$commitCompleted->getFirstEventNumber()} to {$commitCompleted->getLastEventNumber()}".PHP_EOL;
                             }
                         );
                 });
