@@ -47,6 +47,11 @@ abstract class BaseEvent implements EventInterface
             $id = str_replace('-', '', $id);
         }
         $id = hex2bin($id);
+
+        if (!$id) {
+            throw new \RuntimeException('Binary ID could not have been setted in Event');
+        }
+
         $this->message->setEventId($id);
     }
 
