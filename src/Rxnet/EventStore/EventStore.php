@@ -76,6 +76,8 @@ class EventStore
     protected $readBufferDisposable;
     /** @var string */
     protected $dsn;
+    /** @var int */
+    protected $connectTimeout;
 
     /**
      * EventStore constructor.
@@ -103,7 +105,7 @@ class EventStore
         int $heartBeatRate = 5000
     ): Observable {
         // connector compatibility
-        $connectTimeout = ($connectTimeout > 0) ? $connectTimeout / 1000 : 0;
+        $this->connectTimeout = $connectTimeout;
         $this->heartBeatRate = $heartBeatRate;
 
         $this->dsn = $dsn;
@@ -111,7 +113,7 @@ class EventStore
         $this->connectionSubject = new ReplaySubject(1, 1);
 
         return Observable::create(function (ObserverInterface $observer) {
-            $this->connector->connect($this->dsn)
+            $this->connector->connect($this->dsn, ['timeout' => $this->connectTimeout])
                 ->flatMap(function (Socket\Connection $stream) {
                     // send all data to our read buffer
                     $this->stream = $stream;
@@ -156,7 +158,7 @@ class EventStore
     {
         $this->dsn = $dsn ?: $this->dsn;
 
-        return $this->connector->connect($this->dsn)
+        return $this->connector->connect($this->dsn, ['timeout' => $this->connectTimeout])
             ->flatMap(function (Socket\Connection $connection) {
                 // send all data to our read buffer
                 $this->stream = $connection;
