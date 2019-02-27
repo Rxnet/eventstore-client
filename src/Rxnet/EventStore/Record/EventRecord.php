@@ -8,7 +8,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Rxnet\EventStore;
+namespace Rxnet\EventStore\Record;
 
 use Rxnet\EventStore\Event\JsonEvent;
 
@@ -34,13 +34,18 @@ class EventRecord
         $this->created = \DateTimeImmutable::createFromFormat('U.u', "{$date}.{$micro}");
 
         $this->type = $event->getEventType();
-        $this->metadata = $event->getMetadata();
 
+        $this->castData($event);
+    }
+
+    protected function castData(\Rxnet\EventStore\Data\EventRecord $event)
+    {
         if ($event->getDataContentType() === JsonEvent::CONTENT_TYPE) {
             $this->data = json_decode($event->getData(), true);
         } else {
             $this->data = $event->getData();
         }
+
         if ($event->getMetadataContentType() === JsonEvent::CONTENT_TYPE) {
             $this->metadata = json_decode($event->getMetadata(), true);
         } else {
@@ -68,12 +73,12 @@ class EventRecord
         return $this->type;
     }
 
-    public function getData(): string
+    public function getData()
     {
         return $this->data;
     }
 
-    public function getMetadata(): string
+    public function getMetadata()
     {
         return $this->metadata;
     }
