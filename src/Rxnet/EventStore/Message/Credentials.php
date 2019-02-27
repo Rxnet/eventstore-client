@@ -4,43 +4,33 @@ declare(strict_types=1);
 
 namespace Rxnet\EventStore\Message;
 
-/**
- * Class Credentials
- * @package Madkom\EventStore\Client\Domain\Socket\Message
- * @author  Dariusz Gafka <d.gafka@madkom.pl>
- */
 class Credentials
 {
-
-    /** @var  string */
     private $password;
 
-    /** @var  string */
     private $username;
 
-    /**
-     * @param string $username
-     * @param string $password
-     */
-    public function __construct($username, $password)
+    public function __construct(string $username, string $password)
     {
         $this->username = $username;
         $this->password = $password;
     }
 
-    /**
-     * @return string
-     */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }
 
-    /**
-     * @return string
-     */
-    public function getPassword()
+    public function getPassword(): string
     {
         return $this->password;
+    }
+
+    public static function fromDsn(string $dsn): self
+    {
+        $user = parse_url($dsn, PHP_URL_USER) ?? 'admin';
+        $pass = parse_url($dsn, PHP_URL_PASS) ?? 'changeit';
+
+        return new self($user, $pass);
     }
 }
