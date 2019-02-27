@@ -4,19 +4,27 @@ declare(strict_types=1);
 
 namespace Rxnet\EventStore\Event;
 
+use Rxnet\EventStore\Helper\Json;
+
 class JsonEvent extends BaseEvent
 {
     const CONTENT_TYPE = 1;
 
+    /**
+     * @throws \Rxnet\EventStore\Exception\JsonException
+     */
     public function setData($data): void
     {
-        $data = json_encode($data);
+        $data = Json::safeEncode($data);
         $this->message->setData($data);
     }
 
+    /**
+     * @throws \Rxnet\EventStore\Exception\JsonException
+     */
     public function setMetaData($meta): void
     {
-        $meta = json_encode($meta);
+        $meta = Json::safeEncode($meta);
         $this->message->setMetadata($meta);
     }
 
