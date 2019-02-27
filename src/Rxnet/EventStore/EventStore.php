@@ -186,13 +186,13 @@ class EventStore
             ->timeout($this->heartBeatRate)
             ->filter(
                 function (SocketMessage $message) {
-                    return $message->getMessageType()->getType() === MessageType::HEARTBEAT_REQUEST;
+                    return $message->getMessageType()->getType() === MessageType::HEARTBEAT_REQUEST_COMMAND;
                 }
             )
             ->subscribe(
                 new CallbackObserver(
                     function (SocketMessage $message) {
-                        $this->writer->composeAndWrite(MessageType::HEARTBEAT_RESPONSE, null, $message->getCorrelationID());
+                        $this->writer->composeAndWrite(MessageType::HEARTBEAT_RESPONSE_COMMAND, null, $message->getCorrelationID());
                     },
                     [$this->connectionSubject, 'onError']
                 )
@@ -443,7 +443,7 @@ class EventStore
         $event->setRequireMaster($requireMaster);
 
         $correlationID = $this->writer->createUUIDIfNeeded();
-        return $this->writer->composeAndWrite(MessageType::READ, $event, $correlationID)
+        return $this->writer->composeAndWrite(MessageType::READ_EVENT, $event, $correlationID)
             ->merge($this->readBuffer->waitFor($correlationID, 1))
             ->map(function (ReadEventCompleted $data) {
                 return new EventRecord($data->getEvent()->getEvent());
