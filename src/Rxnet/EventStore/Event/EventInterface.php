@@ -14,15 +14,15 @@ use Rxnet\EventStore\Data\NewEvent;
 
 interface EventInterface
 {
-    public function setId(?string $id): void;
-    public function setType(string $type): void;
-    public function setData($data): void;
-    public function setMetaData($meta):void;
+    public function setId(?string $id): EventInterface;
+    public function setType(string $type): EventInterface;
+    public function setData(string $data): EventInterface;
+    public function setMetaData(string $meta): EventInterface;
 
     public function getId(): string;
     public function getType(): string;
-    public function getData();
-    public function getMetaData();
+    public function getData(): string;
+    public function getMetaData(): string;
     public function getMessage(): NewEvent;
     public function getContentType(): int;
 }

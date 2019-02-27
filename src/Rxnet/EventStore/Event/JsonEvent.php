@@ -16,31 +16,14 @@ class JsonEvent extends BaseEvent
 {
     const CONTENT_TYPE = 1;
 
-    /**
-     * @throws \Rxnet\EventStore\Exception\JsonException
-     */
-    public function setData($data): void
-    {
+    public function __construct(
+        string $type,
+        array $data,
+        array $metadata = [],
+        string $id = null
+    ) {
         $data = Json::safeEncode($data);
-        $this->message->setData($data);
-    }
-
-    /**
-     * @throws \Rxnet\EventStore\Exception\JsonException
-     */
-    public function setMetaData($meta): void
-    {
-        $meta = Json::safeEncode($meta);
-        $this->message->setMetadata($meta);
-    }
-
-    public function getData()
-    {
-        return json_decode($this->message->getData(), true);
-    }
-
-    public function getMetaData()
-    {
-        return json_decode($this->message->getMetadata(), true);
+        $metadata = Json::safeEncode($metadata);
+        parent::__construct($type, $data, $metadata, $id);
     }
 }
