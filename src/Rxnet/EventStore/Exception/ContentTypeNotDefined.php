@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Rxnet\EventStore\Exception;
 
-class ContentTypeNotDefined extends \Exception
+final class ContentTypeNotDefined extends \Exception
 {
     public function __construct(string $class)
     {

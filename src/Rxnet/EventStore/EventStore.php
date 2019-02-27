@@ -52,7 +52,7 @@ use Rxnet\EventStore\Record\EventRecordFactory;
 use Rxnet\Operator\OnBackPressureBuffer;
 use Rxnet\Socket;
 
-class EventStore
+final class EventStore
 {
     const POSITION_START = 0;
     const POSITION_END = -1;

@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Rxnet\EventStore\Message;
 
-class Credentials
+final class Credentials
 {
     private $password;
 

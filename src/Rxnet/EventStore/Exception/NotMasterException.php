@@ -12,7 +12,7 @@ namespace Rxnet\EventStore\Exception;
 
 use Throwable;
 
-class NotMasterException extends \Exception
+final class NotMasterException extends \Exception
 {
     protected $masterIp;
     protected $masterPort;

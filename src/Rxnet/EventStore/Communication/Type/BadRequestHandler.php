@@ -15,7 +15,7 @@ use Rxnet\EventStore\Exception\EventStoreHandlerException;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 
-class BadRequestHandler implements Communicable
+final class BadRequestHandler implements Communicable
 {
     /**
      * @throws EventStoreHandlerException

@@ -12,7 +12,7 @@ namespace Rxnet\EventStore\Event;
 
 use Rxnet\EventStore\Helper\Json;
 
-class JsonEvent extends BaseEvent
+final class JsonEvent extends BaseEvent
 {
     const CONTENT_TYPE = 1;
 

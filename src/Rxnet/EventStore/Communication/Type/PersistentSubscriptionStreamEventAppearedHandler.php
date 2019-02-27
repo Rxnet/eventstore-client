@@ -15,7 +15,7 @@ use Rxnet\EventStore\Data\PersistentSubscriptionStreamEventAppeared;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 
-class PersistentSubscriptionStreamEventAppearedHandler implements Communicable
+final class PersistentSubscriptionStreamEventAppearedHandler implements Communicable
 {
     public function handle(
         MessageType $messageType,

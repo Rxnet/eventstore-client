@@ -18,7 +18,7 @@ use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 use TrafficCophp\ByteBuffer\Buffer;
 
-class ReadBuffer extends Subject
+final class ReadBuffer extends Subject
 {
     /** @var CommunicationFactory */
     private $communicationFactory;

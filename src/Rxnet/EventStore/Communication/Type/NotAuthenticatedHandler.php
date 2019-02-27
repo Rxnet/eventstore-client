@@ -15,7 +15,7 @@ use Rxnet\EventStore\Exception\EventStoreHandlerException;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 
-class NotAuthenticatedHandler implements Communicable
+final class NotAuthenticatedHandler implements Communicable
 {
     /**
      * @throws EventStoreHandlerException

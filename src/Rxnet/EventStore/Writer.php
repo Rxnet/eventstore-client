@@ -20,7 +20,7 @@ use Rxnet\EventStore\Message\SocketMessage;
 use Rxnet\Socket\Connection;
 use TrafficCophp\ByteBuffer\Buffer;
 
-class Writer
+final class Writer
 {
     /** @var  Connection */
     protected $stream;

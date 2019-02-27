@@ -15,7 +15,7 @@ namespace Rxnet\EventStore\Message;
  * @package Madkom\EventStore\Client\Domain\Socket\Message
  * @author  Dariusz Gafka <d.gafka@madkom.pl>
  */
-class MessageConfiguration
+final class MessageConfiguration
 {
 
 //    Message content

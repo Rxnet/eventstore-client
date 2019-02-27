@@ -13,7 +13,7 @@ namespace Rxnet\EventStore\Message;
 /**
  * This file is equivalent to https://github.com/EventStore/EventStore/blob/v4-master/src/EventStore.Core/Services/Transport/Tcp/TcpCommand.cs
  */
-class MessageType
+final class MessageType
 {
     const HEARTBEAT_REQUEST_COMMAND  = 0x01;
     const HEARTBEAT_RESPONSE_COMMAND = 0x02;
