@@ -186,37 +186,25 @@ class MessageType
     const AUTHENTICATED = 0xF3;
     const NOT_AUTHENTICATED = 0xF4;
 
-    /**
-     * Command type
-     *
-     * @var string
-     */
     private $messageType;
 
     /**
-     * @param integer $messageType
+     * @throws \Exception
      */
-    public function __construct($messageType)
+    public function __construct(int $messageType)
     {
         $this->setCommand($messageType);
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->messageType;
     }
 
     /**
-     * Is command available
-     *
-     * @param $messageType
-     *
-     * @return bool
+     * @throws \ReflectionException
      */
-    private function isAvailable($messageType)
+    private function isAvailable(int $messageType): bool
     {
         $cmdReflection = new \ReflectionClass($this);
 
@@ -230,11 +218,9 @@ class MessageType
     }
 
     /**
-     * @param string $messageType
-     *
      * @throws \Exception
      */
-    private function setCommand($messageType)
+    private function setCommand(int $messageType): void
     {
         if (!$this->isAvailable($messageType)) {
             throw new \Exception($messageType . ' is not available.');

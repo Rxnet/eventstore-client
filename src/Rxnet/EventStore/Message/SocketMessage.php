@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Rxnet\EventStore\Message;
 
+use Google\Protobuf\Internal\Message;
+
 /**
  * Class SocketMessage - Represents decoded message from socket stream
  *
@@ -13,22 +15,22 @@ namespace Rxnet\EventStore\Message;
 class SocketMessage
 {
 
-    /** @var  MessageType */
+    /** @var MessageType */
     private $messageType;
 
-    /** @var  string */
+    /** @var string */
     private $correlationID;
 
-    /** @var  \Google\Protobuf\Internal\Message */
+    /** @var Message */
     private $data;
 
-    /** @var Credentials  */
+    /** @var Credentials */
     private $credentials;
 
     public function __construct(
         MessageType $messageType,
         string $correlationID,
-        \Google\Protobuf\Internal\Message $data = null,
+        Message $data = null,
         Credentials $credentials = null
     ) {
         $this->messageType 	= $messageType;
@@ -37,58 +39,32 @@ class SocketMessage
         $this->credentials  = $credentials;
     }
 
-    /**
-     * Changes data of socket message
-     *
-     * @param $data
-     *
-     * @return static
-     */
-    public function changeData($data)
+    public function changeData($data): self
     {
         return new static($this->messageType, $this->correlationID, $data, $this->credentials);
     }
 
-    /**
-     * Changes message type
-     *
-     * @param MessageType $messageType
-     *
-     * @return static
-     */
-    public function changeMessageType(MessageType $messageType)
+    public function changeMessageType(MessageType $messageType): self
     {
         return new static($messageType, $this->correlationID, $this->data, $this->credentials);
     }
 
-    /**
-     * @return MessageType
-     */
-    public function getMessageType()
+    public function getMessageType(): MessageType
     {
         return $this->messageType;
     }
 
-    /**
-     * @return string
-     */
-    public function getCorrelationID()
+    public function getCorrelationID(): string
     {
         return $this->correlationID;
     }
 
-    /**
-     * @return \Google\Protobuf\Internal\Message
-     */
-    public function getData()
+    public function getData(): Message
     {
         return $this->data;
     }
 
-    /**
-     * @return Credentials
-     */
-    public function getCredentials()
+    public function getCredentials(): Credentials
     {
         return $this->credentials;
     }

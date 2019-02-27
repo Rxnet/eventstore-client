@@ -82,6 +82,9 @@ class AcknowledgeableEventRecord extends EventRecord
         return $this->group;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function ack(): Observable
     {
         $ack = new PersistentSubscriptionAckEvents();
@@ -99,6 +102,9 @@ class AcknowledgeableEventRecord extends EventRecord
         );
     }
 
+    /**
+     * @throws \Exception
+     */
     public function nack($action = self::NACK_ACTION_UNKNOWN, $msg = ''): Observable
     {
         $nack = new PersistentSubscriptionNakEvents();
