@@ -54,7 +54,7 @@ class EventStore
 {
     const POSITION_START = 0;
     const POSITION_END = -1;
-    const POSITION_LATEST = 999999;
+    const DEFAULT_MAX_EVENTS = 999999;
 
     /** @var LoopInterface */
     protected $loop;
@@ -269,7 +269,7 @@ class EventStore
         int $startFrom = self::POSITION_START,
         bool $resolveLink = false
     ): Observable {
-        return $this->readEventsForward($streamId, $startFrom, self::POSITION_LATEST, $resolveLink)
+        return $this->readEventsForward($streamId, $startFrom, self::DEFAULT_MAX_EVENTS, $resolveLink)
             ->concat($this->volatileSubscription($streamId, $resolveLink));
     }
 
@@ -468,7 +468,7 @@ class EventStore
     public function readEventsForward(
         string $streamId,
         int $fromEvent = self::POSITION_START,
-        int $max = self::POSITION_LATEST,
+        int $max = self::DEFAULT_MAX_EVENTS,
         bool $resolveLinkTos = false,
         bool $requireMaster = false
     ): Observable {
@@ -511,7 +511,7 @@ class EventStore
     protected function readEvents(Message $query, int $messageType): Observable
     {
         $maxPossible = 100;
-        $max = ($query instanceof ReadStreamEvents) ? $query->getMaxCount() : self::POSITION_LATEST;
+        $max = ($query instanceof ReadStreamEvents) ? $query->getMaxCount() : self::DEFAULT_MAX_EVENTS;
 
         $asked = $max;
         if ($max >= $maxPossible) {
@@ -544,7 +544,7 @@ class EventStore
             $records = $event->getEvents();
             $asked -= count($records);
 
-            if (!$event->getIsEndOfStream() and !($asked <= 0 && $max != self::POSITION_LATEST)) {
+            if (!$event->getIsEndOfStream() and !($asked <= 0 && $max != self::DEFAULT_MAX_EVENTS)) {
                 $records = $event->getEvents();
 
                 /** @var ResolvedIndexedEvent $start */
