@@ -1,6 +1,11 @@
 parameters:
-    level: 0
+    level: 7
     paths: ['src']
     excludes_analyse:
         - %rootDir%/../../../src/GPBMetadata
         - %rootDir%/../../../src/Rxnet/EventStore/Data
+    ignoreErrors:
+        - '#(.*)Google\\Protobuf\\Internal\\long, int given.#'
+        -
+            message: '#Strict comparison using === between null and Rxnet\\EventStore\\Data\\EventRecord will always evaluate to false.#'
+            path: '%currentWorkingDirectory%/src/Rxnet/EventStore/EventStore.php'

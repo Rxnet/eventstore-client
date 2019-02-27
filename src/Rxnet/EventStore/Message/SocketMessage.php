@@ -21,10 +21,10 @@ class SocketMessage
     /** @var string */
     private $correlationID;
 
-    /** @var Message */
+    /** @var ?Message */
     private $data;
 
-    /** @var Credentials */
+    /** @var ?Credentials */
     private $credentials;
 
     public function __construct(
@@ -59,12 +59,12 @@ class SocketMessage
         return $this->correlationID;
     }
 
-    public function getData(): Message
+    public function getData(): ?Message
     {
         return $this->data;
     }
 
-    public function getCredentials(): Credentials
+    public function getCredentials(): ?Credentials
     {
         return $this->credentials;
     }

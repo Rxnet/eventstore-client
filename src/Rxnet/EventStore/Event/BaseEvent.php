@@ -96,7 +96,7 @@ abstract class BaseEvent implements EventInterface
     public function getContentType(): int
     {
         if (!static::CONTENT_TYPE) {
-            throw new ContentTypeNotDefined(get_class(static::class));
+            throw new ContentTypeNotDefined(get_class($this));
         }
 
         return static::CONTENT_TYPE;
