@@ -27,7 +27,7 @@ class CommunicationFactory
             case MessageType::PONG:
                 $communicable = new Type\PongHandler();
                 break;
-            case MessageType::HEARTBEAT_REQUEST:
+            case MessageType::HEARTBEAT_REQUEST_COMMAND:
                 $communicable = new Type\HeartBeatRequestHandler();
                 break;
             case MessageType::READ_EVENT_COMPLETED:
