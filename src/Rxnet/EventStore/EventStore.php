@@ -58,7 +58,7 @@ class EventStore
     protected $writer;
     /** @var Socket\Connection */
     protected $stream;
-    /** @var Socket\Connection */
+    /** @var Socket\Connector */
     protected $connector;
     /** @var Subject */
     protected $connectionSubject;
@@ -160,7 +160,7 @@ class EventStore
      */
     public function disconnect(): void
     {
-        $this->connector->close();
+        $this->stream->close();
     }
 
     protected function reconnect(string $host, string $port): Observable
