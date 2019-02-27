@@ -13,7 +13,7 @@ namespace Rxnet\EventStore\Communication;
 use Rxnet\EventStore\Exception\EventStoreHandlerException;
 use Rxnet\EventStore\Message\MessageType;
 
-class CommunicationFactory
+final class CommunicationFactory
 {
     /**
      * @throws EventStoreHandlerException

@@ -15,7 +15,7 @@ use Rxnet\EventStore\Data\ReadAllEventsCompleted;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 
-class ReadAllEventsCompletedHandler implements Communicable
+final class ReadAllEventsCompletedHandler implements Communicable
 {
     public function handle(
         MessageType $messageType,

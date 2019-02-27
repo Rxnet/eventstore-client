@@ -14,7 +14,7 @@ use Rxnet\EventStore\Communication\Communicable;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 
-class HeartBeatRequestHandler implements Communicable
+final class HeartBeatRequestHandler implements Communicable
 {
     public function handle(
         MessageType $messageType,

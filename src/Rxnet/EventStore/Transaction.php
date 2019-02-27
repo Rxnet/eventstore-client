@@ -19,7 +19,7 @@ use Rxnet\EventStore\Data\TransactionWrite;
 use Rxnet\EventStore\Event\EventInterface;
 use Rxnet\EventStore\Message\MessageType;
 
-class Transaction
+final class Transaction
 {
     protected $transactionId;
     protected $writer;

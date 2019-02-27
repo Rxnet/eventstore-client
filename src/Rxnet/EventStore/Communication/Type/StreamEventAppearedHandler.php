@@ -15,7 +15,7 @@ use Rxnet\EventStore\Data\StreamEventAppeared;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 
-class StreamEventAppearedHandler implements Communicable
+final class StreamEventAppearedHandler implements Communicable
 {
     public function handle(
         MessageType $messageType,

@@ -15,7 +15,7 @@ use Rxnet\EventStore\Data\PersistentSubscriptionConfirmation;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 
-class PersistentSubscriptionConfirmationHandler implements Communicable
+final class PersistentSubscriptionConfirmationHandler implements Communicable
 {
     public function handle(
         MessageType $messageType,

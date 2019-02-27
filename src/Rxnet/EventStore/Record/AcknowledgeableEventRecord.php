@@ -18,7 +18,7 @@ use Rxnet\EventStore\Data\PersistentSubscriptionNakEvents;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Writer;
 
-class AcknowledgeableEventRecord extends EventRecord
+final class AcknowledgeableEventRecord extends EventRecord
 {
     /**
      * Client unknown on action. Let server decide

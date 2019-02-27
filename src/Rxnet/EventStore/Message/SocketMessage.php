@@ -18,7 +18,7 @@ use Google\Protobuf\Internal\Message;
  * @package Madkom\EventStore\Client\Domain\Socket
  * @author Dariusz Gafka <dgafka.mail@gmail.com>
  */
-class SocketMessage
+final class SocketMessage
 {
 
     /** @var MessageType */

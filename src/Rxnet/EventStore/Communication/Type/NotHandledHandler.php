@@ -16,7 +16,7 @@ use Rxnet\EventStore\Data\NotHandled\MasterInfo;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 
-class NotHandledHandler implements Communicable
+final class NotHandledHandler implements Communicable
 {
     public function handle(
         MessageType $messageType,

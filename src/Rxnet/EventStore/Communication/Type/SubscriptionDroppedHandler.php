@@ -15,7 +15,7 @@ use Rxnet\EventStore\Data\SubscriptionDropped;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 
-class SubscriptionDroppedHandler implements Communicable
+final class SubscriptionDroppedHandler implements Communicable
 {
     public function handle(
         MessageType $messageType,

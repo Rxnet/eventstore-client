@@ -14,7 +14,7 @@ use Rxnet\EventStore\Communication\Communicable;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
 
-class PongHandler implements Communicable
+final class PongHandler implements Communicable
 {
     public function handle(
         MessageType $messageType,
