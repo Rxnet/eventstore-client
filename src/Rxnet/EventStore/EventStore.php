@@ -68,7 +68,7 @@ class EventStore
     protected $heartBeatRate;
     /** @var  DisposableInterface */
     protected $readBufferDisposable;
-    /** @var  array */
+    /** @var string */
     protected $dsn;
 
     /**
@@ -100,29 +100,12 @@ class EventStore
         $connectTimeout = ($connectTimeout > 0) ? $connectTimeout / 1000 : 0;
         $this->heartBeatRate = $heartBeatRate;
 
-        if (!stristr($dsn, '://')) {
-            $dsn = 'tcp://' . $dsn;
-        }
-        $parsedDsn = parse_url($dsn);
-        if (!isset($parsedDsn['host'])) {
-            throw new \InvalidArgumentException('Invalid connection DNS given format should be : tcp://user:password@host:port');
-        }
-        if (!isset($parsedDsn['port'])) {
-            $parsedDsn['port'] = 1113;
-        }
-        if (!isset($parsedDsn['user'])) {
-            $parsedDsn['user'] = 'admin';
-        }
-        if (!isset($parsedDsn['pass'])) {
-            $parsedDsn['pass'] = 'changeit';
-        }
-        $this->dsn = $parsedDsn;
+        $this->dsn = $dsn;
         // What you should observe if you want to auto reconnect
         $this->connectionSubject = new ReplaySubject(1, 1);
 
-
-        return Observable::create(function (ObserverInterface $observer) use ($dsn) {
-            $this->connector->connect($dsn)
+        return Observable::create(function (ObserverInterface $observer) {
+            $this->connector->connect($this->dsn)
                 ->flatMap(function (Socket\Connection $stream) {
                     // send all data to our read buffer
                     $this->stream = $stream;
@@ -130,7 +113,7 @@ class EventStore
 
                     // common object to write to socket
                     $this->writer->setSocketStream($this->stream);
-                    $this->writer->setCredentials(new Credentials($this->dsn['user'], $this->dsn['pass']));
+                    $this->writer->setCredentials(Credentials::fromDsn($this->dsn));
 
                     // start heartbeat listener
                     $this->heartBeatDisposable = $this->heartbeat();
@@ -163,14 +146,11 @@ class EventStore
         $this->stream->close();
     }
 
-    protected function reconnect(string $host, string $port): Observable
+    protected function reconnect(?string $dsn = null): Observable
     {
-        $this->dsn['host'] = $host;
-        $this->dsn['port'] = $port;
+        $this->dsn = $dsn ?: $this->dsn;
 
-        $dsn = $this->dsn['user'].':'.$this->dsn['pass'].'@'.$this->dsn['host'].':'.$this->dsn['port'];
-
-        return $this->connector->connect($dsn)
+        return $this->connector->connect($this->dsn)
             ->flatMap(function (Socket\Connection $connection) {
                 // send all data to our read buffer
                 $this->stream = $connection;
@@ -180,7 +160,7 @@ class EventStore
 
                 // common object to write to socket
                 $this->writer->setSocketStream($this->stream);
-                $this->writer->setCredentials(new Credentials($this->dsn['user'], $this->dsn['pass']));
+                $this->writer->setCredentials(Credentials::fromDsn($this->dsn));
 
                 // start heartbeat listener
                 $this->heartBeatDisposable->dispose();
