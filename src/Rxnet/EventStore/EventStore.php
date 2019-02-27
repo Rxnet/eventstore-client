@@ -47,6 +47,8 @@ use Rxnet\EventStore\Exception\NotMasterException;
 use Rxnet\EventStore\Message\Credentials;
 use Rxnet\EventStore\Message\MessageType;
 use Rxnet\EventStore\Message\SocketMessage;
+use Rxnet\EventStore\Record\AcknowledgeableEventRecord;
+use Rxnet\EventStore\Record\EventRecordFactory;
 use Rxnet\Operator\OnBackPressureBuffer;
 use Rxnet\Socket;
 
@@ -330,7 +332,7 @@ class EventStore
                         $record = $eventAppeared->getEvent()->getEvent();
                         /* @var \Rxnet\EventStore\Data\EventRecord $record */
 
-                        return new EventRecord($record);
+                        return EventRecordFactory::fromEventRecord($record);
                     }
                 )
                 ->subscribe($observer);
@@ -359,7 +361,6 @@ class EventStore
                 function (PersistentSubscriptionStreamEventAppeared $eventAppeared) use ($correlationID, $group) {
                     $record = $eventAppeared->getEvent()->getEvent();
                     $link = $eventAppeared->getEvent()->getLink();
-                    /* @var \Rxnet\EventStore\Data\EventRecord $record */
 
                     return new AcknowledgeableEventRecord(
                         $record,
@@ -448,7 +449,7 @@ class EventStore
         return $this->writer->composeAndWrite(MessageType::READ_EVENT, $event, $correlationID)
             ->merge($this->readBuffer->waitFor($correlationID, 1))
             ->map(function (ReadEventCompleted $data) {
-                return new EventRecord($data->getEvent()->getEvent());
+                return EventRecordFactory::fromEventRecord($data->getEvent()->getEvent());
             });
     }
 
@@ -578,11 +579,11 @@ class EventStore
             ->flatMap(function (ReadStreamEventsCompleted $event) use ($backPressure) {
                 /* @var ReadStreamEventsCompleted $event */
                 $records = [];
-                /* @var \Rxnet\EventStore\EventRecord[] $records */
+                /* @var \Rxnet\EventStore\Record\BaseEventRecord[] $records */
                 $events = $event->getEvents();
                 foreach ($events as $item) {
                     /* @var \Rxnet\EventStore\Data\ResolvedIndexedEvent $item */
-                    $records[] = new EventRecord($item->getEvent());
+                    $records[] = EventRecordFactory::fromEventRecord($item->getEvent());
                 }
                 // Will emit onNext for each event
                 return Observable::fromArray($records)

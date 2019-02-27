@@ -8,7 +8,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Rxnet\EventStore;
+namespace Rxnet\EventStore\Record;
 
 use Google\Protobuf\Internal\GPBType;
 use Google\Protobuf\Internal\RepeatedField;
@@ -16,6 +16,7 @@ use Rx\Observable;
 use Rxnet\EventStore\Data\PersistentSubscriptionAckEvents;
 use Rxnet\EventStore\Data\PersistentSubscriptionNakEvents;
 use Rxnet\EventStore\Message\MessageType;
+use Rxnet\EventStore\Writer;
 
 class AcknowledgeableEventRecord extends EventRecord
 {

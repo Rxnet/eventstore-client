@@ -10,7 +10,7 @@ $eventStore->connect()
     ->subscribe(function() use ($eventStore) {
         echo "connected \n";
         $eventStore->catchUpSubscription('domain-test.fr', 0)
-            ->subscribe(function (\Rxnet\EventStore\EventRecord $record) {
+            ->subscribe(function (\Rxnet\EventStore\Record\EventRecord $record) {
                 echo "received {$record->getId()}  {$record->getNumber()}@{$record->getStreamId()} {$record->getType()} created at {$record->getCreated()->format('c')}\n";
             });
     }, function (\Exception $e) {

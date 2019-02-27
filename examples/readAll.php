@@ -5,7 +5,8 @@ use EventLoop\EventLoop;
 require __DIR__ . '/../vendor/autoload.php';
 
 $errorCallback = function (\Throwable $e) {
-    echo $e->getMessage().PHP_EOL;
+    var_dump($e);
+    EventLoop::getLoop()->stop();
 };
 
 $stopCallback = function () {
@@ -19,8 +20,10 @@ $eventStore->connect()
             echo "connected".PHP_EOL;
             $eventStore->readEventsForward('domain-test.fr')
                 ->subscribe(
-                    function (\Rxnet\EventStore\EventRecord $record) {
+                    function (\Rxnet\EventStore\Record\EventRecord $record) {
+                        var_dump(get_class($record));
                         echo "received {$record->getId()} {$record->getNumber()}@{$record->getStreamId()} {$record->getType()} created at {$record->getCreated()->format('c')}".PHP_EOL;
+                        var_dump($record->getData());
                     },
                     $errorCallback,
                     $stopCallback
