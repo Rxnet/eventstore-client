@@ -16,24 +16,28 @@ use Rxnet\EventStore\Exception\ContentTypeNotDefined;
 
 abstract class BaseEvent implements EventInterface
 {
-    const CONTENT_TYPE = null;
+    const CONTENT_TYPE = 0;
 
     /**
      * @var NewEvent
      */
     protected $message;
 
+    /**
+     * @throws ContentTypeNotDefined
+     * @throws \Exception
+     */
     public function __construct(
         string $type,
-        $data,
-        string $id = null,
-        array $meta = []
+        string $data,
+        string $metadata = '',
+        string $id = null
     ) {
         $this->message = new NewEvent();
         $this->setId($id);
         $this->setType($type);
         $this->setData($data);
-        $this->setMetadata($meta);
+        $this->setMetadata($metadata);
         $this->message->setDataContentType($this->getContentType());
         $this->message->setMetadataContentType($this->getContentType());
     }
@@ -43,7 +47,10 @@ abstract class BaseEvent implements EventInterface
         return bin2hex($this->message->getEventId());
     }
 
-    public function setId(?string $id): void
+    /**
+     * @throws \Exception
+     */
+    public function setId(?string $id): EventInterface
     {
         if (!$id) {
             $id = Uuid::uuid4()->getHex();
@@ -59,6 +66,7 @@ abstract class BaseEvent implements EventInterface
         }
 
         $this->message->setEventId($id);
+        return $this;
     }
 
     public function getType(): string
@@ -66,29 +74,32 @@ abstract class BaseEvent implements EventInterface
         return $this->message->getEventType();
     }
 
-    public function setType($type): void
+    public function setType(string $type): EventInterface
     {
         $this->message->setEventType($type);
+        return $this;
     }
 
-    public function getData()
+    public function getData(): string
     {
         return $this->message->getData();
     }
 
-    public function setData($data): void
+    public function setData(string $data): EventInterface
     {
         $this->message->setData($data);
+        return $this;
     }
 
-    public function getMetaData()
+    public function getMetaData(): string
     {
         return $this->message->getMetadata();
     }
 
-    public function setMetaData($meta): void
+    public function setMetaData(string $metadata): EventInterface
     {
-        $this->message->setMetadata($meta);
+        $this->message->setMetadata($metadata);
+        return $this;
     }
 
     public function getMessage(): NewEvent
