@@ -27,6 +27,7 @@ class ReadBuffer extends Subject
     /**
      * @param string $value
      * @return null|void
+     * @throws Exception\EventStoreHandlerException
      */
     public function onNext($value)
     {
@@ -86,7 +87,11 @@ class ReadBuffer extends Subject
     }
 
 
-    protected function decomposeMessage($message)
+    /**
+     * @throws Exception\EventStoreHandlerException
+     * @throws \Exception
+     */
+    protected function decomposeMessage(string $message): SocketMessage
     {
         $buffer = new Buffer($message);
 
@@ -96,7 +101,7 @@ class ReadBuffer extends Subject
 
 
         $messageType = new MessageType($buffer->readInt8(MessageConfiguration::MESSAGE_TYPE_OFFSET));
-        $flag = $buffer->readInt8(MessageConfiguration::FLAG_OFFSET);
+        $buffer->readInt8(MessageConfiguration::FLAG_OFFSET);
         $correlationID = bin2hex($buffer->read(MessageConfiguration::CORRELATION_ID_OFFSET, MessageConfiguration::CORRELATION_ID_LENGTH));
         $data = $buffer->read(MessageConfiguration::DATA_OFFSET, $messageLength - MessageConfiguration::HEADER_LENGTH);
 

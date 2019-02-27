@@ -216,6 +216,7 @@ class EventStore
     /**
      * @param EventInterface[] $events
      * @return ObservableInterface(WriteEventsCompleted) with WriteEventsCompleted
+     * @throws \Exception
      */
     public function write(
         string $streamId,
@@ -244,6 +245,9 @@ class EventStore
             ->merge($this->readBuffer->waitFor($correlationID, 1));
     }
 
+    /**
+     * @throws \Exception
+     */
     public function startTransaction(
         string $streamId,
         int $expectedVersion = -2,
@@ -271,6 +275,8 @@ class EventStore
      * For example, if a starting point of 50 is specified when a stream has 100 events in it,
      * the subscriber can expect to see events 51 through 100, and then any events subsequently
      * written until such time as the subscription is dropped or closed.
+     *
+     * @throws \Exception
      */
     public function catchUpSubscription(
         string $streamId,
@@ -347,6 +353,9 @@ class EventStore
         });
     }
 
+    /**
+     * @throws \Exception
+     */
     public function persistentSubscription(
         string $streamID,
         string $group,
@@ -428,6 +437,9 @@ class EventStore
         });
     }
 
+    /**
+     * @throws \Exception
+     */
     public function readEvent(
         string $streamId,
         int $number = 0,
@@ -448,6 +460,9 @@ class EventStore
             });
     }
 
+    /**
+     * @throws \Exception
+     */
     public function readAllEvents(bool $resolveLinkTos = false, bool $requireMaster = false): Observable
     {
         $query = new ReadAllEvents();
@@ -457,6 +472,9 @@ class EventStore
         return $this->readEvents($query, MessageType::READ_ALL_EVENTS_FORWARD);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function readEventsForward(
         string $streamId,
         int $fromEvent = self::POSITION_START,
@@ -474,6 +492,9 @@ class EventStore
         return $this->readEvents($query, MessageType::READ_STREAM_EVENTS_FORWARD);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function readEventsBackward(
         string $streamId,
         int $fromEvent = self::POSITION_END,
@@ -493,6 +514,9 @@ class EventStore
 
     /**
      * Helper to read all events, repeat query until end reached
+     *
+     * @param ReadAllEvents|ReadStreamEvents $query
+     * @throws \Exception
      */
     protected function readEvents(Message $query, int $messageType): Observable
     {

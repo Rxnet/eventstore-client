@@ -20,6 +20,9 @@ class Transaction
     protected $readBuffer;
     protected $requireMaster;
 
+    /**
+     * @param int|string $transactionId
+     */
     public function __construct($transactionId, bool $requireMaster, Writer $writer, ReadBuffer $readBuffer)
     {
         $this->requireMaster = $requireMaster;
@@ -28,6 +31,9 @@ class Transaction
         $this->readBuffer = $readBuffer;
     }
 
+    /**
+     * @return int|string
+     */
     public function getId()
     {
         return $this->transactionId;
@@ -35,6 +41,7 @@ class Transaction
 
     /**
      * @param EventInterface[] $events
+     * @throws \Exception
      */
     public function write($events, bool $requireMaster = false): Observable
     {
@@ -64,6 +71,9 @@ class Transaction
             ->merge($this->readBuffer->waitFor($correlationID, 1));
     }
 
+    /**
+     * @throws \Exception
+     */
     public function commit(): Observable
     {
         $query = new TransactionCommit();

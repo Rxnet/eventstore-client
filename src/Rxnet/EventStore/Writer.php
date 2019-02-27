@@ -31,11 +31,17 @@ class Writer
         $this->stream = $stream;
     }
 
-    public function createUUIDIfNeeded(string $uuid = null)
+    /**
+     * @throws \Exception
+     */
+    public function createUUIDIfNeeded(string $uuid = null): string
     {
         return $uuid ?: str_replace('-', '', Uuid::uuid4());
     }
 
+    /**
+     * @throws \Exception
+     */
     public function composeAndWrite(
         int $messageType,
         Message $event = null,
@@ -44,6 +50,9 @@ class Writer
         return $this->write($this->compose($messageType, $event, $correlationID));
     }
 
+    /**
+     * @throws \Exception
+     */
     public function compose(
         int $messageType,
         Message $event = null,
