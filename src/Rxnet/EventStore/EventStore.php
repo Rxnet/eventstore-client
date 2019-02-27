@@ -64,9 +64,9 @@ class EventStore
     protected $connectionSubject;
     /** @var DisposableInterface */
     protected $heartBeatDisposable;
-    /** @var  int */
+    /** @var int */
     protected $heartBeatRate;
-    /** @var  DisposableInterface */
+    /** @var DisposableInterface */
     protected $readBufferDisposable;
     /** @var string */
     protected $dsn;
@@ -302,7 +302,11 @@ class EventStore
                 ->flatMap(
                     function (SocketMessage $message) {
                         $data = $message->getData();
-                        //var_dump($data);
+
+                        if (!$data) {
+                            throw new \RuntimeException('Data should not be null in volatile subscription');
+                        }
+
                         switch (get_class($data)) {
                             case SubscriptionDropped::class:
                                 return Observable::error(new \Exception("Subscription dropped, for reason : {$data->getReason()}"));
@@ -536,16 +540,20 @@ class EventStore
 
             if (!$event->getIsEndOfStream() and !($asked <= 0 && $max != self::POSITION_LATEST)) {
                 $records = $event->getEvents();
+
+                /** @var ResolvedIndexedEvent $start */
                 $start = $records[count($records) - 1];
-                /* @var ResolvedIndexedEvent $start */
 
                 if (null === $start->getLink()) {
-                    $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getEvent()->getEventNumber() + 1 : $start->getEvent()->getEventNumber() - 1;
+                    $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? (int) $start->getEvent()->getEventNumber() + 1 : (int) $start->getEvent()->getEventNumber() - 1;
                 } else {
-                    $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? $start->getLink()->getEventNumber() + 1 : $start->getLink()->getEventNumber() - 1;
+                    $start = ($messageType == MessageType::READ_STREAM_EVENTS_FORWARD) ? (int) $start->getLink()->getEventNumber() + 1 : (int) $start->getLink()->getEventNumber() - 1;
                 }
 
-                $query->setFromEventNumber($start);
+                if ($query instanceof ReadStreamEvents) {
+                    $query->setFromEventNumber($start);
+                }
+
                 $query->setMaxCount($asked > $maxPossible ? $maxPossible : $asked);
                 $this->writer->composeAndWrite($messageType, $query, $correlationID);
             } else {

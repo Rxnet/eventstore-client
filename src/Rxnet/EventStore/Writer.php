@@ -36,7 +36,7 @@ class Writer
      */
     public function createUUIDIfNeeded(string $uuid = null): string
     {
-        return $uuid ?: str_replace('-', '', Uuid::uuid4());
+        return $uuid ?: str_replace('-', '', Uuid::uuid4()->toString());
     }
 
     /**
@@ -80,11 +80,11 @@ class Writer
         //Correlation + flag length + command length
         $messageLength = MessageConfiguration::HEADER_LENGTH;
 
-        $doAuthorization = $socketMessage->getCredentials() ? true : false;
+        $credentials = $socketMessage->getCredentials();
         $authorizationLength = 0;
 
-        if ($doAuthorization) {
-            $authorizationLength = 1 + strlen($socketMessage->getCredentials()->getUsername()) + 1 + strlen($socketMessage->getCredentials()->getPassword());
+        if ($credentials) {
+            $authorizationLength = 1 + strlen($credentials->getUsername()) + 1 + strlen($credentials->getPassword());
         }
 
         $dataToSend = $socketMessage->getData();
@@ -98,17 +98,17 @@ class Writer
         $buffer = new Buffer($wholeMessageLength);
         $buffer->writeInt32LE($messageLength + $authorizationLength, 0);
         $buffer->writeInt8($socketMessage->getMessageType()->getType(), MessageConfiguration::MESSAGE_TYPE_OFFSET);
-        $buffer->writeInt8(($doAuthorization ? MessageConfiguration::FLAG_AUTHORIZATION : MessageConfiguration::FLAGS_NONE), MessageConfiguration::FLAG_OFFSET);
+        $buffer->writeInt8(($credentials ? MessageConfiguration::FLAG_AUTHORIZATION : MessageConfiguration::FLAGS_NONE), MessageConfiguration::FLAG_OFFSET);
         $buffer->write(pack('H*', $socketMessage->getCorrelationID()), MessageConfiguration::CORRELATION_ID_OFFSET);
 
-        if ($doAuthorization) {
-            $usernameLength = strlen($socketMessage->getCredentials()->getUsername());
-            $passwordLength = strlen($socketMessage->getCredentials()->getPassword());
+        if ($credentials) {
+            $usernameLength = strlen($credentials->getUsername());
+            $passwordLength = strlen($credentials->getPassword());
 
             $buffer->writeInt8($usernameLength, MessageConfiguration::DATA_OFFSET);
-            $buffer->write($socketMessage->getCredentials()->getUsername(), MessageConfiguration::DATA_OFFSET + 1);
+            $buffer->write($credentials->getUsername(), MessageConfiguration::DATA_OFFSET + 1);
             $buffer->writeInt8($passwordLength, MessageConfiguration::DATA_OFFSET + 1 + $usernameLength);
-            $buffer->write($socketMessage->getCredentials()->getPassword(), MessageConfiguration::DATA_OFFSET + 1 + $usernameLength + 1);
+            $buffer->write($credentials->getPassword(), MessageConfiguration::DATA_OFFSET + 1 + $usernameLength + 1);
         }
 
         if ($dataToSend) {

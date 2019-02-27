@@ -196,7 +196,7 @@ class MessageType
         $this->setCommand($messageType);
     }
 
-    public function getType(): string
+    public function getType(): int
     {
         return $this->messageType;
     }

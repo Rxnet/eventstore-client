@@ -14,9 +14,9 @@ use TrafficCophp\ByteBuffer\Buffer;
 
 class ReadBuffer extends Subject
 {
-    /** @var  CommunicationFactory */
+    /** @var CommunicationFactory */
     private $communicationFactory;
-    /** @var  string */
+    /** @var ?string */
     protected $currentMessage;
 
     public function __construct()
@@ -103,7 +103,7 @@ class ReadBuffer extends Subject
         $messageType = new MessageType($buffer->readInt8(MessageConfiguration::MESSAGE_TYPE_OFFSET));
         $buffer->readInt8(MessageConfiguration::FLAG_OFFSET);
         $correlationID = bin2hex($buffer->read(MessageConfiguration::CORRELATION_ID_OFFSET, MessageConfiguration::CORRELATION_ID_LENGTH));
-        $data = $buffer->read(MessageConfiguration::DATA_OFFSET, $messageLength - MessageConfiguration::HEADER_LENGTH);
+        $data = (string) $buffer->read(MessageConfiguration::DATA_OFFSET, $messageLength - MessageConfiguration::HEADER_LENGTH);
 
         //var_dump($data, $correlationID, $flag, $messageType);
         $communicable = $this->communicationFactory->create($messageType);
