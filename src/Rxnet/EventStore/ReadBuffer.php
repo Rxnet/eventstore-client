@@ -47,25 +47,23 @@ final class ReadBuffer extends Subject
             $value = $this->currentMessage . $value;
         }
 
-        do {
-            $buffer = new Buffer($value);
-            $dataLength = strlen($value);
-            $messageLength = $buffer->readInt32LE(0) + MessageConfiguration::INT_32_LENGTH;
+        $buffer = new Buffer($value);
+        $dataLength = strlen($value);
+        $messageLength = $buffer->readInt32LE(0) + MessageConfiguration::INT_32_LENGTH;
 
-            if ($dataLength == $messageLength) {
-                $socketMessages[] = $this->decomposeMessage($value);
-                $this->currentMessage = null;
-            } elseif ($dataLength > $messageLength) {
-                $message = substr($value, 0, $messageLength);
-                $socketMessages[] = $this->decomposeMessage($message);
+        if ($dataLength == $messageLength) {
+            $socketMessages[] = $this->decomposeMessage($value);
+            $this->currentMessage = null;
+        } elseif ($dataLength > $messageLength) {
+            $message = substr($value, 0, $messageLength);
+            $socketMessages[] = $this->decomposeMessage($message);
 
-                // reset data to next message
-                $value = substr($value, $messageLength, $dataLength);
-                $this->currentMessage = null;
-            } else {
-                $this->currentMessage .= $value;
-            }
-        } while ($dataLength > $messageLength);
+            // reset data to next message
+            $value = substr($value, $messageLength);
+            $this->currentMessage = $value;
+        } else {
+            $this->currentMessage = $value;
+        }
 
         //echo "messages : ".count($socketMessages) ." for ".count($this->observers)." observers \n";
         foreach ($socketMessages as $message) {
