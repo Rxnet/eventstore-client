@@ -1,6 +1,6 @@
 <?php
 
-use Rxnet\EventStore\AcknowledgeableEventRecord;
+use Rxnet\EventStore\Record\AcknowledgeableEventRecord;
 
 require __DIR__.'/../vendor/autoload.php';
 
@@ -18,6 +18,7 @@ $eventStore->connect()
             })
             ->subscribe(null, function (\Exception $e) {
                 echo $e->getMessage();
+                \EventLoop\EventLoop::getLoop()->stop();
             });
     });
 \EventLoop\EventLoop::getLoop()->run();
