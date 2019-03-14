@@ -104,7 +104,8 @@ final class EventStore
     public function connect(
         string $dsn = 'tcp://admin:changeit@localhost:1113',
         int $connectTimeout = 1000,
-        int $heartBeatRate = 5000
+        int $heartBeatRate = 5000,
+        array $options = []
     ): Observable {
         // connector compatibility
         $this->connectTimeout = $connectTimeout;
@@ -114,8 +115,8 @@ final class EventStore
         // What you should observe if you want to auto reconnect
         $this->connectionSubject = new ReplaySubject(1, 1);
 
-        return Observable::create(function (ObserverInterface $observer) {
-            $this->connector->connect($this->dsn, ['timeout' => $this->connectTimeout])
+        return Observable::create(function (ObserverInterface $observer) use ($options) {
+            $this->connector->connect($this->dsn, $options += ['timeout' => $this->connectTimeout])
                 ->flatMap(function (Socket\Connection $stream) {
                     // send all data to our read buffer
                     $this->stream = $stream;
