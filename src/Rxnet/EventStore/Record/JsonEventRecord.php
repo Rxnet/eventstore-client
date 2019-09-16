@@ -23,7 +23,7 @@ final class JsonEventRecord extends EventRecord
         return $this->data;
     }
 
-    public function getMetadata(): array
+    public function getMetadata(): ?array
     {
         return $this->metadata;
     }
